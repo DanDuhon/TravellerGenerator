@@ -1,44 +1,52 @@
-import random, math, systemhex, star, planet, animal, alien, datetime
+import random
+import math
+import datetime
+
+import systemhex
+import star
+import planet
+import animal
+import alien
 
 #This is to run all the validation code at the end of this script.
-validateResults = False
+validateResults = True
 
 #input variables
-initialSectorSize = 50
+initialSectorSize = 10
 openClusterPercent = 50
 alienSurvivalPercent = 10
 maxTechLevel = 15
 
 sectorMax = math.ceil(initialSectorSize / 2)
 sectorMin = math.ceil(initialSectorSize / 2) * -1
-right = True if random.random() > 0.5 else False
-up = True if random.random() > 0.5 else False
+right = (random.random() > 0.5)
+up = (random.random() > 0.5)
 openClusterBorder = math.floor(initialSectorSize * openClusterPercent / 100) - sectorMax
 hexes = {}
 
 for h in range(sectorMin, sectorMax + 1):
     for v in range(sectorMin, sectorMax + 1):
         openClusterBonus = 0
-        if openClusterBonus == False \
-           and right == True and h >= openClusterBorder \
-           and up == True and v >= openClusterBorder:
+        if (openClusterBonus == 0
+           and right and h >= openClusterBorder
+           and up and v >= openClusterBorder):
             openClusterBonus = 3
-        if openClusterBonus == False \
-           and right == False and h <= openClusterBorder \
-           and up == False and v <= openClusterBorder:
+        if (openClusterBonus == 0
+           and not right and h <= openClusterBorder
+           and not up and v <= openClusterBorder):
             openClusterBonus = 3
             
         hexes.update({ (h, v): systemhex.System(h, v, openClusterBonus, alienSurvivalPercent, maxTechLevel) })
 
-validTerraTargets = [ targetStar for targetStar in star.allStars \
-                      if targetStar.luminosityClass not in [ "D", "M-Ve", "L", "K-III", "M-III" ] \
-                      and ((targetStar.luminosityClass != "M-V"\
-                            and targetStar.innerZoneOrbits < 5) \
-                           or (targetStar.luminosityClass == "M-V" \
-                               and targetStar.innerZoneOrbits < 4)) \
-                      and ((targetStar.companions == [] \
-                            and targetStar.primaryOrbit == None) \
-                           or targetStar.primaryOrbit == "Distant") \
+validTerraTargets = [ targetStar for targetStar in star.allStars
+                      if targetStar.luminosityClass not in [ "D", "M-Ve", "L", "K-III", "M-III" ]
+                      and ((targetStar.luminosityClass != "M-V"
+                            and targetStar.innerZoneOrbits < 5)
+                           or (targetStar.luminosityClass == "M-V"
+                               and targetStar.innerZoneOrbits < 4))
+                      and ((targetStar.companions == []
+                            and targetStar.primaryOrbit is None)
+                           or targetStar.primaryOrbit == "Distant")
                       and targetStar.systemHex.age >= 4 ]
 terraTarget = random.choice(validTerraTargets)
 
@@ -60,7 +68,7 @@ for p in terraTarget.planets:
 
 alien.set_tech_level(maxTechLevel)
 
-if validateResults == True:
+if validateResults:
     #Validation checks
     print("Validation checks...")
     #System Hex
@@ -69,7 +77,7 @@ if validateResults == True:
             badHex = sys
             raise ValueError("Invalid system age: " + str(sys.age))
 
-        if sys.name == None:
+        if sys.name is None:
             badHex = sys
             raise ValueError("System without a name.")
 
@@ -93,60 +101,60 @@ if validateResults == True:
             raise ValueError("Duplicate name found: " + s.name)
         
         if s in s.systemHex.stars[1:]:
-            if (s.systemHex.stars[0].spectralType == "F" and s.spectralType == "A") \
-               or (s.systemHex.stars[0].spectralType == "G" and s.spectralType in [ "F", "A" ]) \
-               or (s.systemHex.stars[0].spectralType == "K" and s.spectralType in [ "G", "F", "A" ]) \
-               or (s.systemHex.stars[0].spectralType == "M" and s.spectralType in [ "K", "G", "F", "A" ]) \
-               or (s.systemHex.stars[0].spectralType == "L" and s.spectralType != "L"):
+            if ((s.systemHex.stars[0].spectralType == "F" and s.spectralType == "A")
+               or (s.systemHex.stars[0].spectralType == "G" and s.spectralType in [ "F", "A" ])
+               or (s.systemHex.stars[0].spectralType == "K" and s.spectralType in [ "G", "F", "A" ])
+               or (s.systemHex.stars[0].spectralType == "M" and s.spectralType in [ "K", "G", "F", "A" ])
+               or (s.systemHex.stars[0].spectralType == "L" and s.spectralType != "L")):
                 badHex = s.systemHex
                 badStar = s
                 raise ValueError("Companion star has a \"lower\" spectral type than the primary star.")
 
-        if (s.spectralType == "A" and s.systemHex.age <= 2 and s.luminosityClass != "A-V") \
-           or (s.spectralType == "A" and s.systemHex.age == 3 and s.luminosityClass not in [ "F-IV", "K-III", "D" ]) \
-           or (s.spectralType == "A" and s.systemHex.age >= 4 and s.luminosityClass != "D") \
-           or (s.spectralType == "F" and s.systemHex.age <= 5 and s.luminosityClass != "F-V") \
-           or (s.spectralType == "F" and s.systemHex.age == 6 and s.luminosityClass not in [ "G-IV", "M-III" ]) \
-           or (s.spectralType == "F" and s.systemHex.age >= 7 and s.luminosityClass != "D") \
-           or (s.spectralType == "G" and s.systemHex.age <= 11 and s.luminosityClass != "G-V") \
-           or (s.spectralType == "G" and 12 <= s.systemHex.age <= 13 and s.luminosityClass not in [ "K-IV", "M-III" ]) \
-           or (s.spectralType == "G" and s.systemHex.age >= 14 and s.luminosityClass != "D") \
-           or (s.spectralType == "K" and s.luminosityClass != "K-V") \
-           or (s.spectralType == "M" and s.luminosityClass not in [ "M-V", "M-Ve", "L" ]) \
-           or (s.spectralType == "L" and s.luminosityClass != "L"):
+        if ((s.spectralType == "A" and s.systemHex.age <= 2 and s.luminosityClass != "A-V")
+           or (s.spectralType == "A" and s.systemHex.age == 3 and s.luminosityClass not in [ "F-IV", "K-III", "D" ])
+           or (s.spectralType == "A" and s.systemHex.age >= 4 and s.luminosityClass != "D")
+           or (s.spectralType == "F" and s.systemHex.age <= 5 and s.luminosityClass != "F-V")
+           or (s.spectralType == "F" and s.systemHex.age == 6 and s.luminosityClass not in [ "G-IV", "M-III" ])
+           or (s.spectralType == "F" and s.systemHex.age >= 7 and s.luminosityClass != "D")
+           or (s.spectralType == "G" and s.systemHex.age <= 11 and s.luminosityClass != "G-V")
+           or (s.spectralType == "G" and 12 <= s.systemHex.age <= 13 and s.luminosityClass not in [ "K-IV", "M-III" ])
+           or (s.spectralType == "G" and s.systemHex.age >= 14 and s.luminosityClass != "D")
+           or (s.spectralType == "K" and s.luminosityClass != "K-V")
+           or (s.spectralType == "M" and s.luminosityClass not in [ "M-V", "M-Ve", "L" ])
+           or (s.spectralType == "L" and s.luminosityClass != "L")):
             badHex = s.systemHex
             badStar = s
             raise ValueError("Invalid luminosity class")
 
         for c in s.companions:
-            if s in s.systemHex.stars[1:] and (c.primaryOrbit == None or c.primaryOrbit == "Distant") and s.systemHex.stars[0].planets == c.planets:
+            if s in s.systemHex.stars[1:] and (c.primaryOrbit is None or c.primaryOrbit == "Distant") and s.systemHex.stars[0].planets == c.planets:
                 badHex = s.systemHex
                 badStar = c
                 raise ValueError("Distant or brown dwarf star has the same planets as the primary star.")
 
-            if s in s.systemHex.stars[1:] and c.primaryOrbit != None and c.primaryOrbit != "Distant" and s.systemHex.stars[0].planets != c.planets:
+            if s in s.systemHex.stars[1:] and c.primaryOrbit is not None and c.primaryOrbit != "Distant" and s.systemHex.stars[0].planets != c.planets:
                 badHex = s.systemHex
                 badStar = c
                 raise ValueError("Companion star does not have the same planets as the primary star.")
 
-        if (s.luminosityClass in [ "D", "L", "K-III", "M-III" ] \
-            and (s.epistellarOrbits > 0 or sum([ 1 for p in s.planets if p.orbitType == "Epistellar" ]))) \
-            or s.epistellarOrbits > 2:
+        if ((s.luminosityClass in [ "D", "L", "K-III", "M-III" ]
+            and (s.epistellarOrbits > 0 or sum([ 1 for p in s.planets if p.orbitType == "Epistellar" ])))
+            or s.epistellarOrbits > 2):
             badHex = s.systemHex
             badStar = s
             raise ValueError("Wrong number of epistellar orbits.")
 
-        if ((s.primaryOrbit == "Close" or sum([ 1 for c in s.companions if c.primaryOrbit == "Close" ])) and s.innerZoneOrbits > 0) \
-           or (s.luminosityClass == "M-V" and s.innerZoneOrbits > 4) \
-           or (s.luminosityClass == "L" and s.innerZoneOrbits > 2) \
-           or s.innerZoneOrbits > 5:
+        if (((s.primaryOrbit == "Close" or sum([ 1 for c in s.companions if c.primaryOrbit == "Close" ])) and s.innerZoneOrbits > 0)
+           or (s.luminosityClass == "M-V" and s.innerZoneOrbits > 4)
+           or (s.luminosityClass == "L" and s.innerZoneOrbits > 2)
+           or s.innerZoneOrbits > 5):
             badHex = s.systemHex
             badStar = s
             raise ValueError("Wrong number of inner zone orbits.")
 
-        if ((s.primaryOrbit == "Moderate" or sum([ 1 for c in s.companions if c.primaryOrbit == "Moderate" ])) and s.outerZoneOrbits > 0) \
-           or (s.luminosityClass in [ "M-V", "L" ] and s.outerZoneOrbits > 4) \
-           or s.outerZoneOrbits > 5:
+        if (((s.primaryOrbit == "Moderate" or sum([ 1 for c in s.companions if c.primaryOrbit == "Moderate" ])) and s.outerZoneOrbits > 0)
+           or (s.luminosityClass in [ "M-V", "L" ] and s.outerZoneOrbits > 4)
+           or s.outerZoneOrbits > 5):
             badHex = s.systemHex
             badStar = s
             raise ValueError("Wrong number of outer zone orbits.")
@@ -206,20 +214,20 @@ if validateResults == True:
             raise ValueError("Jovian has too many satellites.")
 
         if p.star.luminosityClass in [ "D", "K-III", "M-III" ] and p.order <= p.star.expansionAffectedOrbits:
-            if isinstance(p, planet.DwarfPlanet) and p.category != "Stygian" \
-               or isinstance(p, planet.TerrestrialPlanet) and p.category != "Acheronian" \
-               or isinstance(p, planet.HelianPlanet) and p.category != "Asphodelian" \
-               or isinstance(p, planet.JovianPlanet) and p.category != "Chthonian":
+            if (isinstance(p, planet.DwarfPlanet) and p.category != "Stygian"
+               or isinstance(p, planet.TerrestrialPlanet) and p.category != "Acheronian"
+               or isinstance(p, planet.HelianPlanet) and p.category != "Asphodelian"
+               or isinstance(p, planet.JovianPlanet) and p.category != "Chthonian"):
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Planet should have category determined by star, but category is wrong.")
 
         if p.star.luminosityClass not in [ "D", "K-III", "M-III" ] or p.order > p.star.expansionAffectedOrbits:
-            if isinstance(p, planet.DwarfPlanet) and p.category == "Stygian" \
-               or isinstance(p, planet.TerrestrialPlanet) and p.category == "Acheronian" \
-               or isinstance(p, planet.HelianPlanet) and p.orbitType != "Epistellar" and p.category == "Asphodelian" \
-               or isinstance(p, planet.JovianPlanet) and p.orbitType != "Epistellar" and p.category == "Chthonian":
+            if (isinstance(p, planet.DwarfPlanet) and p.category == "Stygian"
+               or isinstance(p, planet.TerrestrialPlanet) and p.category == "Acheronian"
+               or isinstance(p, planet.HelianPlanet) and p.orbitType != "Epistellar" and p.category == "Asphodelian"
+               or isinstance(p, planet.JovianPlanet) and p.orbitType != "Epistellar" and p.category == "Chthonian"):
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -333,7 +341,7 @@ if validateResults == True:
             raise ValueError("Planet should have animals but doesn't.")
 
         #Aliens on planets
-        if p.biosphere == 12 and p.alien == None:
+        if p.biosphere == 12 and p.alien is None:
             badHex = p.star.systemHex
             badStar = p.star
             badPlanet = p
@@ -361,12 +369,12 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -418,7 +426,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -474,7 +482,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -496,7 +504,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -506,7 +514,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -528,7 +536,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -538,7 +546,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -560,7 +568,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -570,7 +578,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -592,7 +600,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -602,7 +610,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -624,7 +632,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -634,7 +642,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -666,7 +674,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
-            if p.biosphere in [ 0, None ] and p.chemistry != None:
+            if p.biosphere in [ 0, None ] and p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -688,7 +696,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -710,7 +718,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -720,7 +728,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -832,7 +840,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -895,7 +903,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -934,7 +942,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -944,7 +952,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -976,7 +984,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
-            if p.subsurfaceOceans == False and p.biosphere > 0:
+            if not p.subsurfaceOceans and p.biosphere > 0:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1010,7 +1018,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1020,7 +1028,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1083,7 +1091,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1105,7 +1113,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry != None:
+            if p.chemistry is not None:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1115,7 +1123,7 @@ if validateResults == True:
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1166,7 +1174,7 @@ if validateResults == True:
                     badStar = p.star
                     badPlanet = p
                     raise ValueError("Invalid biosphere.")
-            if p.subsurfaceOceans == True:
+            if p.subsurfaceOceans:
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -1212,21 +1220,21 @@ if validateResults == True:
                 validBehaviors = [ "Pouncer", "Trapper", "Hunter", "Chaser" ]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
                     validBehaviors.append("Siren")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
                 validBehaviors = [ "Filter", "Intermittent", "Grazer" ]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
                     validBehaviors.append("Siren")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
                 validBehaviors = [ "Carrion-Eater", "Gatherer", "Eater", "Hunter", "Intermittent", "Reducer" ]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
                     validBehaviors.append("Siren")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1245,21 +1253,21 @@ if validateResults == True:
                 validBehaviors = [ "Eater", "Hunter", "Killer", "Chaser" ]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
                     validBehaviors.append("Pouncer")
-                if all(b in validBehaviors for b in a.behaviors) == False and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
+                if not all(b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
                 validBehaviors = [ "Filter", "Intermittent", "Grazer" ]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
                     validBehaviors.append("Pouncer")
-                if all(b in validBehaviors for b in a.behaviors) == False and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
+                if not all(b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
                 validBehaviors = [ "Carrion-Eater", "Eater", "Reducer" ]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
                     validBehaviors.append("Pouncer")
-                if all(b in validBehaviors for b in a.behaviors) == False and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
+                if not all(b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
                 
@@ -1287,7 +1295,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
                     validBehaviors.append("Chaser")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
@@ -1296,7 +1304,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
                     validBehaviors.append("Chaser")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
@@ -1305,7 +1313,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
                     validBehaviors.append("Chaser")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1334,7 +1342,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
                     validBehaviors.append("Hijacker")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
@@ -1345,7 +1353,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
                     validBehaviors.append("Hijacker")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
@@ -1356,7 +1364,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
                     validBehaviors.append("Hijacker")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1386,7 +1394,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
                     validBehaviors.extend([ "Pouncer", "Trapper" ])
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
@@ -1395,7 +1403,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
                     validBehaviors.extend([ "Pouncer", "Trapper" ])
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
@@ -1404,7 +1412,7 @@ if validateResults == True:
                     validBehaviors.append("Siren")
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
                     validBehaviors.extend([ "Pouncer", "Trapper" ])
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1437,7 +1445,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
                     validBehaviors.append("Killer")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
@@ -1446,7 +1454,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
                     validBehaviors.append("Killer")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
@@ -1455,7 +1463,7 @@ if validateResults == True:
                     validBehaviors.append("Pouncer")
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
                     validBehaviors.append("Killer")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1492,21 +1500,21 @@ if validateResults == True:
                 validBehaviors = [ "Pouncer", "Killer", "Intimidator", "Hunter", "Hijacker" ]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
                     validBehaviors.append("Trapper")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Herbivore":
                 validBehaviors = [ "Gatherer", "Intermittent", "Grazer" ]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
                     validBehaviors.append("Trapper")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
             elif a.diet == "Omnivore":
                 validBehaviors = [ "Carrion-Eater", "Gatherer", "Hijacker", "Hunter", "Reducer" ]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
                     validBehaviors.append("Trapper")
-                if all(b in validBehaviors for b in a.behaviors) == False:
+                if not all(b in validBehaviors for b in a.behaviors):
                     badAnimal = a
                     raise ValueError("Invalid behavior.")
 
@@ -1537,7 +1545,7 @@ if validateResults == True:
             badAlien = a
             raise ValueError("Duplicate alien name found: " + a.name)
         
-        if (a.extinct == False and (a.techLevel < 0 or a.techLevel > maxTechLevel)) or (a.extinct == True and (a.techLevel < 0 or a.techLevel > 9)):
+        if (not a.extinct and (a.techLevel < 0 or a.techLevel > maxTechLevel)) or (a.extinct and (a.techLevel < 0 or a.techLevel > 9)):
             badHex = a.planet.star.systemHex
             badStar = a.planet.star
             badPlanet = a.planet

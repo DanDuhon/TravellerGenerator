@@ -1,4 +1,5 @@
-import star, namegenerator
+import star
+import namegenerator
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -67,7 +68,7 @@ class System():
                 primary = True,
                 numberOfStars = self.numberOfStars))
             self.stars.extend(self.stars[0].companions)
-        if self.brownDwarf == True:
+        if self.brownDwarf:
             self.numberOfStars += 1
             self.stars.append(star.Star(
                 systemHex = self,
@@ -87,5 +88,5 @@ class System():
 
             for planetInstance in starInstance.planets:
                 self.animals.extend(planetInstance.animals)
-                if planetInstance.alien != None:
+                if planetInstance.alien is not None:
                     self.homeSystemOfAliens.append(planetInstance.alien)

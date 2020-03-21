@@ -1,5 +1,10 @@
+import random
+import statistics
+
+import animal
+import planet
+import namegenerator
 from diceroller import roll_xdy
-import animal, planet, namegenerator, statistics, random
 
 allAliens = []
 
@@ -166,7 +171,7 @@ def create_terra_luna_humans(star, maxTechLevel):
     
     #Humans
     if len([ alien.techLevelScore for alien in allAliens ]) > 0:
-        avgTechLevelScore = round(statistics.mean([ alien.techLevelScore for alien in allAliens if alien.extinct == False ]), 0)
+        avgTechLevelScore = round(statistics.mean([ alien.techLevelScore for alien in allAliens if not alien.extinct ]), 0)
         terra.alien = Alien(planet, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
         terra.alien.name = "Terran"
     else:
@@ -190,13 +195,7 @@ def create_alien(planet, alienSurvivalPercent):
     #planet, then pick one at random.
     possibleAliens = list(set([ (animal.animalClass, animal.terrain) for animal in planet.animals if animal.animalClass in ["Amphibian", "Aquatic", "Insect", "Mammal", "Reptile"] ]))
 
-    if len(possibleAliens) > 0:
-        alienRoll = sum(roll_xdy(1, len(possibleAliens))) - 1
-    else:
-        alienRoll = 0
-        
-    alienClass = possibleAliens[alienRoll][0]
-    alienTerrain = possibleAliens[alienRoll][1]
+    alienClass, alienTerrain = random.choice(possibleAliens)
 
     if alienClass == "Amphibian":
         animalToConvert = animal.Amphibian(planet = planet, terrain = alienTerrain)
@@ -279,7 +278,7 @@ def set_tech_level(maxTechLevel):
     #probably wouldn't find any evidence.  At 10, they could colonize other
     #systems and then killing them all off becomes really hard.
     for alien in allAliens:
-        if alien.extinct == True:
+        if alien.extinct:
             alien.techLevel = sum(roll_xdy(1, 9))
         else:
             alien.techLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + ((1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))

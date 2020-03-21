@@ -181,12 +181,12 @@ class Star():
 
         #The primary star rolls 2d6 for spectral type.
         #Companion stars roll 1d6 - 1 + the spetral type roll of the primary star.
-        if primary == False and autoBrownDwarf == False:
+        if not primary and not autoBrownDwarf:
             spectralTypeRoll = primarySpectralTypeRoll + sum(roll_xdy(1, 6)) - 1
         else:
             spectralTypeRoll = sum(roll_xdy(2, 6))
             
-        if autoBrownDwarf == True:
+        if autoBrownDwarf:
             self.spectralType = "L"
         else:
             self.spectralType = spectralTypeTable[spectralTypeRoll]
@@ -209,7 +209,7 @@ class Star():
         else:
             self.expansionAffectedOrbits = 0
 
-        if primary == True:
+        if primary:
             if numberOfStars > 1:
                 self.companion1Orbit = companionOrbitTable[sum(roll_xdy(1, 6))]
                 self.companions.append(
@@ -254,12 +254,12 @@ class Star():
             else:
                 self.outerZoneOrbits = outer_zone_orbits(self.luminosityClass)
         #Companion stars with a Distant distance and automatic brown dwarf stars have their own planetary systems.
-        elif primaryOrbit == "Distant" or autoBrownDwarf == True:
+        elif primaryOrbit == "Distant" or autoBrownDwarf:
             self.epistellarOrbits = epistellar_orbits(self.luminosityClass)
             self.innerZoneOrbits = inner_zone_orbits(self.luminosityClass)
             self.outerZoneOrbits = outer_zone_orbits(self.luminosityClass)
 
-        if primary == True or primaryOrbit == "Distant":
+        if primary or primaryOrbit == "Distant":
             self.planets = []
             for x in range(self.epistellarOrbits + self.innerZoneOrbits + self.outerZoneOrbits):
                 roll = sum(roll_xdy(1, 6))
@@ -341,5 +341,5 @@ class Star():
 
         self.homeStarOfAliens = []
         for planetInstance in self.planets:
-            if planetInstance.alien != None:
+            if planetInstance.alien is not None:
                 self.homeStarOfAliens.append(planetInstance.alien)

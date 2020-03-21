@@ -1,4 +1,6 @@
-import animal, alien, star
+import animal
+import alien
+import star
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -132,7 +134,7 @@ def planet_chemistry_age_modifier_class_type(category, luminosityClass, orbitTyp
     elif category == "Jani-Lithic":
         return (None, None, "Epistellar", "Jani-Lithic")
     elif category == "Jovian":
-        if biosphere != None:
+        if biosphere is not None:
             if biosphere > 0:
                 roll = sum(roll_xdy(1, 6))
                 if luminosityClass == "L":
@@ -319,7 +321,7 @@ def planet_atmosphere(category, luminosityClass, size, chemistry, biosphere = No
             return 1
         else:
             return 10
-    elif biosphere != None and category == "Arid":
+    elif biosphere is not None and category == "Arid":
         if biosphere >= 3 and chemistry == "Water":
             roll = sum(roll_xdy(2, 6)) - 7 + size
 
@@ -387,7 +389,7 @@ def planet_atmosphere(category, luminosityClass, size, chemistry, biosphere = No
             return 13
         else:
             return roll
-    elif biosphere != None and category == "Promethean":
+    elif biosphere is not None and category == "Promethean":
         if chemistry == "Water" and biosphere >= 3:
             roll = sum(roll_xdy(2, 6)) + size - 7
 
@@ -406,7 +408,7 @@ def planet_atmosphere(category, luminosityClass, size, chemistry, biosphere = No
             return 0
         else:
             return 1
-    elif biosphere != None and category == "Tectonic":
+    elif biosphere is not None and category == "Tectonic":
         if biosphere >= 3 and chemistry == "Water":
             roll = sum(roll_xdy(2, 6)) + size - 7
 
@@ -422,7 +424,7 @@ def planet_atmosphere(category, luminosityClass, size, chemistry, biosphere = No
             return 10
     elif category == "Telluric":
         return 12
-    elif biosphere != None and category == "Vesperian":
+    elif biosphere is not None and category == "Vesperian":
         if biosphere >= 3 and chemistry == "Water":
             roll = sum(roll_xdy(2, 6)) + size - 7
 
@@ -728,27 +730,27 @@ def dwarf_category(orbitType, parentObject):
     roll = sum(roll_xdy(1, 6))
             
     if orbitType == "Epistellar":
-        if isinstance(parentObject, AsteroidBelt) == True:
+        if isinstance(parentObject, AsteroidBelt):
             roll -= 2
 
         if roll == 6:
             return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
     elif orbitType == "Inner Zone":
-        if isinstance(parentObject, AsteroidBelt) == True:
+        if isinstance(parentObject, AsteroidBelt):
             roll -= 2
-        elif isinstance(parentObject, HelianPlanet) == True:
+        elif isinstance(parentObject, HelianPlanet):
             roll += 1
-        elif isinstance(parentObject, JovianPlanet) == True:
+        elif isinstance(parentObject, JovianPlanet):
             roll += 2
 
         if roll == 8:
             return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
     else: # Outer Zone
-        if isinstance(parentObject, AsteroidBelt) == True:
+        if isinstance(parentObject, AsteroidBelt):
             roll -= 1
-        elif isinstance(parentObject, HelianPlanet) == True:
+        elif isinstance(parentObject, HelianPlanet):
             roll += 1
-        elif isinstance(parentObject, JovianPlanet) == True:
+        elif isinstance(parentObject, JovianPlanet):
             roll += 2
 
         if roll == 8:
@@ -915,21 +917,21 @@ class OrbitalBody():
                 The luminosity class of the star the planet orbits (if multiple,
                 use the primary star).
         """
-        while self.className == None or self.atmosphere == None or self.biosphere == None or self.hydrosphere == None:
-            if self.className == None:
+        while self.className is None or self.atmosphere is None or self.biosphere is None or self.hydrosphere is None:
+            if self.className is None:
                 chemistryAgeModifierClassType = planet_chemistry_age_modifier_class_type(category = self.category, luminosityClass = luminosityClass, orbitType = self.orbitType, biosphere = self.biosphere)
                 self.chemistry = chemistryAgeModifierClassType[0]
                 self.ageModifier = chemistryAgeModifierClassType[1]
                 self.className = chemistryAgeModifierClassType[2]
                 self.type = chemistryAgeModifierClassType[3]
 
-            if self.atmosphere == None:
+            if self.atmosphere is None:
                 self.atmosphere = planet_atmosphere(category = self.category, luminosityClass = luminosityClass, size = self.size, chemistry = self.chemistry, biosphere = self.biosphere)
 
-            if self.biosphere == None:
+            if self.biosphere is None:
                 self.biosphere = planet_biosphere(category = self.category, systemAge = systemAge, luminosityClass = luminosityClass, orbitType = self.orbitType, size = self.size, ageModifier = self.ageModifier, atmosphere = self.atmosphere, subsurfaceOceans = self.subsurfaceOceans)
 
-            if self.hydrosphere == None:
+            if self.hydrosphere is None:
                 hydrosphereSubsurfaceOceans = planet_hydrosphere_subsurface_oceans(category = self.category, luminosityClass = luminosityClass, orbitType = self.orbitType, size = self.size, atmosphere = self.atmosphere)
                 self.hydrosphere = hydrosphereSubsurfaceOceans[0]
                 self.subsurfaceOceans = hydrosphereSubsurfaceOceans[1]
@@ -959,7 +961,7 @@ class OrbitalBody():
                     self.animals.append(animal.Insect(planet = self, terrain = "Clear"))
                     self.animals.append(animal.Mammal(planet = self, terrain = "Clear"))
     
-        if (self.atmosphere >= 2 and 5 <= self.hydrosphere <= 11) or self.subsurfaceOceans == True:
+        if (self.atmosphere >= 2 and 5 <= self.hydrosphere <= 11) or self.subsurfaceOceans:
             self.terrain.append("Deep Ocean")
             if self.biosphere >= 9:
                 for _ in range(3):
@@ -1005,7 +1007,7 @@ class OrbitalBody():
                     self.animals.append(animal.Avian(planet = self, terrain = "Mountains"))
                     self.animals.append(animal.Insect(planet = self, terrain = "Mountains"))
     
-        if (self.atmosphere>= 2 and 3 <= self.hydrosphere <= 11) or self.subsurfaceOceans == True:
+        if (self.atmosphere>= 2 and 3 <= self.hydrosphere <= 11) or self.subsurfaceOceans:
             self.terrain.append("Open Ocean")
             if self.biosphere >= 9:
                 for _ in range(3):
@@ -1046,7 +1048,7 @@ class OrbitalBody():
                     self.animals.append(animal.Insect(planet = self, terrain = "Rough/Broken"))
                     self.animals.append(animal.Reptile(planet = self, terrain = "Rough/Broken"))
     
-        if (self.atmosphere >= 2 and 2 <= self.hydrosphere <= 10) or self.subsurfaceOceans == True:
+        if (self.atmosphere >= 2 and 2 <= self.hydrosphere <= 10) or self.subsurfaceOceans:
             self.terrain.append("Shallow Ocean")
             if self.biosphere >= 9:
                 for _ in range(3):
@@ -1095,7 +1097,7 @@ class DwarfPlanet(OrbitalBody):
         if self.biosphere >= 12:
             alien.create_alien(self, alienSurvivalPercent)
 
-        if sum(roll_xdy(1, 6)) == 6 and isinstance(parentObject, DwarfPlanet) == False:
+        if sum(roll_xdy(1, 6)) == 6 and not isinstance(parentObject, DwarfPlanet):
             self.satellites.append(DwarfPlanet(star = self.star, parentObject = self, order = self.order, orbitType = self.orbitType, luminosityClass = luminosityClass, expansionAffectedOrbits = expansionAffectedOrbits, systemAge = systemAge, alienSurvivalPercent = alienSurvivalPercent, maxTechLevel = maxTechLevel))
 
 class AsteroidBelt(OrbitalBody):
