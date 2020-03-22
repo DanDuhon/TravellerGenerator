@@ -170,7 +170,7 @@ def create_terra_luna_humans(star, maxTechLevel):
     terra.satellites = [luna]
     
     #Humans
-    if len([ alien.techLevelScore for alien in allAliens ]) > 0:
+    if len([ alien.techLevelScore for alien in allAliens if not alien.extinct ]) > 0:
         avgTechLevelScore = round(statistics.mean([ alien.techLevelScore for alien in allAliens if not alien.extinct ]), 0)
         terra.alien = Alien(planet, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
         terra.alien.name = "Terran"
