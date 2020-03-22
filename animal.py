@@ -1040,35 +1040,35 @@ class Amphibian(Animal):
         quirk10 = False
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append("Whenever packs of these animals make any noise at all, they all make the exact same sound simultaneously several times in a row.")
-            if quirkRoll == 3 and quirk3 == False:
+            if quirkRoll == 3 and not quirk3:
                 quirk3 = True
                 self.quirks.append("Apparently blind, these amphibians have no visible eyes or means of sight.")
                 self.recon -= 1
-            if quirkRoll == 4 and quirk4 == False:
+            if quirkRoll == 4 and not quirk4:
                 quirk4 = True
                 self.quirks.append("These animals make no sound at all, even when they move in natural surroundings.")
                 if self.stealth < 1:
                     self.stealth = 1
-            if quirkRoll == 5 and quirk5 == False:
+            if quirkRoll == 5 and not quirk5:
                 quirk5 = True
                 self.quirks.append("The colours of this amphibian’s hide are vivid and clashing, a sort of natural reverse camouflage. Natural predators dislike this display and leave it alone.")
             if quirkRoll == 6:
                 self.quirks.append("Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world.")
                 self.raise_skill_level("survival", 1)
-            if quirkRoll == 7 and quirk7 == False:
+            if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("These amphibians emit a natural pheromone that other animals find highly attractive.")
                 self.behaviors.add("Siren")
-            if quirkRoll == 8 and quirk8 == False:
+            if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("When threatened, these amphibians emit a piercing scream that sounds like a sentient creature in terrible pain.")
-            if quirkRoll == 9 and quirk9 == False:
+            if quirkRoll == 9 and not quirk9:
                 quirk9 = True
                 self.quirks.append("On rare occasions, these amphibians swarm viciously.")
-            if quirkRoll == 10 and quirk10 == False:
+            if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append("The skin of these animals is naturally coated in a thick, foul-smelling emulsion.")
                 self.exoticWeapons.add("Stench")
@@ -1300,29 +1300,29 @@ class Aquatic(Animal):
         quirk11 = False
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 self.quirks.append("This aquatic is found in the darkest parts of its habitat and sees through bioluminescent eyes.")
-            if quirkRoll == 3 and quirk3 == False and quirk9 == False:
+            if quirkRoll == 3 and not quirk3 and not quirk9:
                 quirk3 = True
                 self.quirks.append("This creature is never found alone and will die within 1d6 days of natural causes if it cannot find a pack to join.")
-            if quirkRoll == 4 and quirk4 == False:
+            if quirkRoll == 4 and not quirk4:
                 quirk4 = True
                 self.quirks.append("Posseses a frail physique and has the ability to engage in extremely swift movement.")
                 self.behaviors.add("Pouncer")
                 self.armor = 0
-            if quirkRoll == 5 and quirk5 == False:
+            if quirkRoll == 5 and not quirk5:
                 quirk5 = True
                 self.quirks.append("Possessed of a unique biology, this aquatic can survive for 1d6 hours on dry land and can walk in addition to its ability to swim.")
             if quirkRoll == 6:
                 self.quirks.append("Unnaturally large for the local ecology.")
                 self.sizeRollModifier += 1
-            if quirkRoll == 7 and quirk7 == False:
+            if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("Capable of surviving for long periods of time without any nourishment, this aquatic goes dormant for long periods of time, awaking for 3d6 days at a time to feed and breed.")
             if quirkRoll == 8:
                 self.quirks.append("This aquatic breed has volatile genetics and is prone to mutation.")
                 evoSkillRollModifier += 1
-            if quirkRoll == 9 and quirk9 == False and quirk3 == False:
+            if quirkRoll == 9 and not quirk9 and not quirk3:
                 quirk9 = True
                 self.quirks.append("Unlike most aquatics, this species reproduces asexually and is never encountered with others of its kind.")
                 self.pack = 0
@@ -1330,7 +1330,7 @@ class Aquatic(Animal):
             if quirkRoll == 10:
                 quirk10 += 1
                 self.quirks.append("Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
-            if quirkRoll == 11 and quirk11 == False:
+            if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("Unusually bright and clever.")
             if quirkRoll == 12:
@@ -1448,7 +1448,7 @@ class Aquatic(Animal):
 
         self.behavior_effects()
         
-        if quirk3 == True and self.pack < 1:
+        if quirk3 and self.pack < 1:
             self.pack = 1
 
         self.set_size(self.sizeRoll, self.sizeRollModifier)
@@ -1463,14 +1463,14 @@ class Aquatic(Animal):
         self.set_initiative()
         self.set_reactions()
         
-        if quirk4 == True:
+        if quirk4:
             self.armor = 0
-        if quirk9 == True:
+        if quirk9:
             self.pack = 0
         if quirk10 > 0:
             self.quirks = list(filter(("Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.").__ne__, self.quirks))
             self.quirks.append("Extremely vicious, this animal gains a +" + str(quirk10) + " DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
-        if quirk11 == True:
+        if quirk11:
             if self.instinct < 9:
                 self.instinct = 9
             if self.intelligence < 2:
@@ -1577,13 +1577,13 @@ class Avian(Animal):
         quirk11 = False
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append("The plumage of this animal is highly exotic and valuable, exhibiting colours rarely found within its habitat.")
-            if quirkRoll == 3 and quirk3 == False:
+            if quirkRoll == 3 and not quirk3:
                 quirk3 = True
                 self.quirks.append("Extremely social, these animals live in immense flocks.")
-            if quirkRoll == 4 and quirk4 == False:
+            if quirkRoll == 4 and not quirk4:
                 quirk4 = True
                 self.quirks.append("Quite at home on the ground, this species has evolved away from flight.")
             if quirkRoll == 5:
@@ -1592,7 +1592,7 @@ class Avian(Animal):
             if quirkRoll == 6:
                 self.quirks.append("These avians have adapted a very unusual way of dealing with enemies.")
                 exoticWeaponRolls += 1
-            if quirkRoll == 7 and quirk7 == False:
+            if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer.")
                 self.behaviors.add("Siren")
@@ -1600,15 +1600,15 @@ class Avian(Animal):
                 self.quirks.append("Environmental pressures have forced this animal to adapt to a hostile environment.")
                 self.endurance += 1
                 self.armor += 1
-            if quirkRoll == 9 and quirk9 == False:
+            if quirkRoll == 9 and not quirk9:
                 quirk9 = True
                 self.quirks.append("Not just ground bound, this flightless species thrives because of it.")
                 self.behaviors.add("Chaser")
                 self.endurance += 1
-            if quirkRoll == 10 and quirk10 == False:
+            if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append("Possessed of a deadly main attack, these avians are truly vicious and always press their attack once they wound an enemy.")
-            if quirkRoll == 11 and quirk11 == False:
+            if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("These avians mate for life, are never encountered in packs larger than a pair of adults. If one is killed the other will automatically flee if possible.")
             if quirkRoll == 12:
@@ -1735,14 +1735,14 @@ class Avian(Animal):
         self.set_initiative()
         self.set_reactions()
 
-        if quirk3 == True:
+        if quirk3:
             if self.pack <= 6:
                 self.pack = 12
             else:
                 self.pack = self.pack * 2
-        if quirk4 == True or quirk9 == True:
+        if quirk4 or quirk9:
             self.primaryMovement = "Walk"
-        if quirk11 == True:
+        if quirk11:
             self.numberEncountered = 2
 
         if self.intelligence > 2:
@@ -1847,14 +1847,14 @@ class Fungal(Animal):
                 quirk2 = True
                 self.quirks.append("This Fungal is an absolutely bizarre colour and smells rancid. It cannot succeed at Stealth rolls.")
                 exoticWeaponRolls += 1
-            if quirkRoll == 3 and quirk3 == False:
+            if quirkRoll == 3 and not quirk3:
                 quirk3 = True
                 self.quirks.append("Unlike other fungus-based life, this species has developed a rudimentary vocal structure. The sounds it can make may be extremely strange, similar to nothing else found in nature.")
-            if quirkRoll == 4 and quirk4 == False and quirk5 == False:
+            if quirkRoll == 4 and not quirk4 and not quirk5:
                 quirk4 = True
                 self.quirks.append("The Fungal can inflate itself with a light gas, allowing for a slow form of flight.")
                 self.primaryMovement = "Fly"
-            if quirkRoll == 5 and quirk5 == False and quirk4 == False and quirk11 == False:
+            if quirkRoll == 5 and not quirk5 and not quirk4 and not quirk11:
                 quirk5 = True
                 self.quirks.append("Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
                 self.behaviors.add("Siren")
@@ -1867,17 +1867,17 @@ class Fungal(Animal):
                 quirk7 = True
                 self.quirks.append("Very soft in bodily structure.")
                 self.endurance += sum(roll_xdy(1, 6))
-            if quirkRoll == 8 and quirk8 == False:
+            if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("The scent and outlandish appearance of this fungal terrifies other animals.")
                 self.behaviors.add("Hijacker")
-            if quirkRoll == 9 and quirk9 == False:
+            if quirkRoll == 9 and not quirk9:
                 quirk9 = True
                 self.quirks.append("Unfortunately for this fungal, its biological structure is extremely nutritious, capable of feeding even carnivores in its environment. When encountered, there is a 50% chance that a predator of another species is also in the area.")
-            if quirkRoll == 10 and quirk10 == False:
+            if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append("Capable of rapid regrowth from even very small samples, this species must be completely destroyed or it will regenerate completely in 1d6 days.")
-            if quirkRoll == 11 and quirk11 == False and quirk5 == False:
+            if quirkRoll == 11 and not quirk11 and not quirk5:
                 quirk11 = True
                 self.quirks.append("Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts.")
                 self.behaviors.add("Pouncer")
@@ -1941,7 +1941,7 @@ class Fungal(Animal):
             physicalSkillRolls -= 1
 
         #Roll for a behavior.
-        if quirk5 == False:
+        if not quirk5:
             behaviorRoll = sum(roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
@@ -1994,7 +1994,7 @@ class Fungal(Animal):
                     self.behaviors.add("Reducer")
                     self.reactionModifier -= 2
 
-        if quirk2 == True:
+        if quirk2:
             self.stealth = -99
 
         self.behavior_effects()
@@ -2010,7 +2010,7 @@ class Fungal(Animal):
         self.set_initiative()
         self.set_reactions()
 
-        if quirk7 == True:
+        if quirk7:
             self.armor = 0
 
         if self.intelligence > 2:
@@ -2111,7 +2111,7 @@ class Insect(Animal):
         armorQuirkCount = 0
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append("Extremely unusual in appearance, these insects have apparently useless and garish physical structures and barely fit in their own ecosystems.")
             if quirkRoll == 3:
@@ -2132,29 +2132,29 @@ class Insect(Animal):
                         self.armor = 0
                     else:
                         self.armor -= 1
-            if quirkRoll == 5 and quirk5 == False and quirk6 == False:
+            if quirkRoll == 5 and not quirk5 and not quirk6:
                 quirk5 = True
                 self.quirks.append("These insects form veritable swarms.")
-            if quirkRoll == 6 and quirk6 == False and quirk5 == False:
+            if quirkRoll == 6 and not quirk6 and not quirk5:
                 quirk6 = True
                 self.quirks.append("Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus.")
                 if self.primaryMovement != "Fly":
                     self.behaviors.add("Trapper")
                 else:
                     self.behaviors.add("Pouncer")
-            if quirkRoll == 7 and quirk7 == False:
+            if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("Acutely self-aware.")
-            if quirkRoll == 8 and quirk8 == False:
+            if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("These insects have a hive mind and a minimum Pack score of 6. One of their number has an Intelligence of 2, all the rest are 0 and serve its will without question.")
             if quirkRoll == 9:
                 self.quirks.append("Evolved in a particularly dangerous habitat, these insects developed an unusual defence.")
                 exoticWeaponRolls += 1
-            if quirkRoll == 10 and quirk10 == False:
+            if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append("These insects have a decentralised nervous system and can be hacked apart into smaller creatures. In combat, any attack that inflicts Endurance damage has a 50% chance of splitting the insect in half. The resulting insects have their attack damage dice halved and divide their remaining Endurance between them. If this would result in an insect with a starting End of 3 or less, the insect dies instead of splitting.")
-            if quirkRoll == 11 and quirk11 == False:
+            if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("The insect can generate a hypnotic drone.")
                 self.behaviors.add("Siren")
@@ -2285,13 +2285,13 @@ class Insect(Animal):
 
         self.armor += armorQuirkCount
 
-        if quirk5 == True and self.pack < 2:
+        if quirk5 and self.pack < 2:
             self.pack = 2
-        if quirk6 == True:
+        if quirk6:
             self.pack = 0
-        if quirk7 == True:
+        if quirk7:
             self.intelligence = 2
-        if quirk8 == True and self.pack < 6:
+        if quirk8 and self.pack < 6:
             self.pack = 6
             
         if self.intelligence > 2:
@@ -2392,7 +2392,7 @@ class Mammal(Animal):
         quirk11 = False
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append("This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment.")
                 self.behaviors.add("Pouncer")
@@ -2413,7 +2413,7 @@ class Mammal(Animal):
                 quirk7 = True
                 self.quirks.append("Herd-oriented and nomadic, these are mostly peaceful mammals.")
                 self.pack += sum(roll_xdy(1, 6))
-            if quirkRoll == 8 and quirk8 == False:
+            if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("These animals have prodigious horns and know how to use them in combat.")
                 self.weapons.add("Horns")
@@ -2424,11 +2424,11 @@ class Mammal(Animal):
                     self.strength += 2
                 else:
                     self.behaviors.add("Killer")
-            if quirkRoll == 10 and quirk10 == False:
+            if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append("Adapted to an aquatic environment even if they do not normally live near one.")
                 self.primaryMovement = "Swim"
-            if quirkRoll == 11 and quirk11 == False:
+            if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("This animal species is on the verge of evolving into sentience.")
             if quirkRoll == 12:
@@ -2543,7 +2543,7 @@ class Mammal(Animal):
             else:
                 self.behaviors.add("Reducer")
 
-        if extraBehaviorRoll == True:
+        if extraBehaviorRoll:
             behaviorRoll = sum(roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
@@ -2611,7 +2611,7 @@ class Mammal(Animal):
         if quirk4 > 0:
             self.quirks = list(filter(("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain one lost Endurance point every other round of combat starting at the beginning of the second round.").__ne__, self.quirks))
             self.quirks.append("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain " + str(quirk4) + " lost Endurance point every other round of combat starting at the beginning of the second round.")
-        if quirk11 == True:
+        if quirk11:
             if self.intelligence < 2:
                 self.intelligence = 2
             if self.instinct < 12:
@@ -2714,7 +2714,7 @@ class Reptile(Animal):
         quirk9 = 0
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
-            if quirkRoll == 2 and quirk2 == False:
+            if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append("Outlandish colours and adaptations make this reptile a bizarre sight and remarkably intimidating to other non-sentient species.")
             if quirkRoll == 3:
@@ -2726,7 +2726,7 @@ class Reptile(Animal):
             if quirkRoll == 5:
                 self.quirks.append("Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals.")
                 self.raise_skill_level("survival", 1)
-            if quirkRoll == 6 and quirk6 == False:
+            if quirkRoll == 6 and not quirk6:
                 quirk6 = True
                 self.quirks.append("This reptile buries itself in its terrain, blending in and waiting for prey to ensnare.")
                 dietRoll = sum(roll_xdy(1, 5))
@@ -2738,10 +2738,10 @@ class Reptile(Animal):
                     self.dietDescription = "These animals have an uncommon trait for their kind – a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
                 self.behaviors.add("Trapper")
                 self.raise_skill_level("stealth", 1)
-            if quirkRoll == 7 and quirk7 == False:
+            if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("These reptiles see heat, allowing them to have normal vision even in total darkness.")
-            if quirkRoll == 8 and quirk8 == False:
+            if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("Capable of flying, these reptiles have adapted body structures that generate heat through wind friction, allowing them to stay warm during flight. They do not sleep, they never land intentionally and will die within 1d6 hours if grounded.")
                 self.primaryMovement = "Fly"
@@ -2815,7 +2815,7 @@ class Reptile(Animal):
             physicalSkillRolls -= 1
 
         #Roll for a behavior.
-        if quirk6 == False:
+        if not quirk6:
             behaviorRoll = sum(roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:

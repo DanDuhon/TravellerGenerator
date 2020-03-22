@@ -1,5 +1,5 @@
+import unicodedata
 from random import choice
-import namesastral, namesalien, namesanimal, unicodedata
 
 def generate_name_grams(nameList):
     """
@@ -58,7 +58,7 @@ def generate_name(nGrams, existingNames):
         name += choice([ triGram[-1] for triGram in firstTriGrams if triGram[:2] == name ])
         name += choice([ fourGram[-1] for fourGram in firstFourGrams if fourGram[:3] == name ])
 
-        while name != None and len(name) < length - 2:
+        while name is not None and len(name) < length - 2:
             choices = [ fourGram[-1] for fourGram in fourGrams if fourGram[:3] == name[-3:] ]
             if len(choices) > 0:
                 name += choice(choices)
@@ -108,7 +108,7 @@ def generate_animal_name(nGrams):
         name1 += choice([ triGram[-1] for triGram in firstTriGrams if triGram[:2] == name1 ])
         name1 += choice([ fourGram[-1] for fourGram in firstFourGrams if fourGram[:3] == name1 ])
 
-        while name1 != None and len(name1) < length1 - 2:
+        while name1 is not None and len(name1) < length1 - 2:
             choices = [ fourGram[-1] for fourGram in fourGrams if fourGram[:3] == name1[-3:] ]
             if len(choices) > 0:
                 name1 += choice(choices)
@@ -134,7 +134,7 @@ def generate_animal_name(nGrams):
         name2 += choice([ triGram[-1] for triGram in firstTriGrams if triGram[:2] == name2 ])
         name2 += choice([ fourGram[-1] for fourGram in firstFourGrams if fourGram[:3] == name2 ])
 
-        while name2 != None and len(name2) < length2 - 2:
+        while name2 is not None and len(name2) < length2 - 2:
             choices = [ fourGram[-1] for fourGram in fourGrams if fourGram[:3] == name2[-3:] ]
             if len(choices) > 0:
                 name2 += choice(choices)
@@ -154,6 +154,11 @@ def generate_animal_name(nGrams):
 
     return name
 
-astralNGrams = generate_name_grams(namesastral.names)
-alienNGrams = generate_name_grams(namesalien.names)
-animalNGrams = generate_name_grams(namesanimal.names)
+with open("namesastral.txt") as f:
+    astralNGrams = generate_name_grams(f.read().splitlines())
+
+with open("namesastral.txt") as f:
+    alienNGrams = generate_name_grams(f.read().splitlines())
+
+with open("namesastral.txt") as f:
+    animalNGrams = generate_name_grams(f.read().splitlines())
