@@ -41,8 +41,7 @@ class System():
         self.verticalCoord = verticalCoord
         self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
         self.age = sum(roll_xdy(3, 6)) - 3
-        self.name = None
-        self.name = namegenerator.generate_name(namegenerator.astralNGrams, [ system.name for system in allSystems ])
+        self.name = namegenerator.astralNGrams.generate_name()
         
         if sum(roll_xdy(1, 2)) == 1:
             self.numberOfStars = numberOfStarsTable[sum(roll_xdy(3, 6)) + openClusterBonus]

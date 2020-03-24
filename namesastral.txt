@@ -295,8 +295,8 @@ Bilana
 Bilaren
 Bolarus
 Bolshevik
-Boötes
-Boötis
+Bootes
+Bootis
 Boraal
 Galador
 Ganesha
@@ -417,7 +417,7 @@ Grazer
 Guniibuu
 Ha'Dara
 Halee
-Halvmörk
+Halvmork
 Hannaford
 Hanon
 Harbor
@@ -595,7 +595,7 @@ Ki'asman
 Ki'manora
 Ki'vless
 Kilik
-Kiniké
+Kinike
 Kipa
 Kontik
 Zephon
