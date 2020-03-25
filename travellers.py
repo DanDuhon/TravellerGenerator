@@ -4,11 +4,11 @@ import sectorgenerator
 import validation
 
 parser = argparse.ArgumentParser(description="Generates a sector of space for use in Gurp's Travellers")
-parser.add_argument("-s", default=50, dest='size', type=int, help="initial sector size")
-parser.add_argument("-c", default=50, dest='cluster', type=int, help="open cluster percent")
-parser.add_argument("-x", default=10, dest='survival', type=int, help="alien survival percent")
-parser.add_argument("-t", default=15, dest='techlevel', type=int, help="maximum tech level")
-parser.add_argument("-v", default=False, dest='validation', action='store_true', help="run validations")
+parser.add_argument("-s", dest='size', default=50, type=int, help="initial sector size (default=50)")
+parser.add_argument("-c", dest='cluster', default=50, type=int, help="open cluster percent (default=50)")
+parser.add_argument("-x", dest='survival', default=10, type=int, help="alien survival percent (default=10)")
+parser.add_argument("-t", dest='techlevel', default=15, type=int, help="maximum tech level (default=15)")
+parser.add_argument("-v", dest='validation', default=False, action='store_true', help="run validations")
 
 args = parser.parse_args()
 
