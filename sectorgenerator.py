@@ -4,6 +4,7 @@ import datetime
 
 import systemhex
 import star
+import planet
 import alien
 
 #This is to run all the validation code at the end of this script.
@@ -66,3 +67,50 @@ def sectorgen(initialSectorSize, openClusterPercent, alienSurvivalPercent, maxTe
             p.name = p.parentObject.name + "-" + str(p.parentObject.satellites.index(p) + 1)
 
     alien.set_tech_level(maxTechLevel)
+
+    #Now that the initial area has been created, we don't want any more Aliens to survive
+    #otherwise this could literally go on forever. Not to mention it would be really hard
+    #to introduce a new Alien in the middle of the exploration and colonization phase.
+    #You'd pretty much have to back out everything done in this section and start it all
+    #over. Every time you get a new one.
+    alienSurvivalPercent = 0
+
+    #Determine how far a extinct Aliens at Tech Level 9 expanded
+    for a in [ a for a in alien.allAliens if a.techLevel == 9 and a.extinct ]:
+        for p in a.homePlanet.systemHex.planets:
+            if p in a.colonizedPlanets.values():
+                continue
+            p.desirability[a] = p.set_desirability(a)
+            p.habitation[a] = p.set_habitation(a)
+
+    while True:    
+        planetsExplored = set()
+
+        for p in [ p for p in planet.allPlanets if set([ "Colony", "Outpost" ]) <= set(p.habitation.values()) ]:
+            p.settlement += 1
+        
+        for a in [ a for a in alien.allAliens if not a.extinct ]:
+            colonizedPlanets = set()
+            colonizedPlanets.add(a.colonizedPlanets["Homeworld"])
+            colonizedPlanets.update(a.colonizedPlanets["Colony"])
+            colonizedPlanets.update(a.colonizedPlanets["Outpost"])
+            systemsExplored = set()
+            for s in set([ i.systemHex for i in colonizedPlanets ]):
+                for x in range(3 + a.aggressionModifier):
+                    systemsExplored.update(s.systemsAtRange[x])
+
+            for s in systemsExplored:
+                if s not in systemhex.allCoordinates:
+                    print("Creating new system at " + str(s[0]) + ", " + str(s[1]) + ".") 
+                    hexes.update({ (s[0], s[1]): systemhex.System(s[0], s[1], openClusterBonus, alienSurvivalPercent, maxTechLevel) })
+                planetsExplored.update([ (a, p) for p in systemhex.allCoordinates[s].planets if a not in p.desirability.keys() ])
+
+        if len(planetsExplored) == 0:
+            break
+
+        planetsExplored = list(planetsExplored)
+        random.shuffle(planetsExplored)
+
+        for p in planetsExplored:
+            p[1].desirability[p[0]] = p[1].set_desirability(p[0])
+            p[1].habitation[p[0]] = p[1].set_habitation(p[0])
