@@ -43,8 +43,7 @@ class System():
         self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
         allCoordinates[(self.horizontalCoord, self.verticalCoord, self.cubeCoord)] = self
         self.age = sum(roll_xdy(3, 6)) - 3
-        self.name = None
-        self.name = namegenerator.generate_name(namegenerator.astralNGrams, [ system.name for system in allSystems ])
+        self.name = namegenerator.alienNGrams.generate_name()
         self.systemsAtRange = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
         for k in self.systemsAtRange.keys():
             for x in range(-k, k + 1):

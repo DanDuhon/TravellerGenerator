@@ -64,8 +64,7 @@ class Alien():
     """
     def __init__ (self, homePlanet, animalBasis, animalClass, strength, dexterity, endurance, size, athletics, deception, meleeNaturalWeapons, persuade, recon, stealth, survival, naturalWeapons, exoticNaturalWeapons, naturalWeaponDice, naturalWeaponDamageModifier, initiative, quirks, extinct, aggressionModifier, techLevelScore):
         allAliens.append(self)
-        self.name = None
-        self.name = namegenerator.generate_name(namegenerator.alienNGrams, [ alien.name for alien in allAliens ])
+        self.name = namegenerator.alienNGrams.generate_name()
         self.homePlanet = homePlanet
         self.animalBasis = animalBasis
         self.animalClass = animalClass
