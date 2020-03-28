@@ -44,6 +44,10 @@ class System():
         allCoordinates[(self.horizontalCoord, self.verticalCoord, self.cubeCoord)] = self
         self.age = sum(roll_xdy(3, 6)) - 3
         self.name = namegenerator.alienNGrams.generate_name()
+
+        #This lists the system coordinates that are x hexes distant from this system,
+        #where x is the dictionary key. Coordinates will be listed even if there is
+        #no System for those coordinates.
         self.systemsAtRange = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
         for k in self.systemsAtRange.keys():
             for x in range(-k, k + 1):
@@ -115,6 +119,6 @@ def distance_between_systems (system1, system2):
         system2: System class instance
             The other system to get the distance between.
     """
-    return (abs(system1.horizontalCoord - system2.horizontalCoord)
-            + abs(system1.verticalCoord - system2.verticalCoord)
-            + abs(system1.cubeCoord - system2.cubeCoord)) / 2
+    return int((abs(system1.horizontalCoord - system2.horizontalCoord)
+                + abs(system1.verticalCoord - system2.verticalCoord)
+                + abs(system1.cubeCoord - system2.cubeCoord)) / 2)

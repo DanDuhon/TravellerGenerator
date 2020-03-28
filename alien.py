@@ -56,13 +56,15 @@ class Alien():
             List of quirks from animal generation.
         extinct: Boolean
             Whether the alien species has gone extinct or not.
+        reactionModifier: Integer
+            The reaction modifier from the animal.
         aggressionModifier: Integer
             The calculated aggression modifier of the alien, based on animal
             behaviors.
         techLevelScore: Integer
             The calculated tech level score of the alien.
     """
-    def __init__ (self, homePlanet, animalBasis, animalClass, strength, dexterity, endurance, size, athletics, deception, meleeNaturalWeapons, persuade, recon, stealth, survival, naturalWeapons, exoticNaturalWeapons, naturalWeaponDice, naturalWeaponDamageModifier, initiative, quirks, extinct, aggressionModifier, techLevelScore):
+    def __init__ (self, homePlanet, animalBasis, animalClass, strength, dexterity, endurance, size, athletics, deception, meleeNaturalWeapons, persuade, recon, stealth, survival, naturalWeapons, exoticNaturalWeapons, naturalWeaponDice, naturalWeaponDamageModifier, initiative, quirks, extinct, reactionModifier, aggressionModifier, techLevelScore):
         allAliens.append(self)
         self.name = namegenerator.alienNGrams.generate_name()
         self.homePlanet = homePlanet
@@ -87,10 +89,12 @@ class Alien():
         self.initiative = initiative
         self.quirks = quirks
         self.extinct = extinct
+        self.reactionModifier = reactionModifier
         self.aggressionModifier = aggressionModifier
         self.techLevelScore = techLevelScore
-        self.techLevel = 0
-        self.colonizedPlanets = { "Homeworld": None, "Colony": [], "Outpost": [] }
+        self.maxTechLevel = 0
+        self.currentTechLevel = 0
+        self.colonizedPlanets = { "Homeworld": homePlanet, "Colony": [], "Outpost": [] }
 
 def create_terra_luna_humans(star, maxTechLevel):
     """
@@ -172,14 +176,13 @@ def create_terra_luna_humans(star, maxTechLevel):
     #Humans
     if len([ alien.techLevelScore for alien in allAliens if not alien.extinct ]) > 0:
         avgTechLevelScore = round(statistics.mean([ alien.techLevelScore for alien in allAliens if not alien.extinct ]), 0)
-        terra.alien = Alien(terra, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
+        terra.alien = Alien(terra, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
     else:
-        terra.alien = Alien(terra, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, maxTechLevel)
+        terra.alien = Alien(terra, None, "Mammal", 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0, set(), set(), 1, 0, 0, set(), False, 0, 0, 10)
         
     terra.alien.name = "Terran"
     terra.desirability[terra.alien] = terra.set_desirability(terra.alien)
     terra.habitation[terra.alien] = "Homeworld"
-    terra.alien.colonizedPlanets["Homeworld"] = terra
     terra.settlement = 100
 
     return terra
@@ -244,11 +247,7 @@ def create_alien(planet, alienSurvivalPercent):
         elif behavior == "Eater":
             behaviorAggressionNumbers.append(5)
 
-    aggressionModifier = round(statistics.mean(behaviorAggressionNumbers), 0)
-    if aggressionModifier < 9:
-        aggressionModifier = aggressionModifier - 9
-    else:
-        aggressionModifier = 9 - aggressionModifier
+    aggressionModifier = int(round(statistics.mean(behaviorAggressionNumbers), 0))
 
     #Tech level score will be used to determine tech level.
     #This is so that species with higher instincts and pack scores have an
@@ -256,18 +255,17 @@ def create_alien(planet, alienSurvivalPercent):
     survivalRoll = sum(roll_xdy(1, 100))
     if survivalRoll <= alienSurvivalPercent:
         extinct = False
-        techLevelScore = animalToConvert.pack + animalToConvert.instinct + aggressionModifier
+        techLevelScore = animalToConvert.pack + animalToConvert.instinct + (aggressionModifier - 9 if aggressionModifier < 9 else 9 - aggressionModifier)
     else:
         extinct = True
         techLevelScore = 0
 
-    planet.alien = Alien(homePlanet = planet, animalBasis = animalToConvert, animalClass = animalToConvert.animalClass, strength = strength, dexterity = dexterity, endurance = animalToConvert.endurance, size = animalToConvert.size, athletics = animalToConvert.athletics, deception = animalToConvert.deception, meleeNaturalWeapons = animalToConvert.meleeNaturalWeapons, persuade = animalToConvert.persuade, recon = animalToConvert.recon, stealth = animalToConvert.stealth, survival = animalToConvert.survival, naturalWeapons = animalToConvert.weapons, exoticNaturalWeapons = animalToConvert.exoticWeapons, naturalWeaponDice = animalToConvert.weaponDice, naturalWeaponDamageModifier = animalToConvert.weaponDamageModifier, initiative = animalToConvert.initiative, quirks = animalToConvert.quirks, extinct = extinct, aggressionModifier = aggressionModifier, techLevelScore = techLevelScore)
+    planet.alien = Alien(homePlanet = planet, animalBasis = animalToConvert, animalClass = animalToConvert.animalClass, strength = strength, dexterity = dexterity, endurance = animalToConvert.endurance, size = animalToConvert.size, athletics = animalToConvert.athletics, deception = animalToConvert.deception, meleeNaturalWeapons = animalToConvert.meleeNaturalWeapons, persuade = animalToConvert.persuade, recon = animalToConvert.recon, stealth = animalToConvert.stealth, survival = animalToConvert.survival, naturalWeapons = animalToConvert.weapons, exoticNaturalWeapons = animalToConvert.exoticWeapons, naturalWeaponDice = animalToConvert.weaponDice, naturalWeaponDamageModifier = animalToConvert.weaponDamageModifier, initiative = animalToConvert.initiative, quirks = animalToConvert.quirks, extinct = extinct, reactionModifier = animalToConvert.reactionModifier, aggressionModifier = aggressionModifier, techLevelScore = techLevelScore)
+    planet.set_desirability(planet.alien)
+    planet.habitation[planet.alien] = "Homeworld"
     if extinct:
         planet.ruins.add(planet.alien)
     else:
-        planet.desirability[planet.alien] = planet.set_desirability(planet.alien)
-        planet.habitation[planet.alien] = "Homeworld"
-        planet.alien.colonizedPlanets["Homeworld"] = planet
         planet.settlement = 100
 
 def set_tech_level(maxTechLevel):
@@ -290,6 +288,10 @@ def set_tech_level(maxTechLevel):
     #systems and then killing them all off becomes really hard.
     for alien in allAliens:
         if alien.extinct:
-            alien.techLevel = sum(roll_xdy(1, 9))
+            tl = sum(roll_xdy(1, 9))
+            alien.maxTechLevel = tl
+            alien.currentTechLevel = tl
         else:
-            alien.techLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + ((1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
+            alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + ((1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
+            alien.currentTechLevel = alien.maxTechLevel - (maxTechLevel - 9)
+            
