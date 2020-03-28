@@ -1,4 +1,5 @@
 import collections
+
 from random import choice, sample, randint
 
 
@@ -24,7 +25,8 @@ class NameGenerator:
         self.namelengths = collections.defaultdict(int)
 
         with open(filename) as f:
-            for name in f:
+            for rawName in f:
+                name = rawName[:-1].replace("_", " ")
                 for letter in range(4):
                     self.firstGrams[name[:letter]].add(name[letter])
                 for letter in range(1, len(name)-5):
@@ -107,12 +109,12 @@ alienNGrams = NameGenerator("namesalien.txt")
 animalNGrams = NameGenerator("namesanimal.txt", double=True, track=False)
 
 if __name__ == "__main__":
-    print("Astral Name Sample".center(20, "="))
+    print("Astral Name Sample".center(30, "="))
     for x in range(10):
         print(astralNGrams.generate_name())
-    print("Alien Name Sample".center(20, "="))
+    print("Alien Name Sample".center(30, "="))
     for x in range(10):
         print(alienNGrams.generate_name())
-    print("Animal Name Sample".center(20, "="))
+    print("Animal Name Sample".center(30, "="))
     for x in range(10):
         print(animalNGrams.generate_name())
