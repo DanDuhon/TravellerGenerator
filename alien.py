@@ -56,8 +56,6 @@ class Alien():
             List of quirks from animal generation.
         extinct: Boolean
             Whether the alien species has gone extinct or not.
-        reactionModifier: Integer
-            The reaction modifier from the animal.
         aggressionModifier: Integer
             The calculated aggression modifier of the alien, based on animal
             behaviors.
@@ -95,6 +93,7 @@ class Alien():
         self.maxTechLevel = 0
         self.currentTechLevel = 0
         self.colonizedPlanets = { "Homeworld": homePlanet, "Colony": [], "Outpost": [] }
+        self.exploredSystemsDistanceFromHome = { homePlanet.systemHex: 0 }
 
 def create_terra_luna_humans(star, maxTechLevel):
     """
