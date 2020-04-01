@@ -961,8 +961,16 @@ class OrbitalBody():
                 The alien considering colonization of this planet.
         """
         desirability = 0
-        distanceFromHomeworld = systemhex.distance_between_systems(self.systemHex, alien.homePlanet.systemHex)
-        nearbyColony = 3 + alien.reactionModifier >= 0 if len([ systemhex.distance_between_systems(self.systemHex, p.systemHex) for p in allPlanets if alien in p.habitation.keys() and p.habitation[alien] == "Colony" ]) == 0 else min([ systemhex.distance_between_systems(self.systemHex, p.systemHex) for p in allPlanets if alien in p.habitation.keys() and p.habitation[alien] == "Colony" ])
+        if self not in alien.exploredSystemsDistanceFromHome:
+            alien.exploredSystemsDistanceFromHome[self] = systemhex.distance_between_systems(self.systemHex, alien.homePlanet.systemHex)
+        distanceFromHomeworld = alien.exploredSystemsDistanceFromHome[self]
+
+        nearbyColony = False
+        for p in [ alien.homePlanet ] + alien.colonizedPlanets["Colony"]:
+            if 3 + alien.reactionModifier <= systemhex.distance_between_systems(self.systemHex, p.systemHex):
+                nearbyColony = True
+                break
+
         modifiedDistance = round(distanceFromHomeworld / ((1 if alien.currentTechLevel == 9 else (alien.currentTechLevel - 9)) * 5), 0) - 1 if nearbyColony else 0
         
         #Distance penalty
@@ -1288,7 +1296,6 @@ class AsteroidBelt(OrbitalBody):
         """
         Returns the planet's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
-        Asteroid belts have different rules for desirability than planets.
 
         Parameters:
             alien: Alien class instance

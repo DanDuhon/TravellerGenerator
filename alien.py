@@ -95,6 +95,7 @@ class Alien():
         self.maxTechLevel = 0
         self.currentTechLevel = 0
         self.colonizedPlanets = { "Homeworld": homePlanet, "Colony": [], "Outpost": [] }
+        self.exploredSystemsDistanceFromHome = { homePlanet.systemHex: 0 }
 
 def create_terra_luna_humans(star, maxTechLevel):
     """
