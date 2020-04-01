@@ -965,17 +965,17 @@ class OrbitalBody():
             alien.exploredSystemsDistanceFromHome[self] = systemhex.distance_between_systems(self.systemHex, alien.homePlanet.systemHex)
         distanceFromHomeworld = alien.exploredSystemsDistanceFromHome[self]
 
-        systemsWithColony = set()
-        systemsWithColony.add((alien.homePlanet.systemHex.horizontalCoord, alien.homePlanet.systemHex.verticalCoord, alien.homePlanet.systemHex.cubeCoord))
-        for p in alien.colonizedPlanets["Colony"]:
-            systemsWithColony.add((p.systemHex.horizontalCoord, p.systemHex.verticalCoord, p.systemHex.cubeCoord))
-
         systemsInRange = set()
         for x in range(3 + alien.reactionModifier):
             for s in self.systemHex.systemsAtRange[x]:
                 systemsInRange.add(s)
 
-        nearbyColony = len(systemsInRange & systemsWithColony) > 0
+        nearbyColony = False
+        for p in [ alien.homePlanet ] + alien.colonizedPlanets["Colony"]:
+            if 3 + alien.reactionModifier <= systemhex.distance_between_systems(self.systemHex, p.systemHex):
+                nearbyColony = True
+                break
+
         modifiedDistance = round(distanceFromHomeworld / ((1 if alien.currentTechLevel == 9 else (alien.currentTechLevel - 9)) * 5), 0) - 1 if nearbyColony else 0
         
         #Distance penalty
@@ -1091,21 +1091,15 @@ class OrbitalBody():
         """
         homeSystem = alien.homePlanet.systemHex == self.systemHex
         if not self.alien or not self.alien.extinct:
-        #    print("1")
-        #    print(homeSystem)
             if alien.currentTechLevel >= 10 or (alien.currentTechLevel == 9 and homeSystem):
-        #        print("2")
                 if self.colonyRoll - 2 <= self.desirability[alien]:
-        #            print("3")
                     self.habitation[alien] = "Colony"
                 elif self.outpostRoll - 1 if homeSystem else 0 <= alien.currentTechLevel + self.desirability[alien] - 10:
-        #            print("4")
                     self.habitation[alien] = "Outpost"
                 #Need another elif here to make it so if this alien is terraforming,
                 #the habitation doesn't drop to None. If another alien is doing the
                 #terraforming, then it can happen.
                 else:
-        #            print("5")
                     self.habitation[alien] = None
         else:
             self.habitation[alien] = None
