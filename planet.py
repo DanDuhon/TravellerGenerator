@@ -965,11 +965,6 @@ class OrbitalBody():
             alien.exploredSystemsDistanceFromHome[self] = systemhex.distance_between_systems(self.systemHex, alien.homePlanet.systemHex)
         distanceFromHomeworld = alien.exploredSystemsDistanceFromHome[self]
 
-        systemsInRange = set()
-        for x in range(3 + alien.reactionModifier):
-            for s in self.systemHex.systemsAtRange[x]:
-                systemsInRange.add(s)
-
         nearbyColony = False
         for p in [ alien.homePlanet ] + alien.colonizedPlanets["Colony"]:
             if 3 + alien.reactionModifier <= systemhex.distance_between_systems(self.systemHex, p.systemHex):
