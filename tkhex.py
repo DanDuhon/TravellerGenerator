@@ -1,14 +1,22 @@
 import tkinter
+
 import systemhex
 
 #TODO: Max/Min Zoom
 #TODO: Zoom from mouse
+#TODO: Avoid double line drawing
+
+class Colors:
+    hex = "#a1e2a1"
+    background = "white"
+    selected = "#53ca53"
+    edges = "black"
 
 class SystemDisplay:
     """ Displays the Universe on a hex grid """
     def __init__(self, *args, **kwargs):
         self.hexaSize = 50
-        self.click_loc = (0, 0)
+        self.click_location = (0, 0)
         self.hexagonlist = {}
         self.selected = None
 
@@ -19,7 +27,7 @@ class SystemDisplay:
         tk.grid_rowconfigure(0, weight=1)
 
         self.canvas = tkinter.Canvas(tk,
-                background='white',
+                background=Colors.background,
                 width=800, height=600,
                 *args, **kwargs)
 
@@ -28,20 +36,21 @@ class SystemDisplay:
         self.keybindings()
 
         for system in systemhex.allSystems:
-            self.setCell(system.horizontalCoord, system.verticalCoord)
+            self.create_hexagon(system.horizontalCoord, system.verticalCoord)
         
         self.info = tkinter.Label(tk, width=50)
         self.info.grid(row=0, column=1)
-        
+
         tk.mainloop()
 
     def set_text(self, text):
+        """Sets the text for the side panel"""
         self.info.config(text=text)
-    
-    def create_hexagone(self, x, y, tags, fill="#a1e2a1"):
-        """ 
-        Creates hexagon at pixel cordinates x, y
-        Compute coordinates of 6 points relative to a center position.
+
+    def create_hexagon(self, xCell, yCell):
+        """
+        Creates hexagon at cubic grid location xCell, yCell, -xCell-yCell
+        Computes coordinates of 6 points relative to a center position.
         Point are numbered following this schema :
 
         Points in euclidiean grid:  
@@ -55,39 +64,30 @@ class SystemDisplay:
 
         """
         size = self.hexaSize
-        width = 2
         Δx = (size**2 - (size/2)**2)**0.5
-
-        point1 = (x+Δx, y+size/2)
-        point2 = (x+Δx, y-size/2)
-        point3 = (x   , y-size  )
-        point4 = (x-Δx, y-size/2)
-        point5 = (x-Δx, y+size/2)
-        point6 = (x   , y+size  )
-
-        self.canvas.create_line(point1, point2, width=width)
-        self.canvas.create_line(point2, point3, width=width)
-        self.canvas.create_line(point3, point4, width=width)
-        self.canvas.create_line(point4, point5, width=width)
-        self.canvas.create_line(point5, point6, width=width)
-        self.canvas.create_line(point6, point1, width=width)
-
-        hexagon = self.canvas.create_polygon(point1, point2, point3, point4, point5, point6, fill=fill, tags=tags)
-        self.hexagonlist[hexagon] = tags
-
-    def setCell(self, xCell, yCell, *args, **kwargs ):
-        """ Creates hexagon at cubic grid location xCell, yCell, -xCell-yCell"""
-
+        
         #compute pixel coordinate of the center of the cell:
-        size = self.hexaSize
-        Δx = (size**2 - (size/2)**2)**0.5
+        pixel_x = Δx*(xCell-yCell)+400
+        pixel_y = -1.5*size*(xCell+yCell)+300
 
-        pix_x = Δx*(xCell-yCell)
-        pix_y = -1.5*size*(xCell+yCell)
+        point1 = (pixel_x+Δx, pixel_y+size/2)
+        point2 = (pixel_x+Δx, pixel_y-size/2)
+        point3 = (pixel_x   , pixel_y-size  )
+        point4 = (pixel_x-Δx, pixel_y-size/2)
+        point5 = (pixel_x-Δx, pixel_y+size/2)
+        point6 = (pixel_x   , pixel_y+size  )
 
-        tag = "{},{}".format(xCell, yCell)
+        width = 2
+        self.canvas.create_line(point1, point2, fill=Colors.edges, width=width)
+        self.canvas.create_line(point2, point3, fill=Colors.edges, width=width)
+        self.canvas.create_line(point3, point4, fill=Colors.edges, width=width)
+        self.canvas.create_line(point4, point5, fill=Colors.edges, width=width)
+        self.canvas.create_line(point5, point6, fill=Colors.edges, width=width)
+        self.canvas.create_line(point6, point1, fill=Colors.edges, width=width)
 
-        self.create_hexagone(pix_x, pix_y, tag, *args, **kwargs)
+        tags = "{},{}".format(xCell, yCell)
+        hexagon_id = self.canvas.create_polygon(point1, point2, point3, point4, point5, point6, fill=Colors.hex, tags=tags)
+        self.hexagonlist[hexagon_id] = tags
 
     def keybindings(self):
         self.canvas.bind("<MouseWheel>", self.do_zoom)
@@ -101,30 +101,33 @@ class SystemDisplay:
 
     def do_click(self, event):
         self.canvas.scan_mark(event.x, event.y)
-        self.click_loc = (event.x, event.y)
+        self.click_location = (event.x, event.y)
 
     def do_drag(self, event):
         self.canvas.scan_dragto(event.x, event.y, gain=1)
 
     def do_release(self, event):
-        dist = abs(self.click_loc[0] - event.x) + abs(self.click_loc[1] - event.y)
-        if dist > 5:
+        xorig, yorig = self.click_location
+        distance = abs(xorig - event.x) + abs(yorig - event.y)
+        if distance > 5: #Only select a cell if clicked without (much) draggging
             return
-        clicklist = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
-        for h in clicklist:
-            self.select(h)
+
+        x = self.canvas.canvasx(event.x)
+        y = self.canvas.canvasy(event.y)
+        for hexagon_id in self.canvas.find_overlapping(x, y, x, y):
+            if hexagon_id in self.hexagonlist:
+                self.select(hexagon_id)
+                break
 
     def select(self, id):
-        if id not in self.hexagonlist:
-            return
-
+        """Selects a particular hexigon for information detail by tk id"""
         if self.selected:
             tag = self.hexagonlist[self.selected]
-            self.canvas.itemconfigure(tag, fill="#a1e2a1")
+            self.canvas.itemconfigure(tag, fill=Colors.hex)
 
         self.selected = id
         tag = self.hexagonlist[self.selected]
-        self.canvas.itemconfigure(tag, fill="#53ca53")
+        self.canvas.itemconfigure(tag, fill=Colors.selected)
 
         t1, t2 = [int(x) for x in tag.split(",")]
         coord = (t1, t2, -t1-t2)
