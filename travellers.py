@@ -2,6 +2,7 @@ import argparse
 
 import sectorgenerator
 import validation
+import tkhex
 
 parser = argparse.ArgumentParser(description="Generates a sector of space for use in Gurp's Travellers")
 parser.add_argument("-s", dest='size', default=50, type=int, help="initial sector size (default=50)")
@@ -16,3 +17,5 @@ sectorgenerator.sectorgen(args.size, args.cluster, args.survival, args.techlevel
 
 if args.validation:
     validation.validation(args.techlevel)
+
+tkhex.SystemDisplay()

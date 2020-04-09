@@ -7,15 +7,6 @@ import star
 import planet
 import alien
 
-#This is to run all the validation code at the end of this script.
-validateResults = True
-
-#input variables
-initialSectorSize = 10
-openClusterPercent = 50
-alienSurvivalPercent = 10
-maxTechLevel = 15
-
 def sectorgen(initialSectorSize, openClusterPercent, alienSurvivalPercent, maxTechLevel):
     sectorMax = math.ceil(initialSectorSize / 2)
     sectorMin = math.ceil(initialSectorSize / 2) * -1
