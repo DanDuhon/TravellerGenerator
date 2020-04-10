@@ -130,10 +130,10 @@ class SystemDisplay:
         self.canvas.itemconfigure(tag, fill=Colors.selected)
 
         t1, t2 = [int(x) for x in tag.split(",")]
-        coord = (t1, t2, -t1-t2)
+        coord = (t1, t2)
         system = systemhex.allCoordinates[coord]
 
         text = "Name: {}\n".format(system.name)
-        text += "Age: {}\n".format(system.age)
+        text += "Age: {}\n".format((system.horizontalCoord, system.verticalCoord))
 
         self.set_text(text)

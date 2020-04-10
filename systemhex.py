@@ -1,3 +1,5 @@
+import itertools
+
 import star
 import namegenerator
 from diceroller import roll_xdy
@@ -41,7 +43,7 @@ class System():
         self.horizontalCoord = horizontalCoord
         self.verticalCoord = verticalCoord
         self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
-        allCoordinates[(self.horizontalCoord, self.verticalCoord, self.cubeCoord)] = self
+        allCoordinates[(self.horizontalCoord, self.verticalCoord)] = self
         self.age = sum(roll_xdy(3, 6)) - 3
         self.name = namegenerator.alienNGrams.generate_name()
 
@@ -50,16 +52,10 @@ class System():
         #no System for those coordinates.
         self.systemsAtRange = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
         for k in self.systemsAtRange.keys():
-            for x in range(-k, k + 1):
-                for y in range(max(-k, -x - k), min(k, -x + k) + 1):
-                    x += self.horizontalCoord
-                    y += self.verticalCoord
-                    z = -x - y
-                    if (abs(self.horizontalCoord - x)
-                        + abs(self.verticalCoord - y)
-                        + abs(self.cubeCoord - z)) / 2 == k:
-                        self.systemsAtRange[k].append((x, y, z))
-        
+            self.systemsAtRange[k] = [ (s[0], s[1]) for s in list(itertools.product(*[ [ x for x in range(self.horizontalCoord - k, self.horizontalCoord + k + 1) ],
+                                                                                       [ x for x in range(self.verticalCoord - k, self.verticalCoord + k + 1) ],
+                                                                                       [ x for x in range(self.cubeCoord - k, self.cubeCoord + k + 1) ] ])) if s[0] + s[1] + s[2] == 0 ]
+
         if sum(roll_xdy(1, 2)) == 1:
             self.numberOfStars = numberOfStarsTable[sum(roll_xdy(3, 6)) + openClusterBonus]
         else:

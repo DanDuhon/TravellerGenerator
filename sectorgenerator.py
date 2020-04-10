@@ -105,8 +105,21 @@ def sectorgen(initialSectorSize, openClusterPercent, alienSurvivalPercent, maxTe
                 #This is probably where terraforming will go.
                 #Reminder to check the comments in the habitation method when terraforming is implemented.
                 for p in colonizedPlanets:
+                    previousDesirability = p.desirability[a]
                     p.set_desirability(a)
+                    if p.desirability[a] == previousDesirability:
+                        continue
+
+                    previousHabitation = p.habitation.get(a)
                     p.set_habitation(a)
+                    if p.habitation.get(a) == previousHabitation:
+                        continue
+
+                    if previousHabitation:
+                        a.colonizedPlanets[previousHabitation].remove(p)
+
+                    if p.habitation.get(a):
+                        a.colonizedPlanets[p.habitation.get(a)].append(p)
 
                 colonizedPlanets.add(a.colonizedPlanets["Homeworld"])
 
@@ -115,15 +128,17 @@ def sectorgen(initialSectorSize, openClusterPercent, alienSurvivalPercent, maxTe
                 for s in set([ i.systemHex for i in colonizedPlanets ]):
                     #At TL9, you're restricted to your star system.
                     if a.currentTechLevel == 9:
-                        systemsExplored.add((s.horizontalCoord, s.verticalCoord, s.cubeCoord))
+                        systemsExplored.add((s.horizontalCoord, s.verticalCoord))
                     else:
-                        for x in range(3 + a.reactionModifier + (1 if any([ True for p in s.planets if p.habitation[a] == "Colony" ]) else 0)):
-                            systemsExplored.update(s.systemsAtRange[x])
+                        for x in s.systemsAtRange[3 + a.reactionModifier + (1 if any([ True for p in s.planets if p.habitation[a] in [ "Homeworld", "Colony" ] ]) else 0)]:
+                            xs = systemhex.System(x[0], x[1], openClusterBonus, alienSurvivalPercent, maxTechLevel)
+                        systemsExplored.update(s.systemsAtRange[3 + a.reactionModifier + (1 if any([ True for p in s.planets if p.habitation[a] in [ "Homeworld", "Colony" ] ]) else 0)])
 
                 #Create new systems if they don't exist.
                 for s in systemsExplored:
-                    if (s[0], s[1], s[2]) not in systemhex.allCoordinates:
+                    if (s[0], s[1]) not in systemhex.allCoordinates:
                         hexes.update({ (s[0], s[1]): systemhex.System(s[0], s[1], openClusterBonus, alienSurvivalPercent, maxTechLevel) })
+
                     planetsExplored.update([ (a, p) for p in systemhex.allCoordinates[s].planets if a not in p.desirability.keys() or p.habitation[a] == None ])
 
             #I decided I didn't want a particular alien to always have an advantage because
