@@ -1245,12 +1245,11 @@ class OrbitalBody():
         if self.biosphere >= 9 and self.atmosphere >= 4 and 4 <= self.hydrosphere <= 8:
             self.terrain.append("Jungle")
             for _ in range(3):
-                self.animals.append(
-                    animal.Amphibian(planet=self,terrain="Jungle")) self.animals.append(
-                    animal.Avian(planet=self,terrain="Jungle")) self.animals.append(
-                    animal.Fungal(planet=self,terrain="Jungle")) self.animals.append(
-                    animal.Insect(planet=self,terrain="Jungle")) self.animals.append(
-                    animal.Reptile(planet=self,terrain="Jungle"))
+                self.animals.append(animal.Amphibian(planet=self,terrain="Jungle"))
+                self.animals.append(animal.Avian(planet=self,terrain="Jungle"))
+                self.animals.append(animal.Fungal(planet=self,terrain="Jungle"))
+                self.animals.append(animal.Insect(planet=self,terrain="Jungle"))
+                self.animals.append(animal.Reptile(planet=self,terrain="Jungle"))
         if self.hydrosphere <= 8:
             self.terrain.append("Mountains")
             if self.biosphere >= 9:
