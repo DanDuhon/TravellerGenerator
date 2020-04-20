@@ -1,5 +1,6 @@
 from random import randint
 
+
 def roll_xdy(numberToRoll, dieSides):
     """
     Returns a generator of dice roll results.

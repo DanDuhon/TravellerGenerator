@@ -28,18 +28,19 @@ class NameGenerator:
             for rawName in f:
                 name = rawName[:-1].replace("_", " ")
                 for letter in range(4):
-                    self.firstGrams[name[:letter]].add(name[letter])
-                for letter in range(1, len(name)-5):
-                    self.middleGrams[name[letter:letter+3]].add(name[letter+3])
+                    lookup = name[:letter]
+                    self.firstGrams[lookup].add(name[letter])
+                for letter in range(1, len(name) - 5):
+                    lookup = name[letter:letter + 3]
+                    self.middleGrams[lookup].add(name[letter + 3])
                 self.lastGrams[name[-4:-2]].add(name[-2:])
                 self.namelengths[len(name)] += 1
-
 
     def _get_length(self, minlength=0):
         """
         Gets a random length from the input set
         This provides a target length for the generating process
-        
+
         Parameters:
             minlength: Specificies a minimum length
 
@@ -54,7 +55,7 @@ class NameGenerator:
         if totalwords == 0:
             raise ValueError("Minlength too high")
 
-        wordselection = randint(0, totalwords-1)
+        wordselection = randint(0, totalwords - 1)
         cumulativewords = 0
         for length, cnt in self.namelengths.items():
             if length >= minlength:
@@ -70,7 +71,7 @@ class NameGenerator:
         while True:
             try:
                 name = ""
-                for letter in range(length-2):
+                for letter in range(length - 2):
                     if letter < 4:
                         name += choice(list(self.firstGrams[name]))
                     else:
@@ -78,8 +79,8 @@ class NameGenerator:
                 name += choice(list(self.lastGrams[name[-2:]]))
                 return name
             except IndexError:
-                #This fails if there are 0 options available for a choice function.
-                #In this case, we simply try again with the same length.
+                # This fails if there are 0 options available for a choice function.
+                # In this case, we simply try again with the same length.
                 pass
 
     def generate_name(self):
@@ -94,13 +95,16 @@ class NameGenerator:
         while True:
             name = self._generate_name_attempt()
             if self.double:
-                name2 = self._generate_name_attempt(max(self.namelengths) - len(name))
-                name = " ".join(sample([name, name2], 2)) #Randomly swaps the names
+                name2 = self._generate_name_attempt(
+                    max(self.namelengths) - len(name))
+                # Randomly swaps the names
+                name = " ".join(sample([name, name2], 2))
             if not self.track:
                 return name
             if name not in self.existingNames:
                 self.existingNames.append(name)
                 return name
+
 
 astralNGrams = NameGenerator("namesastral.txt")
 

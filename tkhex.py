@@ -2,9 +2,10 @@ import tkinter
 
 import systemhex
 
-#TODO: Max/Min Zoom
-#TODO: Zoom from mouse
-#TODO: Avoid double line drawing
+# TODO: Max/Min Zoom
+# TODO: Zoom from mouse
+# TODO: Avoid double line drawing
+
 
 class Colors:
     hex = "#a1e2a1"
@@ -12,8 +13,10 @@ class Colors:
     selected = "#53ca53"
     edges = "black"
 
+
 class SystemDisplay:
     """ Displays the Universe on a hex grid """
+
     def __init__(self, *args, **kwargs):
         self.hexaSize = 50
         self.click_location = (0, 0)
@@ -27,9 +30,9 @@ class SystemDisplay:
         tk.grid_rowconfigure(0, weight=1)
 
         self.canvas = tkinter.Canvas(tk,
-                background=Colors.background,
-                width=800, height=600,
-                *args, **kwargs)
+                                     background=Colors.background,
+                                     width=800, height=600,
+                                     *args, **kwargs)
 
         self.canvas.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
 
@@ -37,7 +40,7 @@ class SystemDisplay:
 
         for system in systemhex.allSystems:
             self.create_hexagon(system.horizontalCoord, system.verticalCoord)
-        
+
         self.info = tkinter.Label(tk, width=50)
         self.info.grid(row=0, column=1)
 
@@ -53,7 +56,7 @@ class SystemDisplay:
         Computes coordinates of 6 points relative to a center position.
         Point are numbered following this schema :
 
-        Points in euclidiean grid:  
+        Points in euclidiean grid:
                     6
 
                 5       1
@@ -64,18 +67,18 @@ class SystemDisplay:
 
         """
         size = self.hexaSize
-        Δx = (size**2 - (size/2)**2)**0.5
-        
-        #compute pixel coordinate of the center of the cell:
-        pixel_x = Δx*(xCell-yCell)+400
-        pixel_y = -1.5*size*(xCell+yCell)+300
+        Δx = (size**2 - (size / 2)**2)**0.5
 
-        point1 = (pixel_x+Δx, pixel_y+size/2)
-        point2 = (pixel_x+Δx, pixel_y-size/2)
-        point3 = (pixel_x   , pixel_y-size  )
-        point4 = (pixel_x-Δx, pixel_y-size/2)
-        point5 = (pixel_x-Δx, pixel_y+size/2)
-        point6 = (pixel_x   , pixel_y+size  )
+        # compute pixel coordinate of the center of the cell:
+        pixel_x = Δx * (xCell - yCell) + 400
+        pixel_y = -1.5 * size * (xCell + yCell) + 300
+
+        point1 = (pixel_x + Δx, pixel_y + size / 2)
+        point2 = (pixel_x + Δx, pixel_y - size / 2)
+        point3 = (pixel_x, pixel_y - size)
+        point4 = (pixel_x - Δx, pixel_y - size / 2)
+        point5 = (pixel_x - Δx, pixel_y + size / 2)
+        point6 = (pixel_x, pixel_y + size)
 
         width = 2
         self.canvas.create_line(point1, point2, fill=Colors.edges, width=width)
@@ -86,7 +89,15 @@ class SystemDisplay:
         self.canvas.create_line(point6, point1, fill=Colors.edges, width=width)
 
         tags = "{},{}".format(xCell, yCell)
-        hexagon_id = self.canvas.create_polygon(point1, point2, point3, point4, point5, point6, fill=Colors.hex, tags=tags)
+        hexagon_id = self.canvas.create_polygon(
+            point1,
+            point2,
+            point3,
+            point4,
+            point5,
+            point6,
+            fill=Colors.hex,
+            tags=tags)
         self.hexagonlist[hexagon_id] = tags
 
     def keybindings(self):
@@ -109,7 +120,8 @@ class SystemDisplay:
     def do_release(self, event):
         xorig, yorig = self.click_location
         distance = abs(xorig - event.x) + abs(yorig - event.y)
-        if distance > 5: #Only select a cell if clicked without (much) draggging
+        # Only select a cell if clicked without (much) draggging
+        if distance > 5:
             return
 
         x = self.canvas.canvasx(event.x)
@@ -130,7 +142,7 @@ class SystemDisplay:
         self.canvas.itemconfigure(tag, fill=Colors.selected)
 
         t1, t2 = [int(x) for x in tag.split(",")]
-        coord = (t1, t2, -t1-t2)
+        coord = (t1, t2, -t1 - t2)
         system = systemhex.allCoordinates[coord]
 
         text = "Name: {}\n".format(system.name)
