@@ -192,6 +192,7 @@ class Star():
         # If there is more than one star in a system, a roman numeral is
         # appended.
         self.name = systemName + num[starNumber]
+        self.starNumber = starNumber
         self.epistellarOrbits = 0
         self.innerZoneOrbits = 0
         self.outerZoneOrbits = 0
