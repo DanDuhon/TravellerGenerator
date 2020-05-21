@@ -5,12 +5,14 @@ import datetime
 import systemhex
 import star
 import planet
+import animal
 import alien
+import tkhex
+from diceroller import roll_xdy
 
 
 def sectorgen(
         initialSectorSize,
-        openClusterPercent,
         alienSurvivalPercent,
         maxTechLevel):
     sectorMax = math.ceil(initialSectorSize / 2)
@@ -18,34 +20,34 @@ def sectorgen(
     right = (random.random() > 0.5)
     up = (random.random() > 0.5)
     openClusterBorder = math.floor(
-        initialSectorSize * openClusterPercent / 100) - sectorMax
-    hexes = {}
+        initialSectorSize * random.randint(1, 100) / 100) - sectorMax
+    openClusterTuple = (right, up, openClusterBorder)
 
     for h in range(sectorMin, sectorMax + 1):
         for v in range(sectorMin, sectorMax + 1):
             openClusterBonus = 0
             if (openClusterBonus == 0
-                and right and h >= openClusterBorder
-                    and up and v >= openClusterBorder):
+               and right and h >= openClusterBorder
+               and up and v >= openClusterBorder):
                 openClusterBonus = 3
             if (openClusterBonus == 0
-                and not right and h <= openClusterBorder
-                    and not up and v <= openClusterBorder):
+               and not right and h <= openClusterBorder
+               and not up and v <= openClusterBorder):
                 openClusterBonus = 3
-
-            hexes.update({(h, v): systemhex.System(
-                h, v, openClusterBonus, alienSurvivalPercent, maxTechLevel)})
+                
+            systemhex.System(
+                h, v, openClusterBonus, alienSurvivalPercent, maxTechLevel)
 
     validTerraTargets = [targetStar for targetStar in star.allStars
-                         if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
-                         and ((targetStar.luminosityClass != "M-V"
-                               and targetStar.innerZoneOrbits < 5)
-                              or (targetStar.luminosityClass == "M-V"
-                                  and targetStar.innerZoneOrbits < 4))
-                         and ((targetStar.companions == []
-                               and targetStar.primaryOrbit is None)
-                              or targetStar.primaryOrbit == "Distant")
-                         and targetStar.systemHex.age >= 4]
+                          if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
+                          and ((targetStar.luminosityClass != "M-V"
+                                and targetStar.innerZoneOrbits < 5)
+                               or (targetStar.luminosityClass == "M-V"
+                                   and targetStar.innerZoneOrbits < 4))
+                          and ((targetStar.companions == []
+                                and targetStar.primaryOrbit is None)
+                               or targetStar.primaryOrbit == "Distant")
+                          and targetStar.systemHex.age >= 4]
     terraTarget = random.choice(validTerraTargets)
 
     terra = alien.create_terra_luna_humans(terraTarget, maxTechLevel)
@@ -65,6 +67,14 @@ def sectorgen(
             p.name = p.parentObject.name + "-" + str(p.parentObject.satellites.index(p) + 1)
 
     alien.set_tech_level(maxTechLevel)
+    maxReactionModifier = max(
+        [a.reactionModifier for a in alien.allAliens if not a.extinct])
+    for a in [a for a in alien.allAliens if not a.extinct]:
+        a.homePlanet.systemHex.create_surrounding_systems(
+            openClusterTuple,
+            alienSurvivalPercent,
+            maxTechLevel,
+            maxReactionModifier)
 
     # Now that the initial area has been created, we don't want any more Aliens to survive
     # otherwise this could literally go on forever. Not to mention it would be really hard
@@ -76,12 +86,19 @@ def sectorgen(
     # Determine how far extinct Aliens at Tech Level 9 expanded
     for a in [a for a in alien.allAliens if a.maxTechLevel == 9 and a.extinct]:
         for p in a.homePlanet.systemHex.planets:
-            if p in a.colonizedPlanets.values() or p.alien:
-                continue
-            p.set_desirability(a)
-            p.set_habitation(a)
-            if p.habitation[a] is not None:
-                a.colonizedPlanets[p.habitation[a]].append(p)
+            a.planets[p] = {
+                "outpostRoll": sum(roll_xdy(1, 6)),
+                "colonyRoll": sum(roll_xdy(2, 6)),
+                "desirability": None,
+                "habitation": None}
+            a.planets[p]["desirability"] = p.calculate_desirability(a, True)
+            a.planets[p]["habitation"] = p.calculate_habitation(
+                a,
+                openClusterTuple,
+                alienSurvivalPercent,
+                maxTechLevel,
+                maxReactionModifier,
+                True)
 
     # Exploration and colonization
     # The current Tech Level of the most advanced aliens start at 9, and
@@ -91,84 +108,103 @@ def sectorgen(
     # are created.
     while True:
         while True:
-            planetsExplored = set()
-            colonyPreCount = 0
-            outpostPreCount = 0
-
-            for a in [a for a in alien.allAliens if not a.extinct]:
-                colonyPreCount += len(a.colonizedPlanets["Colony"])
-                outpostPreCount += len(a.colonizedPlanets["Outpost"])
-
-            # Increase settlement, which tracks how long a planet has been
-            # colonized.
-            for p in [p for p in planet.allPlanets if set(
-                    ["Colony", "Outpost"]) <= set(p.habitation.values())]:
+            aliensExploring = []
+            
+            for p in [ p for p in planet.allPlanets if {"Outpost", "Colony"} & set(p.habitation.values())]:
                 p.settlement += 1
 
-            # Reassess the already colonized planets to see if anything has
-            # changed.
-            for a in [
-                    a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
-                colonizedPlanets = set()
-                colonizedPlanets.update(a.colonizedPlanets["Colony"])
-                colonizedPlanets.update(a.colonizedPlanets["Outpost"])
+            for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
+                preExplored = len(a.exploredSystems)
+                preHabitations = {}
+                postHabitations = {}
+                for p in a.planets:
+                    preHabitations[p] = a.planets[p]["habitation"]
 
-                # This is probably where terraforming will go.
-                # Reminder to check the comments in the habitation method when
-                # terraforming is implemented.
-                for p in colonizedPlanets:
-                    p.set_desirability(a)
-                    p.set_habitation(a)
+                systemsToExplore = set()
+                colonizedSystems = set()
+                maxRange = a.currentTechLevel - 9
+                alreadyChecked = []
 
-                colonizedPlanets.add(a.colonizedPlanets["Homeworld"])
+                # Check for systems in which to create an Outpost (this can also create a Colony)
+                # Outposts need the support of a Colony within 1 Jump
+                for p in a.planets:
+                    if a.planets[p]["habitation"] in ["Colony", "Homeworld"]:
+                        colonizedSystems.add(p.systemHex)
+                        
+                for sys in colonizedSystems:
+                    if not sys.planets or sys in alreadyChecked:
+                        continue
+                    alreadyChecked.append(sys)
+                    for k in range(1, maxRange + 1):
+                        for x in range(-k, k + 1):
+                            for y in range(max(-k, -x - k), min(k, -x + k) + 1):
+                                newSystem = systemhex.allCoordinates[(sys.coordinates[0] + x, sys.coordinates[1] + y, ((sys.coordinates[0] + x) * -1) - (sys.coordinates[1] + y))]
+                                if newSystem not in a.exploredSystems:
+                                    for p in newSystem.planets:
+                                        a.planets[p] = { "outpostRoll": sum(roll_xdy(1, 6)), "colonyRoll": sum(roll_xdy(2, 6)), "desirability": None, "habitation": None }
+                                        a.planets[p]["desirability"] = p.calculate_desirability(a, False)
+                                        a.planets[p]["habitation"] = p.calculate_habitation(a, openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier, False)
+                                    a.exploredSystems.add(newSystem)
+                                else:
+                                    for p in newSystem.planets:
+                                        a.planets[p]["desirability"] = p.calculate_desirability(a, False)
+                                        a.planets[p]["habitation"] = p.calculate_habitation(
+                                            a,
+                                            openClusterTuple,
+                                            alienSurvivalPercent,
+                                            maxTechLevel,
+                                            maxReactionModifier,
+                                            False)
+                                
 
-                # Get a set of all the systems that may have new colonies.
-                systemsExplored = set()
-                for s in set([i.systemHex for i in colonizedPlanets]):
-                    # At TL9, you're restricted to your star system.
-                    if a.currentTechLevel == 9:
-                        systemsExplored.add(
-                            (s.horizontalCoord, s.verticalCoord, s.cubeCoord))
-                    else:
-                        for x in range(3 + a.reactionModifier + (
-                                1 if any([True for p in s.planets if p.habitation[a] == "Colony"]) else 0)):
-                            systemsExplored.update(s.systemsAtRange[x])
+                # Check for systems in which to create a Colony (this cannot create an Outpost)
+                # Colonies should be self-sufficient, therefore can be farther out
+                for p in a.planets:
+                    if a.planets[p]["habitation"]:
+                        systemsToExplore.add(p.systemHex)
+                        
+                systemsToCheck = systemsToExplore.copy()
+                for _ in range(1, 4 + a.reactionModifier):
+                    newSystemsToCheck = []
+                    for sys in systemsToCheck:
+                        if not sys.planets or sys in alreadyChecked:
+                            continue
+                        alreadyChecked.append(newSystem)
+                        for k in range(maxRange):
+                            for x in range(-k, k + 1):
+                                for y in range(max(-k, -x - k), min(k, -x + k) + 1):
+                                    newSystem = systemhex.allCoordinates[(sys.coordinates[0] + x, sys.coordinates[1] + y, ((sys.coordinates[0] + x) * -1) - (sys.coordinates[1] + y))]
+                                    if newSystem.fuelAvailable:
+                                        newSystemsToCheck.append(newSystem)
+                                    if newSystem not in a.exploredSystems:
+                                        for p in newSystem.planets:
+                                            a.planets[p] = { "outpostRoll": sum(roll_xdy(1, 6)), "colonyRoll": sum(roll_xdy(2, 6)), "desirability": None, "habitation": None }
+                                            a.planets[p]["desirability"] = p.calculate_desirability(a, False)
+                                            a.planets[p]["habitation"] = p.calculate_habitation(a, openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier, True)
+                                        a.exploredSystems.add(newSystem)
+                                    else:
+                                        for p in newSystem.planets:
+                                            a.planets[p]["desirability"] = p.calculate_desirability(a, False)
+                                            a.planets[p]["habitation"] = p.calculate_habitation(a, openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier, True)
+                    systemsToCheck = newSystemsToCheck
+                                
+                for p in a.planets:
+                    postHabitations[p] = a.planets[p]["habitation"]
+                postExplored = len(a.exploredSystems)
+                    
+                if preExplored != postExplored or postHabitations != preHabitations:
+                    aliensExploring.append(a)
 
-                # Create new systems if they don't exist.
-                for s in systemsExplored:
-                    if (s[0], s[1], s[2]) not in systemhex.allCoordinates:
-                        hexes.update({(s[0], s[1]): systemhex.System(
-                            s[0], s[1], openClusterBonus, alienSurvivalPercent, maxTechLevel)})
-                    planetsExplored.update(
-                        [(a, p) for p in systemhex.allCoordinates[s].planets if a not in p.desirability.keys() or p.habitation[a] is None])
-
-            # I decided I didn't want a particular alien to always have an advantage because
-            # of where they appear in the list, so this randomizes it.
-            planetsExplored = list(planetsExplored)
-            random.shuffle(planetsExplored)
-
-            # This is used to break out of the loop. If there were no changes in the
-            # number of outposts and no changes in the number of colonies, break out
-            # of the loop. I admit that there are edge cases that would break the
-            # loop early, but for now I accept those.
-            colonyPostCount = 0
-            outpostPostCount = 0
-            for a in [a for a in alien.allAliens if not a.extinct]:
-                colonyPostCount += len(a.colonizedPlanets["Colony"])
-                outpostPostCount += len(a.colonizedPlanets["Outpost"])
-
-            for p in planetsExplored:
-                p[1].set_desirability(p[0])
-                p[1].set_habitation(p[0])
-                if p[1].habitation[p[0]] is not None:
-                    p[0].colonizedPlanets[p[1].habitation[p[0]]].append(p[1])
-
-            if colonyPreCount == colonyPostCount and outpostPreCount == outpostPostCount:
+            if not len(aliensExploring):
                 break
 
-        if max(
-                [a.currentTechLevel for a in alien.allAliens if not a.extinct]) == maxTechLevel:
+        if max([ a.currentTechLevel for a in alien.allAliens if not a.extinct ]) == maxTechLevel:
             break
 
-        for a in [a for a in alien.allAliens if not a.extinct]:
+        for a in [ a for a in alien.allAliens if not a.extinct ]:
             a.currentTechLevel += 1
+
+    #Create the uninhabited space beyond the frontier.
+    existingSystems = systemhex.allSystems.copy()
+    for s in existingSystems:
+        s.create_surrounding_systems(openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier)

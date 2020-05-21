@@ -3,6 +3,7 @@ import statistics
 
 import animal
 import planet
+import systemhex
 import namegenerator
 from diceroller import roll_xdy
 
@@ -121,12 +122,11 @@ class Alien():
         self.techLevelScore = techLevelScore
         self.maxTechLevel = 0
         self.currentTechLevel = 0
-        self.colonizedPlanets = {
-            "Homeworld": homePlanet,
-            "Colony": [],
-            "Outpost": []}
-        self.exploredSystemsDistanceFromHome = {homePlanet.systemHex: 0}
+        self.exploredSystems = set()
+        self.planets = dict()
 
+        for s in systemhex.allSystems:
+            s.distanceFromAlienHomeSystem[self] = systemhex.distance_between_systems(s, self.homePlanet.systemHex)
 
 def create_terra_luna_humans(star, maxTechLevel):
     """
@@ -218,9 +218,9 @@ def create_terra_luna_humans(star, maxTechLevel):
     luna.animals = []
     luna.satellites = []
     luna.alien = None
-
+    
     terra.satellites = [luna]
-
+    
     # Humans
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:
         avgTechLevelScore = round(statistics.mean(
@@ -234,21 +234,24 @@ def create_terra_luna_humans(star, maxTechLevel):
                 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
                 set(), False, 0, 0, 10)
-
+        
     terra.alien.name = "Terran"
-    terra.desirability[terra.alien] = terra.set_desirability(terra.alien)
     terra.habitation[terra.alien] = "Homeworld"
+    terra.alien.planets[terra] = {"outpostRoll": None,
+        "colonyRoll": None,
+        "desirability": 8,
+        "habitation": "Homeworld"}
     terra.settlement = 100
-
+    
     return terra
 
 
-def create_alien(planet, alienSurvivalPercent):
+def create_alien(alienPlanet, alienSurvivalPercent):
     """
     Returns an Alien class instance to be added to a planet.
 
     Parameters:
-        planet: Class instance
+        alienPlanet: OrbitalBody subclass instance
             The planet that is the alien's homeworld.
         alienSurvivalPercent: Integer
             A number representing the percent chance that an alien species
@@ -256,21 +259,21 @@ def create_alien(planet, alienSurvivalPercent):
     """
     # Build a list of animal classes and terrains that are possible for this
     # planet, then pick one at random.
-    possibleAliens = list(set([(animal.animalClass, animal.terrain) for animal in planet.animals if animal.animalClass in [
-                          "Amphibian", "Aquatic", "Insect", "Mammal", "Reptile"]]))
+    possibleAliens = list(set([(animal.animalClass, animal.terrain) for animal in alienPlanet.animals if animal.animalClass in [
+        "Amphibian", "Aquatic", "Insect", "Mammal", "Reptile"]]))
 
     alienClass, alienTerrain = random.choice(possibleAliens)
 
     if alienClass == "Amphibian":
-        animalToConvert = animal.Amphibian(planet=planet, terrain=alienTerrain)
+        animalToConvert = animal.Amphibian(planet=alienPlanet, terrain=alienTerrain)
     elif alienClass == "Aquatic":
-        animalToConvert = animal.Aquatic(planet=planet, terrain=alienTerrain)
+        animalToConvert = animal.Aquatic(planet=alienPlanet, terrain=alienTerrain)
     elif alienClass == "Insect":
-        animalToConvert = animal.Insect(planet=planet, terrain=alienTerrain)
+        animalToConvert = animal.Insect(planet=alienPlanet, terrain=alienTerrain)
     elif alienClass == "Mammal":
-        animalToConvert = animal.Mammal(planet=planet, terrain=alienTerrain)
+        animalToConvert = animal.Mammal(planet=alienPlanet, terrain=alienTerrain)
     elif alienClass == "Reptile":
-        animalToConvert = animal.Reptile(planet=planet, terrain=alienTerrain)
+        animalToConvert = animal.Reptile(planet=alienPlanet, terrain=alienTerrain)
         # This particular quirk does not seem suitable to intelligent species
         # that have to construct things.
         # Remove it if we happen to generate an intelligent reptile that has
@@ -321,8 +324,8 @@ def create_alien(planet, alienSurvivalPercent):
         extinct = True
         techLevelScore = 0
 
-    planet.alien = Alien(
-        homePlanet=planet,
+    alienPlanet.alien = Alien(
+        homePlanet=alienPlanet,
         animalBasis=animalToConvert,
         animalClass=animalToConvert.animalClass,
         strength=strength,
@@ -346,13 +349,22 @@ def create_alien(planet, alienSurvivalPercent):
         reactionModifier=animalToConvert.reactionModifier,
         aggressionModifier=aggressionModifier,
         techLevelScore=techLevelScore)
-    planet.set_desirability(planet.alien)
-    planet.habitation[planet.alien] = "Homeworld"
+    alienPlanet.habitation[alienPlanet.alien] = "Homeworld"
+    alienPlanet.alien.planets[alienPlanet] = {
+        "outpostRoll": None,
+        "colonyRoll": None,
+        "desirability": 8,
+        "habitation": "Homeworld"
+        }
+    
     if extinct:
-        planet.ruins.add(planet.alien)
+        alienPlanet.ruins.add(planet.alien)
     else:
-        planet.settlement = 100
+        alienPlanet.settlement = 100
 
+    # Due to how similar on paper the animal would be to the alien,
+    # remove the animal from the list of all animals.
+    animal.allAnimals.remove(animalToConvert)
 
 def set_tech_level(maxTechLevel):
     """
@@ -381,3 +393,4 @@ def set_tech_level(maxTechLevel):
             alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + (
                 (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
             alien.currentTechLevel = alien.maxTechLevel - (maxTechLevel - 9)
+            

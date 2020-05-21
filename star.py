@@ -10,7 +10,7 @@ num = {
     2: " Beta",
     3: " Gamma",
     4: " Delta"
-}
+    }
 
 spectralTypeTable = LookupTable((2, "A"),
                                 (3, "F"),
@@ -38,7 +38,7 @@ luminosityClassDict = {
                      (12, "M-Ve"),
                      (14, "L")),
     "L": "L"
-}
+    }
 
 companionOrbitTable = LookupTable((2, "Tight"),
                                   (4, "Close"),
@@ -63,7 +63,7 @@ def epistellar_orbits(luminosityClass):
         roll = sum(roll_xdy(1, 6)) - 3
         if luminosityClass == "M-V":
             roll -= 1
-
+            
         if roll > 2:
             return 2
         elif roll < 0:
@@ -89,7 +89,7 @@ def inner_zone_orbits(luminosityClass):
         roll = sum(roll_xdy(1, 6)) - 1
         if luminosityClass == "M-V":
             roll -= 1
-
+            
         if roll < 0:
             return 0
         else:
@@ -122,7 +122,7 @@ class Star():
     Defines a star.  A primary star will also generate companion stars, if any.
     Primary stars, automatic brown dwarf stars, and companion stars that are
     "Distant" from the primary star generate the planets that orbit them.
-
+    
     Requied Parameters:
         systemHex: SystemHex class
             The system in which the star is located.
@@ -192,7 +192,6 @@ class Star():
         # If there is more than one star in a system, a roman numeral is
         # appended.
         self.name = systemName + num[starNumber]
-        self.starNumber = starNumber
         self.epistellarOrbits = 0
         self.innerZoneOrbits = 0
         self.outerZoneOrbits = 0
@@ -206,12 +205,12 @@ class Star():
             spectralTypeRoll = primarySpectralTypeRoll + sum(roll_xdy(1, 6)) - 1
         else:
             spectralTypeRoll = sum(roll_xdy(2, 6))
-
+            
         if autoBrownDwarf:
             self.spectralType = "L"
         else:
             self.spectralType = spectralTypeTable[spectralTypeRoll]
-
+        
         if self.spectralType in ["A", "F", "G"]:
             if (self.spectralType == "A" and systemAge == 3) or (self.spectralType ==
                                                                  "F" and systemAge == 6) or (self.spectralType == "G" and 12 <= systemAge <= 13):
@@ -248,7 +247,7 @@ class Star():
                         primarySpectralTypeRoll=spectralTypeRoll))
             else:
                 self.companion1Orbit = None
-
+                
             if numberOfStars > 2:
                 self.companion2Orbit = companionOrbitTable[sum(roll_xdy(1, 6))]
                 self.companions.append(
@@ -289,22 +288,21 @@ class Star():
         if primary or primaryOrbit == "Distant":
             self.planets = []
             for x in range(
-                    self.epistellarOrbits +
-                    self.innerZoneOrbits +
-                    self.outerZoneOrbits):
+                self.epistellarOrbits +
+                self.innerZoneOrbits +
+                self.outerZoneOrbits):
                 roll = sum(roll_xdy(1, 6))
                 if self.spectralType == "L":
                     roll -= 1
-
+                
                 if roll <= 1:
                     self.planets.append(
                         planet.AsteroidBelt(
                             star=self,
                             parentObject=self,
-                            order=x +
-                            1,
+                            order=x + 1,
                             orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                            self.innerZoneOrbits else "Outer Zone",
+                                self.innerZoneOrbits else "Outer Zone",
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -315,10 +313,9 @@ class Star():
                         planet.DwarfPlanet(
                             star=self,
                             parentObject=self,
-                            order=x +
-                            1,
+                            order=x + 1,
                             orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                            self.innerZoneOrbits else "Outer Zone",
+                                self.innerZoneOrbits else "Outer Zone",
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -329,10 +326,9 @@ class Star():
                         planet.TerrestrialPlanet(
                             star=self,
                             parentObject=self,
-                            order=x +
-                            1,
+                            order=x + 1,
                             orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                            self.innerZoneOrbits else "Outer Zone",
+                                self.innerZoneOrbits else "Outer Zone",
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -343,10 +339,9 @@ class Star():
                         planet.HelianPlanet(
                             star=self,
                             parentObject=self,
-                            order=x +
-                            1,
+                            order=x + 1,
                             orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                            self.innerZoneOrbits else "Outer Zone",
+                                self.innerZoneOrbits else "Outer Zone",
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -357,10 +352,9 @@ class Star():
                         planet.JovianPlanet(
                             star=self,
                             parentObject=self,
-                            order=x +
-                            1,
+                            order=x + 1,
                             orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                            self.innerZoneOrbits else "Outer Zone",
+                                self.innerZoneOrbits else "Outer Zone",
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
