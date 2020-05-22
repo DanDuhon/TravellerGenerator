@@ -235,7 +235,7 @@ class SystemDisplay:
         system = systemhex.allCoordinates[coord]
 
         text = "Name: {}\n".format(system.name)
-        text += "Age: {}\n".format(system.age)
+        text += "Age: {}\n".format((system.horizontalCoord, system.verticalCoord))
 
         self.info.config(text=text)
         self.systemlabel.config(text=system.name)

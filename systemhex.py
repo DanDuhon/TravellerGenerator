@@ -1,3 +1,5 @@
+import itertools
+
 import star
 import planet
 import namegenerator
