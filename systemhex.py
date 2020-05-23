@@ -1,5 +1,9 @@
+import itertools
+
 import star
+import planet
 import namegenerator
+import alien
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -49,26 +53,16 @@ class System():
         self.horizontalCoord = horizontalCoord
         self.verticalCoord = verticalCoord
         self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
+        self.coordinates = (self.horizontalCoord,
+                            self.verticalCoord,
+                            self.cubeCoord)
         allCoordinates[(self.horizontalCoord,
                         self.verticalCoord,
                         self.cubeCoord)] = self
         self.age = sum(roll_xdy(3, 6)) - 3
-        self.name = namegenerator.alienNGrams.generate_name()
-
-        # This lists the system coordinates that are x hexes distant from this system,
-        # where x is the dictionary key. Coordinates will be listed even if there is
-        # no System for those coordinates.
-        self.systemsAtRange = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
-        for k in self.systemsAtRange.keys():
-            for x in range(-k, k + 1):
-                for y in range(max(-k, -x - k), min(k, -x + k) + 1):
-                    x += self.horizontalCoord
-                    y += self.verticalCoord
-                    z = -x - y
-                    if (abs(self.horizontalCoord - x)
-                        + abs(self.verticalCoord - y)
-                            + abs(self.cubeCoord - z)) / 2 == k:
-                        self.systemsAtRange[k].append((x, y, z))
+        self.name = namegenerator.astralNGrams.generate_name()
+        self.distanceFromAlienHomeSystem = {}
+        self.fuelAvailable = False
 
         if sum(roll_xdy(1, 2)) == 1:
             self.numberOfStars = numberOfStarsTable[sum(
@@ -108,6 +102,12 @@ class System():
                 autoBrownDwarf=self.brownDwarf,
                 primaryOrbit="Distant"))
 
+        self.flareStarDesirabilityPenalty = 0
+        for s in self.stars:
+            if s.luminosityClass == "M-Ve":
+                self.flareStarDesirabilityPenalty = sum(roll_xdy(1, 3))
+                break
+
         self.planets = []
         self.animals = []
         self.homeSystemOfAliens = []
@@ -118,6 +118,43 @@ class System():
                 self.animals.extend(planetInstance.animals)
                 if planetInstance.alien is not None:
                     self.homeSystemOfAliens.append(planetInstance.alien)
+
+        for p in self.planets:
+            if isinstance(p, planet.JovianPlanet) or p.chemistry == "Water":
+                self.fuelAvailable = True
+                break
+
+        for a in alien.allAliens:
+            self.distanceFromAlienHomeSystem[a] = distance_between_systems(self, a.homePlanet.systemHex)
+        self.systemsAtRange = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+        for k in self.systemsAtRange:
+            for x in range(-k, k + 1):
+                for y in range(max(-k, -x - k), min(k, -x + k) + 1):
+                    self.systemsAtRange[k].append((self.horizontalCoord + x, self.verticalCoord + y))
+
+    def create_surrounding_systems(
+            self,
+            openClusterTuple,
+            alienSurvivalPercent,
+            maxTechLevel,
+            maxReactionModifier):
+        hexRange = (3 + maxReactionModifier) * (maxTechLevel - 9)
+        for x in range(-hexRange, hexRange + 1):
+            for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
+                if (self.horizontalCoord + x, self.verticalCoord + y, ((self.horizontalCoord + x) * -1) - (self.verticalCoord + y)) not in allCoordinates:
+                    h = self.horizontalCoord + x
+                    v = self.verticalCoord + y
+                    openClusterBonus = 0
+                    if openClusterTuple[0] and h >= openClusterTuple[2] and openClusterTuple[1] and v >= openClusterTuple[2]:
+                        openClusterBonus = 3
+                    elif not openClusterTuple[0] and h <= openClusterTuple[2] and not openClusterTuple[1] and v <= openClusterTuple[2]:
+                        openClusterBonus = 3
+                    System(
+                        self.horizontalCoord + x,
+                        self.verticalCoord + y,
+                        openClusterBonus,
+                        alienSurvivalPercent,
+                        maxTechLevel)
 
 
 def distance_between_systems(system1, system2):

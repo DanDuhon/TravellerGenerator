@@ -5,15 +5,9 @@ import validation
 import tkhex
 
 parser = argparse.ArgumentParser(
-    description="Generates a sector of space for use in Gurp's Travellers")
-parser.add_argument("-s", dest='size', default=50, type=int,
+    description="Generates a sector of space for use in Traveller")
+parser.add_argument("-s", dest='size', default=10, type=int,
                     help="initial sector size (default=50)")
-parser.add_argument(
-    "-c",
-    dest='cluster',
-    default=50,
-    type=int,
-    help="open cluster percent (default=50)")
 parser.add_argument(
     "-x",
     dest='survival',
@@ -23,7 +17,7 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=15,
+    default=12,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(
@@ -37,7 +31,6 @@ args = parser.parse_args()
 
 sectorgenerator.sectorgen(
     args.size,
-    args.cluster,
     args.survival,
     args.techlevel)
 

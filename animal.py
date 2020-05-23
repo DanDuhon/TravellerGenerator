@@ -2447,7 +2447,6 @@ class Mammal(Animal):
         quirk2 = False
         quirk3 = 0
         quirk4 = 0
-        quirk7 = False
         quirk8 = False
         quirk10 = False
         quirk11 = False
@@ -2475,7 +2474,6 @@ class Mammal(Animal):
                     "Profuse body hair marks this species as a sign of its innate adaptability.")
                 self.raise_skill_level("survival", 1)
             if quirkRoll == 7:
-                quirk7 = True
                 self.quirks.append(
                     "Herd-oriented and nomadic, these are mostly peaceful mammals.")
                 self.pack += sum(roll_xdy(1, 6))
@@ -2974,10 +2972,8 @@ class Reptile(Animal):
                     self.quirks))
             self.quirks.append(
                 "Several of the scales on this reptile are jagged and sharp, letting it inflict " +
-                str(
-                    4 *
-                    quirk4) +
-                " + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
+                str(4 * quirk4) +
+                    " + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
         while quirk9 > 0:
             self.dexterity += sum(roll_xdy(1, 6))
             self.armor = self.armor / 2

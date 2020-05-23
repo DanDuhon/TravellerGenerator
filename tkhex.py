@@ -103,7 +103,7 @@ class SystemDisplay:
                 background='green',
                 width=300, height=200)
         self.star.grid(row=3, column=1, sticky='n')
-        
+
         # Planet Label
         self.planetlabel = tkinter.Label(tk, width=40, height=1, anchor="n")
         self.planetlabel.grid(row=4, column=1)
@@ -163,7 +163,7 @@ class SystemDisplay:
             width=2,
             tags=tag)
         self.hexagonlist[hexagon_id] = tag
-      
+
         osize = 5
         for i, star in enumerate(system.stars):
             centerx = pixel_x - Δx / 2 + (2 * i + (4 - len(system.stars))) * Δx / 6
@@ -194,7 +194,7 @@ class SystemDisplay:
             return hoverhex
 
         self.galaxy.tag_bind(hexagon_id, '<Enter>', hoverhex_create(hexagon_id))
-        
+
         def hoverhexleave_create(hexagon_id):
             def hoverhex(event):
                 if hexagon_id != self.selected:
@@ -235,7 +235,7 @@ class SystemDisplay:
         system = systemhex.allCoordinates[coord]
 
         text = "Name: {}\n".format(system.name)
-        text += "Age: {}\n".format(system.age)
+        text += "Coordinates: {}\n".format((system.horizontalCoord, system.verticalCoord))
 
         self.info.config(text=text)
         self.systemlabel.config(text=system.name)
@@ -257,7 +257,7 @@ class SystemDisplay:
             self.system.tag_bind(star_id, '<Button-1>', clicksystem_create(star))
             x += 60
             y = -y
-        
+
         self.set_info(system)
 
     def selectstar(self, star):
@@ -300,7 +300,7 @@ class SystemDisplay:
                     x_center - size / 2, y_center - size / 2,
                     fill=Colors.planet)
             self.star.tag_bind(planet_id, '<Button-1>', clickstar_create(planet))
-        
+
         self.set_info(star)
 
     def selectplanet(self, planet):
@@ -331,7 +331,7 @@ class SystemDisplay:
         self.starlist = {}
 
         self.clearstar()
-        
+
     def clearstar(self):
         for id in self.selectmarks:
             self.system.delete(id)
