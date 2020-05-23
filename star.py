@@ -192,6 +192,7 @@ class Star():
         # If there is more than one star in a system, a roman numeral is
         # appended.
         self.name = systemName + num[starNumber]
+        self.starNumber = starNumber
         self.epistellarOrbits = 0
         self.innerZoneOrbits = 0
         self.outerZoneOrbits = 0
@@ -288,9 +289,9 @@ class Star():
         if primary or primaryOrbit == "Distant":
             self.planets = []
             for x in range(
-                self.epistellarOrbits +
-                self.innerZoneOrbits +
-                self.outerZoneOrbits):
+                    self.epistellarOrbits +
+                    self.innerZoneOrbits +
+                    self.outerZoneOrbits):
                 roll = sum(roll_xdy(1, 6))
                 if self.spectralType == "L":
                     roll -= 1

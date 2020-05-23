@@ -523,7 +523,7 @@ class Animal():
 
         if exoticWeaponRolls > 0 and "Carrion-Eater" in self.behaviors:
             self.exoticWeapons.add("Diseased")
-            
+
         while exoticWeaponRolls > len(self.exoticWeapons):
             roll = sum(roll_xdy(1, 6))
             if roll == 1:
@@ -1470,7 +1470,7 @@ class Aquatic(Animal):
                 self.reactionModifier -= 2
 
         self.behavior_effects()
-        
+
         if quirk3 and self.pack < 1:
             self.pack = 1
 
@@ -1524,7 +1524,7 @@ class Avian(Animal):
     def __init__(self, planet, terrain):
         super(Avian, self).__init__(planet, terrain)
         self.animalClass = "Avian"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.recon = 1
@@ -1537,7 +1537,7 @@ class Avian(Animal):
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 2:
@@ -1811,14 +1811,14 @@ class Fungal(Animal):
         self.stealth = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll == 1:
@@ -2096,7 +2096,7 @@ class Insect(Animal):
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 3:
@@ -2385,7 +2385,7 @@ class Mammal(Animal):
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 2:
