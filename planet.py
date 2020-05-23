@@ -1510,7 +1510,7 @@ class AsteroidBelt(OrbitalBody):
         self.hydrosphere = 0
         self.chemistry = None
         self.subsurfaceOceans = False
-        self.baseDesirability = roll_xdy(1, 6)) - roll_xdy(1, 6)
+        self.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
 
         if roll_xdy(1, 6) <= 4:
             self.satellites.append(
