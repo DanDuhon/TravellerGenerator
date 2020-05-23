@@ -37,27 +37,7 @@ def dwarf_satellites(group, roll1, roll2):
             return roll1
 
 
-planetSizeDict = {
-    "Acheronian": roll_xdy(1, 6) + 4,
-    "Arean": roll_xdy(1, 6) - 1,
-    "Arid": roll_xdy(1, 6) + 4,
-    "Asphodelian": min(14, roll_xdy(1, 6) + 9),
-    "Chthonian": 16,
-    "Hebean": roll_xdy(1, 6) - 1,
-    "Helian": min(14, roll_xdy(1, 6) + 9),
-    "Jani-Lithic": roll_xdy(1, 6) + 4,
-    "Jovian": 16,
-    "Meltball": roll_xdy(1, 6) - 1,
-    "Oceanic": roll_xdy(1, 6) + 4,
-    "Panthalassic": min(14, roll_xdy(1, 6) + 9),
-    "Promethean": roll_xdy(1, 6) - 1,
-    "Rockball": roll_xdy(1, 6) - 1,
-    "Snowball": roll_xdy(1, 6) - 1,
-    "Stygian": roll_xdy(1, 6) - 1,
-    "Tectonic": roll_xdy(1, 6) + 4,
-    "Telluric": roll_xdy(1, 6) + 4,
-    "Vesperian": roll_xdy(1, 6) + 4
-}
+
 
 
 def planet_chemistry_age_modifier_class_type(
@@ -956,6 +936,48 @@ class OrbitalBody():
         else:
             self.name = parentObject.name + "-" + str(len(parentObject.satellites) + 1)
 
+    def set_planetSize(self):
+        if self.category == "Acheronian":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Arean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Arid":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Asphodelian":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Chthonian":
+            self.size = 16
+        elif self.category == "Hebean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Helian":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Jani-Lithic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Jovian":
+            self.size = 16
+        elif self.category == "Meltball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Oceanic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Panthalassic":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Promethean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Rockball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Snowball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Stygian":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Tectonic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Telluric":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Vesperian":
+            self.size = roll_xdy(1, 6) + 4
+        else:
+            raise ValueError("Unrecognized planet category " + str(self.category))
+
     def set_class_chemistry_atmosphere_hydrosphere_biosphere(
             self, systemAge, luminosityClass):
         """
@@ -1451,7 +1473,7 @@ class DwarfPlanet(OrbitalBody):
         else:
             self.category = dwarf_category(self.orbitType, self.parentObject)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1597,7 +1619,7 @@ class TerrestrialPlanet(OrbitalBody):
             self.category = terrestrial_category(
                 self.orbitType, self.parentObject, self.star)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1659,7 +1681,7 @@ class HelianPlanet(OrbitalBody):
         else:
             self.category = helian_category(self.orbitType)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1742,7 +1764,7 @@ class JovianPlanet(OrbitalBody):
         else:
             self.category = jovian_category(self.orbitType)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
