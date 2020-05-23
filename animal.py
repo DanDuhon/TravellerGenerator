@@ -427,7 +427,7 @@ class Animal():
             self.strength += sum(roll_xdy(8, 6))
         else:  # 15+
             self.strength += sum(roll_xdy(9, 6))
-            
+
     def set_endurance(self, sizeRoll):
         """
         Sets the endurance of the animal based on the size roll
@@ -467,7 +467,7 @@ class Animal():
             self.endurance += sum(roll_xdy(8, 6))
         else:  # 15+
             self.endurance += sum(roll_xdy(9, 6))
-            
+
     def set_dexterity(self, sizeRoll):
         """
         Sets the dexterity of the animal based on the size roll
@@ -520,7 +520,7 @@ class Animal():
             self.exoticWeapons = set(
                 ["Diseased", "Poison", "Bleed", "Bioelectric", "Concealing Mist", "Ranged"])
             exoticWeaponRolls = 0
-            
+
         if exoticWeaponRolls > 0 and "Carrion-Eater" in self.behaviors:
             self.exoticWeapons.add("Diseased")
             
@@ -964,7 +964,7 @@ class Amphibian(Animal):
     def __init__(self, planet, terrain):
         super(Amphibian, self).__init__(planet, terrain)
         self.animalClass = "Amphibian"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.recon = 0
@@ -1029,7 +1029,7 @@ class Amphibian(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.
@@ -1233,12 +1233,12 @@ class Aquatic(Animal):
     def __init__(self, planet, terrain):
         super(Aquatic, self).__init__(planet, terrain)
         self.animalClass = "Aquatic"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.recon = 0
         self.survival = 0
-        
+
         self.primaryMovement = "Swim"
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1247,7 +1247,7 @@ class Aquatic(Animal):
         evoSkillRollModifier = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 3:
@@ -1485,7 +1485,7 @@ class Aquatic(Animal):
         self.set_number_encountered()
         self.set_initiative()
         self.set_reactions()
-        
+
         if quirk4:
             self.armor = 0
         if quirk9:
@@ -1529,7 +1529,7 @@ class Avian(Animal):
         self.athletics = 0
         self.recon = 1
         self.survival = 0
-        
+
         self.primaryMovement = "Fly"
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1595,7 +1595,7 @@ class Avian(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.
@@ -1805,7 +1805,7 @@ class Fungal(Animal):
     def __init__(self, planet, terrain):
         super(Fungal, self).__init__(planet, terrain)
         self.animalClass = "Fungal"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.stealth = 0
@@ -1871,7 +1871,7 @@ class Fungal(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.
@@ -2083,13 +2083,13 @@ class Insect(Animal):
     def __init__(self, planet, terrain):
         super(Insect, self).__init__(planet, terrain)
         self.animalClass = "Insect"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
@@ -2150,7 +2150,7 @@ class Insect(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.
@@ -2352,7 +2352,7 @@ class Insect(Animal):
             self.intelligence = 2
         if quirk8 and self.pack < 6:
             self.pack = 6
-            
+
         if self.intelligence > 2:
             self.intelligence = 2
 
@@ -2372,13 +2372,13 @@ class Mammal(Animal):
     def __init__(self, planet, terrain):
         super(Mammal, self).__init__(planet, terrain)
         self.animalClass = "Mammal"
-        
+
         # Skills this class innately has.
         self.athletics = 0
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
@@ -2440,14 +2440,13 @@ class Mammal(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.
         quirk2 = False
         quirk3 = 0
         quirk4 = 0
-        quirk7 = False
         quirk8 = False
         quirk10 = False
         quirk11 = False
@@ -2475,7 +2474,6 @@ class Mammal(Animal):
                     "Profuse body hair marks this species as a sign of its innate adaptability.")
                 self.raise_skill_level("survival", 1)
             if quirkRoll == 7:
-                quirk7 = True
                 self.quirks.append(
                     "Herd-oriented and nomadic, these are mostly peaceful mammals.")
                 self.pack += sum(roll_xdy(1, 6))
@@ -2505,7 +2503,7 @@ class Mammal(Animal):
                 quirkRolls += 1
 
         extraBehaviorRoll = False
-        
+
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
@@ -2661,7 +2659,7 @@ class Mammal(Animal):
 
         if "Herd-oriented and nomadic, these are mostly peaceful mammals." in self.quirks and self.pack < 2:
             self.pack = 2
-        
+
         self.set_size(self.sizeRoll, self.sizeRollModifier)
         self.set_strength(self.sizeRoll)
         self.set_endurance(self.sizeRoll)
@@ -2713,19 +2711,19 @@ class Reptile(Animal):
         super(Reptile, self).__init__(planet, terrain)
         self.animalClass = "Reptile"
         self.armor += 1
-        
+
         # Skills this class innately has.
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
+
         # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 4:
@@ -2780,7 +2778,7 @@ class Reptile(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
         # Roll for quirks.

@@ -11,7 +11,7 @@ parser.add_argument("-s", dest='size', default=10, type=int,
 parser.add_argument(
     "-x",
     dest='survival',
-    default=0,
+    default=10,
     type=int,
     help="alien survival percent (default=10)")
 parser.add_argument(

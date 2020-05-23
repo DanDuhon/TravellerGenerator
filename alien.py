@@ -232,9 +232,9 @@ def create_terra_luna_humans(star, maxTechLevel):
                 set(), False, 0, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
     else:
         terra.alien = Alien(terra, None, "Mammal",
-                            7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
-                            set(), set(), 1, 0, 0,
-                            set(), False, 0, 0, 10)
+                7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
+                set(), set(), 1, 0, 0,
+                set(), False, 0, 0, 10)
 
     terra.alien.name = "Terran"
     terra.habitation[terra.alien] = "Homeworld"
@@ -320,7 +320,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     if survivalRoll <= alienSurvivalPercent:
         extinct = False
         techLevelScore = (animalToConvert.pack + animalToConvert.instinct +
-                          (aggressionModifier - 9 if aggressionModifier < 9 else 9 - aggressionModifier))
+            (aggressionModifier - 9 if aggressionModifier < 9 else 9 - aggressionModifier))
     else:
         extinct = True
         techLevelScore = 0
@@ -351,12 +351,10 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         aggressionModifier=aggressionModifier,
         techLevelScore=techLevelScore)
     alienPlanet.habitation[alienPlanet.alien] = "Homeworld"
-    alienPlanet.alien.planets[alienPlanet] = {
-        "outpostRoll": None,
+    alienPlanet.alien.planets[alienPlanet] = {"outpostRoll": None,
         "colonyRoll": None,
         "desirability": 8,
-        "habitation": "Homeworld"
-    }
+        "habitation": "Homeworld"}
 
     if extinct:
         alienPlanet.ruins.add(planet.alien)

@@ -10,7 +10,7 @@ num = {
     2: " Beta",
     3: " Gamma",
     4: " Delta"
-    }
+}
 
 spectralTypeTable = LookupTable((2, "A"),
                                 (3, "F"),
@@ -38,7 +38,7 @@ luminosityClassDict = {
                      (12, "M-Ve"),
                      (14, "L")),
     "L": "L"
-    }
+}
 
 companionOrbitTable = LookupTable((2, "Tight"),
                                   (4, "Close"),
@@ -63,7 +63,7 @@ def epistellar_orbits(luminosityClass):
         roll = sum(roll_xdy(1, 6)) - 3
         if luminosityClass == "M-V":
             roll -= 1
-            
+
         if roll > 2:
             return 2
         elif roll < 0:
@@ -89,7 +89,7 @@ def inner_zone_orbits(luminosityClass):
         roll = sum(roll_xdy(1, 6)) - 1
         if luminosityClass == "M-V":
             roll -= 1
-            
+
         if roll < 0:
             return 0
         else:
@@ -122,7 +122,7 @@ class Star():
     Defines a star.  A primary star will also generate companion stars, if any.
     Primary stars, automatic brown dwarf stars, and companion stars that are
     "Distant" from the primary star generate the planets that orbit them.
-    
+
     Requied Parameters:
         systemHex: SystemHex class
             The system in which the star is located.
@@ -205,12 +205,12 @@ class Star():
             spectralTypeRoll = primarySpectralTypeRoll + sum(roll_xdy(1, 6)) - 1
         else:
             spectralTypeRoll = sum(roll_xdy(2, 6))
-            
+
         if autoBrownDwarf:
             self.spectralType = "L"
         else:
             self.spectralType = spectralTypeTable[spectralTypeRoll]
-        
+
         if self.spectralType in ["A", "F", "G"]:
             if (self.spectralType == "A" and systemAge == 3) or (self.spectralType ==
                                                                  "F" and systemAge == 6) or (self.spectralType == "G" and 12 <= systemAge <= 13):
@@ -247,7 +247,7 @@ class Star():
                         primarySpectralTypeRoll=spectralTypeRoll))
             else:
                 self.companion1Orbit = None
-                
+
             if numberOfStars > 2:
                 self.companion2Orbit = companionOrbitTable[sum(roll_xdy(1, 6))]
                 self.companions.append(
@@ -294,7 +294,7 @@ class Star():
                 roll = sum(roll_xdy(1, 6))
                 if self.spectralType == "L":
                     roll -= 1
-                
+
                 if roll <= 1:
                     self.planets.append(
                         planet.AsteroidBelt(
