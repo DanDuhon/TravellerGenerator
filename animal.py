@@ -42,14 +42,14 @@ class Animal():
         self.strength = 0
         self.dexterity = 0
         self.endurance = 0
-        self.instinct = sum(roll_xdy(2, 6))
-        self.pack = sum(roll_xdy(2, 6))
-        if sum(roll_xdy(1, 6)) >= 5:
+        self.instinct = roll_xdy(2, 6))
+        self.pack = roll_xdy(2, 6))
+        if roll_xdy(1, 6)) >= 5:
             self.intelligence = 1
         else:
             self.intelligence = 0
         self.size = 0
-        self.sizeRoll = sum(roll_xdy(2, 6))
+        self.sizeRoll = roll_xdy(2, 6))
         self.sizeRollModifier = 0
         self.armor = 0
         self.athletics = -3
@@ -98,8 +98,8 @@ class Animal():
         # The type of terrain also helps determine the type of movement
         # favored by the animal. This may be overridden by the child class.
         self.primaryMovement = None
-        roll = sum(roll_xdy(1, 6))
-        burrowRoll = sum(roll_xdy(2, 6))
+        roll = roll_xdy(1, 6))
+        burrowRoll = roll_xdy(2, 6))
         if terrain == "Clear":
             if roll <= 5:
                 self.primaryMovement = "Walk"
@@ -314,7 +314,7 @@ class Animal():
                     self.pack = 0
                 else:
                     self.pack -= 2
-                if sum(roll_xdy(1, 6)) <= 3:
+                if roll_xdy(1, 6)) <= 3:
                     self.strength += 4
                 else:
                     self.dexterity += 4
@@ -402,31 +402,31 @@ class Animal():
         elif self.sizeRoll == 2:
             self.strength += 2
         elif self.sizeRoll == 3:
-            self.strength += sum(roll_xdy(1, 6))
+            self.strength += roll_xdy(1, 6))
         elif self.sizeRoll == 4:
-            self.strength += sum(roll_xdy(1, 6))
+            self.strength += roll_xdy(1, 6))
         elif self.sizeRoll == 5:
-            self.strength += sum(roll_xdy(2, 6))
+            self.strength += roll_xdy(2, 6))
         elif self.sizeRoll == 6:
-            self.strength += sum(roll_xdy(2, 6))
+            self.strength += roll_xdy(2, 6))
         elif self.sizeRoll == 7:
-            self.strength += sum(roll_xdy(3, 6))
+            self.strength += roll_xdy(3, 6))
         elif self.sizeRoll == 8:
-            self.strength += sum(roll_xdy(3, 6))
+            self.strength += roll_xdy(3, 6))
         elif self.sizeRoll == 9:
-            self.strength += sum(roll_xdy(4, 6))
+            self.strength += roll_xdy(4, 6))
         elif self.sizeRoll == 10:
-            self.strength += sum(roll_xdy(4, 6))
+            self.strength += roll_xdy(4, 6))
         elif self.sizeRoll == 11:
-            self.strength += sum(roll_xdy(5, 6))
+            self.strength += roll_xdy(5, 6))
         elif self.sizeRoll == 12:
-            self.strength += sum(roll_xdy(6, 6))
+            self.strength += roll_xdy(6, 6))
         elif self.sizeRoll == 13:
-            self.strength += sum(roll_xdy(7, 6))
+            self.strength += roll_xdy(7, 6))
         elif self.sizeRoll == 14:
-            self.strength += sum(roll_xdy(8, 6))
+            self.strength += roll_xdy(8, 6))
         else:  # 15+
-            self.strength += sum(roll_xdy(9, 6))
+            self.strength += roll_xdy(9, 6))
 
     def set_endurance(self, sizeRoll):
         """
@@ -442,31 +442,31 @@ class Animal():
         elif self.sizeRoll == 2:
             self.endurance += 2
         elif self.sizeRoll == 3:
-            self.endurance += sum(roll_xdy(1, 6))
+            self.endurance += roll_xdy(1, 6))
         elif self.sizeRoll == 4:
-            self.endurance += sum(roll_xdy(1, 6))
+            self.endurance += roll_xdy(1, 6))
         elif self.sizeRoll == 5:
-            self.endurance += sum(roll_xdy(2, 6))
+            self.endurance += roll_xdy(2, 6))
         elif self.sizeRoll == 6:
-            self.endurance += sum(roll_xdy(2, 6))
+            self.endurance += roll_xdy(2, 6))
         elif self.sizeRoll == 7:
-            self.endurance += sum(roll_xdy(3, 6))
+            self.endurance += roll_xdy(3, 6))
         elif self.sizeRoll == 8:
-            self.endurance += sum(roll_xdy(3, 6))
+            self.endurance += roll_xdy(3, 6))
         elif self.sizeRoll == 9:
-            self.endurance += sum(roll_xdy(4, 6))
+            self.endurance += roll_xdy(4, 6))
         elif self.sizeRoll == 10:
-            self.endurance += sum(roll_xdy(4, 6))
+            self.endurance += roll_xdy(4, 6))
         elif self.sizeRoll == 11:
-            self.endurance += sum(roll_xdy(5, 6))
+            self.endurance += roll_xdy(5, 6))
         elif self.sizeRoll == 12:
-            self.endurance += sum(roll_xdy(6, 6))
+            self.endurance += roll_xdy(6, 6))
         elif self.sizeRoll == 13:
-            self.endurance += sum(roll_xdy(7, 6))
+            self.endurance += roll_xdy(7, 6))
         elif self.sizeRoll == 14:
-            self.endurance += sum(roll_xdy(8, 6))
+            self.endurance += roll_xdy(8, 6))
         else:  # 15+
-            self.endurance += sum(roll_xdy(9, 6))
+            self.endurance += roll_xdy(9, 6))
 
     def set_dexterity(self, sizeRoll):
         """
@@ -478,31 +478,31 @@ class Animal():
                 The result of the 2d6 roll for size.
         """
         if self.sizeRoll <= 1:
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
         elif self.sizeRoll == 2:
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
         elif self.sizeRoll == 3:
-            self.dexterity += sum(roll_xdy(2, 6))
+            self.dexterity += roll_xdy(2, 6))
         elif self.sizeRoll == 4:
-            self.dexterity += sum(roll_xdy(2, 6))
+            self.dexterity += roll_xdy(2, 6))
         elif self.sizeRoll == 5:
-            self.dexterity += sum(roll_xdy(3, 6))
+            self.dexterity += roll_xdy(3, 6))
         elif self.sizeRoll == 6:
-            self.dexterity += sum(roll_xdy(4, 6))
+            self.dexterity += roll_xdy(4, 6))
         elif self.sizeRoll == 7:
-            self.dexterity += sum(roll_xdy(3, 6))
+            self.dexterity += roll_xdy(3, 6))
         elif self.sizeRoll == 8:
-            self.dexterity += sum(roll_xdy(3, 6))
+            self.dexterity += roll_xdy(3, 6))
         elif self.sizeRoll == 9:
-            self.dexterity += sum(roll_xdy(2, 6))
+            self.dexterity += roll_xdy(2, 6))
         elif self.sizeRoll == 10:
-            self.dexterity += sum(roll_xdy(2, 6))
+            self.dexterity += roll_xdy(2, 6))
         elif self.sizeRoll == 11:
-            self.dexterity += sum(roll_xdy(2, 6))
+            self.dexterity += roll_xdy(2, 6))
         elif self.sizeRoll == 12:
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
         elif self.sizeRoll == 13:
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
         elif self.sizeRoll == 14:
             self.dexterity += 2
         else:  # 15+
@@ -525,7 +525,7 @@ class Animal():
             self.exoticWeapons.add("Diseased")
 
         while exoticWeaponRolls > len(self.exoticWeapons):
-            roll = sum(roll_xdy(1, 6))
+            roll = roll_xdy(1, 6))
             if roll == 1:
                 self.exoticWeapons.add("Diseased")
             elif roll == 2:
@@ -546,7 +546,7 @@ class Animal():
         Animals with a meleeNaturalWeapons skill of -3 that ends up with
         a weapon from this method will have that skill raised to 0.
         """
-        roll = sum(roll_xdy(2, 6))
+        roll = roll_xdy(2, 6))
         if len(self.exoticWeapons) == 0:
             if self.diet == "Carnivore":
                 roll += 8
@@ -567,7 +567,7 @@ class Animal():
             self.weaponDamageModifier += 3
 
         if roll == 2 or (roll < 2 and len(self.exoticWeapons) > 0):
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Teeth")
             elif roll2 == 2:
@@ -575,7 +575,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 3:
-            roll2 = sum(roll_xdy(1, 4))
+            roll2 = roll_xdy(1, 4))
             if roll2 == 1:
                 self.weapons.add("Horns")
             elif roll2 == 2:
@@ -585,7 +585,7 @@ class Animal():
             else:
                 self.weapons.add("Headbutt")
         elif roll == 4:
-            roll2 = sum(roll_xdy(1, 6))
+            roll2 = roll_xdy(1, 6))
             if roll2 == 1:
                 self.weapons.add("Hooves")
             if roll2 == 2:
@@ -599,7 +599,7 @@ class Animal():
             else:
                 self.weapons.add("Trample")
         elif roll == 5:
-            roll2 = sum(roll_xdy(1, 8))
+            roll2 = roll_xdy(1, 8))
             if roll2 == 1:
                 self.weapons.add("Hooves")
             if roll2 == 2:
@@ -617,7 +617,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 6:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Teeth")
             if roll2 == 2:
@@ -625,7 +625,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 7:
-            roll2 = sum(roll_xdy(1, 4))
+            roll2 = roll_xdy(1, 4))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -635,13 +635,13 @@ class Animal():
             else:
                 self.weapons.add("Talons")
         elif roll == 8:
-            roll2 = sum(roll_xdy(1, 2))
+            roll2 = roll_xdy(1, 2))
             if roll2 == 1:
                 self.weapons.add("Stinger")
             else:
                 self.weapons.add("Darting Tongue")
         elif roll == 9:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Thrasher")
             if roll2 == 2:
@@ -649,7 +649,7 @@ class Animal():
             else:
                 self.weapons.add("Trample")
         elif roll == 10:
-            roll2 = sum(roll_xdy(1, 6))
+            roll2 = roll_xdy(1, 6))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -663,7 +663,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 11:
-            roll2 = sum(roll_xdy(1, 4))
+            roll2 = roll_xdy(1, 4))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -673,7 +673,7 @@ class Animal():
             else:
                 self.weapons.add("Talons")
         elif roll == 12:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Teeth")
             if roll2 == 2:
@@ -681,7 +681,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 13:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Thrasher")
             if roll2 == 2:
@@ -689,7 +689,7 @@ class Animal():
             else:
                 self.weapons.add("Trample")
         elif roll == 14:
-            roll2 = sum(roll_xdy(1, 6))
+            roll2 = roll_xdy(1, 6))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -703,7 +703,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 15:
-            roll2 = sum(roll_xdy(1, 4))
+            roll2 = roll_xdy(1, 4))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -713,13 +713,13 @@ class Animal():
             else:
                 self.weapons.add("Talons")
         elif roll == 16:
-            roll2 = sum(roll_xdy(1, 2))
+            roll2 = roll_xdy(1, 2))
             if roll2 == 1:
                 self.weapons.add("Stinger")
             else:
                 self.weapons.add("Darting Tongue")
         elif roll == 17:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Thrasher")
             if roll2 == 2:
@@ -727,7 +727,7 @@ class Animal():
             else:
                 self.weapons.add("Trample")
         elif roll == 18:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Teeth")
             if roll2 == 2:
@@ -735,7 +735,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 19:
-            roll2 = sum(roll_xdy(1, 6))
+            roll2 = roll_xdy(1, 6))
             if roll2 == 1:
                 self.weapons.add("Claws")
             if roll2 == 2:
@@ -749,7 +749,7 @@ class Animal():
             else:
                 self.weapons.add("Suckers")
         elif roll == 20:
-            roll2 = sum(roll_xdy(1, 3))
+            roll2 = roll_xdy(1, 3))
             if roll2 == 1:
                 self.weapons.add("Thrasher")
             if roll2 == 2:
@@ -783,7 +783,7 @@ class Animal():
         """
         Sets the armor value for this animal.
         """
-        roll = sum(roll_xdy(2, 6))
+        roll = roll_xdy(2, 6))
         if roll <= 3:
             self.armor += 0
         elif roll <= 5:
@@ -978,7 +978,7 @@ class Amphibian(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
             self.dietDescription = "Carnivorous amphibians usually feed off the young of other amphibious species or smaller aquatic life. Insects may also comprise a large part of their diet."
@@ -1001,7 +1001,7 @@ class Amphibian(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         socialSkillRolls += 1
         if evoRollSkills == 7:
             socialSkillRolls += 1
@@ -1013,7 +1013,7 @@ class Amphibian(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -1021,9 +1021,9 @@ class Amphibian(Animal):
             elif evoRollOther == 3:
                 self.intelligence += 1
             elif evoRollOther == 4:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
             elif evoRollOther == 5:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 6:
                 quirkRolls += 2
             else:
@@ -1042,7 +1042,7 @@ class Amphibian(Animal):
         quirk9 = False
         quirk10 = False
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append(
@@ -1093,7 +1093,7 @@ class Amphibian(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
@@ -1111,7 +1111,7 @@ class Amphibian(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 4
             elif socialSkillRoll == 2:
@@ -1129,7 +1129,7 @@ class Amphibian(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.dexterity += 1
             elif physicalSkillRoll == 2:
@@ -1139,14 +1139,14 @@ class Amphibian(Animal):
             elif physicalSkillRoll == 4:
                 self.endurance += 2
             elif physicalSkillRoll == 5:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
 
             physicalSkillRolls -= 1
 
         # Roll for a behavior.
-        behaviorRoll = sum(roll_xdy(1, 6))
+        behaviorRoll = roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
                 self.behaviors.add("Pouncer")
@@ -1249,7 +1249,7 @@ class Aquatic(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 3:
             self.diet = "Carnivore"
             self.dietDescription = "Carnivorous aquatics usually have large teeth, comparative to their size, and hunt by the scent of blood released into the water. They are very commonly opportunistic feeders, hunting and killing anything they come across."
@@ -1260,7 +1260,7 @@ class Aquatic(Animal):
         elif dietRoll <= 5:
             self.diet = "Herbivore"
             self.dietDescription = " Like amphibians of this variety, herbivore aquatics typically feast on plankton, water-rotted plants and algae. Larger herbivorous aquatics have the same diet but commonly strain their sustenance from the same medium they breathe."
-            self.endurance += sum(roll_xdy(1, 6))
+            self.endurance += roll_xdy(1, 6))
             socialSkillRolls += 1
         else:
             self.diet = "Omnivore"
@@ -1272,7 +1272,7 @@ class Aquatic(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills == 1 or 2 <= evoRollSkills <= 3 or evoRollSkills >= 6:
             socialSkillRolls += 1
         if evoRollSkills == 7:
@@ -1285,7 +1285,7 @@ class Aquatic(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -1293,9 +1293,9 @@ class Aquatic(Animal):
             elif evoRollOther == 3:
                 self.intelligence += 1
             elif evoRollOther == 4:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
             elif evoRollOther == 5:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 6:
                 quirkRolls += 2
             else:
@@ -1314,7 +1314,7 @@ class Aquatic(Animal):
         quirk10 = 0
         quirk11 = False
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 self.quirks.append(
                     "This aquatic is found in the darkest parts of its habitat and sees through bioluminescent eyes.")
@@ -1348,7 +1348,7 @@ class Aquatic(Animal):
                 self.quirks.append(
                     "Unlike most aquatics, this species reproduces asexually and is never encountered with others of its kind.")
                 self.pack = 0
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             if quirkRoll == 10:
                 quirk10 += 1
                 self.quirks.append(
@@ -1361,7 +1361,7 @@ class Aquatic(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6)) + evoSkillRollModifier
+            evoSkillRoll = roll_xdy(1, 6)) + evoSkillRollModifier
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
@@ -1379,7 +1379,7 @@ class Aquatic(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -1397,7 +1397,7 @@ class Aquatic(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.dexterity += 1
             elif physicalSkillRoll == 2:
@@ -1407,14 +1407,14 @@ class Aquatic(Animal):
             elif physicalSkillRoll == 4:
                 self.endurance += 4
             elif physicalSkillRoll == 5:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
 
             physicalSkillRolls -= 1
 
         # Roll for a behavior.
-        behaviorRoll = sum(roll_xdy(1, 6))
+        behaviorRoll = roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
                 self.behaviors.add("Eater")
@@ -1539,7 +1539,7 @@ class Avian(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
             self.dietDescription = "Carnivorous avians tend to be larger than other avian species and have a tendency toward cannibalism. Those avians that do not eat others of their kind prefer small, easily caught game and may even be suited to hunting for shallow water aquatic animals."
@@ -1563,7 +1563,7 @@ class Avian(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills != 5:
             socialSkillRolls += 1
         if evoRollSkills == 7:
@@ -1576,7 +1576,7 @@ class Avian(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -1585,11 +1585,11 @@ class Avian(Animal):
                 self.instinct += 1
                 self.pack += 2
             elif evoRollOther == 4:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
                 self.pack += 2
             elif evoRollOther == 5:
                 self.endurance += 2
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             elif evoRollOther == 6:
                 quirkRolls += 2
             else:
@@ -1607,7 +1607,7 @@ class Avian(Animal):
         quirk10 = False
         quirk11 = False
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append(
@@ -1657,7 +1657,7 @@ class Avian(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
@@ -1675,7 +1675,7 @@ class Avian(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -1685,7 +1685,7 @@ class Avian(Animal):
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("recon", 1)
 
@@ -1693,7 +1693,7 @@ class Avian(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.dexterity += 1
             elif physicalSkillRoll == 2:
@@ -1703,14 +1703,14 @@ class Avian(Animal):
             elif physicalSkillRoll == 4:
                 self.endurance += 4
             elif physicalSkillRoll == 5:
-                self.dexterity += sum(roll_xdy(1, 6))
+                self.dexterity += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
 
             physicalSkillRolls -= 1
 
         # Roll for a behavior.
-        behaviorRoll = sum(roll_xdy(1, 6))
+        behaviorRoll = roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
                 self.behaviors.add("Hunter")
@@ -1820,7 +1820,7 @@ class Fungal(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll == 1:
             self.diet = "Carnivore"
             self.dietDescription = "Carnivorous fungals usually lure food to them, engulfing their prey and dissolving them. Fungal creatures are rarely dense or resilient enough to be combative."
@@ -1841,7 +1841,7 @@ class Fungal(Animal):
             physicalSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills <= 4 or evoRollSkills == 7:
             socialSkillRolls += 1
         if evoRollSkills == 3 or evoRollSkills >= 5:
@@ -1854,7 +1854,7 @@ class Fungal(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -1862,10 +1862,10 @@ class Fungal(Animal):
             elif evoRollOther == 3:
                 exoticWeaponRolls += 1
             elif evoRollOther == 4:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 5:
                 self.endurance += 2
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             elif evoRollOther == 6:
                 quirkRolls += 2
             else:
@@ -1885,7 +1885,7 @@ class Fungal(Animal):
         quirk10 = False
         quirk11 = False
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2:
                 quirk2 = True
                 self.quirks.append(
@@ -1906,15 +1906,15 @@ class Fungal(Animal):
                     "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
                 self.behaviors.add("Siren")
                 self.primaryMovement = "Stationary"
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             if quirkRoll == 6:
                 self.quirks.append(
                     "This species propagates very quickly and easily, dwelling in large family structures with its progeny. It is never encountered alone.")
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             if quirkRoll == 7:
                 quirk7 = True
                 self.quirks.append("Very soft in bodily structure.")
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append(
@@ -1938,7 +1938,7 @@ class Fungal(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
@@ -1956,7 +1956,7 @@ class Fungal(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -1966,7 +1966,7 @@ class Fungal(Animal):
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("recon", 1)
 
@@ -1974,7 +1974,7 @@ class Fungal(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.endurance += 1
             elif physicalSkillRoll == 2:
@@ -1982,10 +1982,10 @@ class Fungal(Animal):
             elif physicalSkillRoll == 3:
                 self.endurance += 4
             elif physicalSkillRoll == 4:
-                self.endurance += sum(roll_xdy(2, 6))
+                self.endurance += roll_xdy(2, 6))
             elif physicalSkillRoll == 5:
-                self.endurance += sum(roll_xdy(1, 6))
-                self.strength += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
+                self.strength += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
 
@@ -1993,7 +1993,7 @@ class Fungal(Animal):
 
         # Roll for a behavior.
         if not quirk5:
-            behaviorRoll = sum(roll_xdy(1, 6))
+            behaviorRoll = roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
                     self.behaviors.add("Hunter")
@@ -2098,12 +2098,12 @@ class Insect(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 3:
             self.diet = "Carnivore"
             self.dietDescription = " Most insects are carnivorous by the strictest definition of the term, with weaker insects normally being their food, and many are also cannibalistic. Insects often have a modified diet, consuming liquids from their prey as opposed to devouring flesh."
             self.meleeNaturalWeapons += 1
-            self.strength += sum(roll_xdy(1, 6))
+            self.strength += roll_xdy(1, 6))
             physicalSkillRolls += 1
         elif dietRoll == 4:
             self.diet = "Herbivore"
@@ -2121,7 +2121,7 @@ class Insect(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         physicalSkillRolls += 1
         if evoRollSkills == 6:
             physicalSkillRolls += 1
@@ -2133,7 +2133,7 @@ class Insect(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -2141,10 +2141,10 @@ class Insect(Animal):
             elif evoRollOther == 3:
                 exoticWeaponRolls += 1
             elif evoRollOther == 4:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 5:
                 self.endurance += 2
-                self.strength = sum(roll_xdy(1, 6))
+                self.strength = roll_xdy(1, 6))
             elif evoRollOther == 6:
                 quirkRolls += 2
             else:
@@ -2163,7 +2163,7 @@ class Insect(Animal):
         quirk11 = False
         armorQuirkCount = 0
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append(
@@ -2177,7 +2177,7 @@ class Insect(Animal):
                     "This perk granted flying if the insect didn't have it, or takes it away to add strength.")
                 if self.primaryMovement == "Fly":
                     self.primaryMovement = "Walk"
-                    self.strength += sum(roll_xdy(1, 6))
+                    self.strength += roll_xdy(1, 6))
                 else:
                     self.primaryMovement = "Fly"
                     if self.strength - 1 < 0:
@@ -2222,14 +2222,14 @@ class Insect(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
             elif evoSkillRoll == 3:
                 self.pack += 1
-                self.instinct += sum(roll_xdy(1, 6))
+                self.instinct += roll_xdy(1, 6))
             elif evoSkillRoll == 4:
                 physicalSkillRolls += 1
             elif evoSkillRoll == 5:
@@ -2241,7 +2241,7 @@ class Insect(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -2251,7 +2251,7 @@ class Insect(Animal):
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             else:
                 self.raise_skill_level("recon", 1)
 
@@ -2259,7 +2259,7 @@ class Insect(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.endurance += 1
             elif physicalSkillRoll == 2:
@@ -2267,10 +2267,10 @@ class Insect(Animal):
             elif physicalSkillRoll == 3:
                 self.armor += 1
             elif physicalSkillRoll == 4:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
                 self.armor += 1
             elif physicalSkillRoll == 5:
-                self.strength += sum(roll_xdy(1, 6))
+                self.strength += roll_xdy(1, 6))
                 self.armor += 1
             else:
                 self.raise_skill_level("meleeNaturalWeapons", 1)
@@ -2278,7 +2278,7 @@ class Insect(Animal):
             physicalSkillRolls -= 1
 
         # Roll for a behavior.
-        behaviorRoll = sum(roll_xdy(1, 6))
+        behaviorRoll = roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
                 self.behaviors.add("Pouncer")
@@ -2387,7 +2387,7 @@ class Mammal(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
             self.dietDescription = "Predatory mammals are generally the strongest of their kind and occupy a middle strata between their prey (often herbivorous mammals) and more intelligent omnivorous mammals above them."
@@ -2409,7 +2409,7 @@ class Mammal(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills == 1 or 3 <= evoRollSkills <= 4 or evoRollSkills >= 6:
             physicalSkillRolls += 1
         if evoRollSkills >= 2:
@@ -2422,7 +2422,7 @@ class Mammal(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.instinct += 2
             elif evoRollOther == 2:
@@ -2432,7 +2432,7 @@ class Mammal(Animal):
                 self.endurance += 1
                 self.pack += 1
             elif evoRollOther == 4:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 5:
                 self.sizeRollModifier += 1
             elif evoRollOther == 6:
@@ -2451,7 +2451,7 @@ class Mammal(Animal):
         quirk10 = False
         quirk11 = False
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append(
@@ -2476,7 +2476,7 @@ class Mammal(Animal):
             if quirkRoll == 7:
                 self.quirks.append(
                     "Herd-oriented and nomadic, these are mostly peaceful mammals.")
-                self.pack += sum(roll_xdy(1, 6))
+                self.pack += roll_xdy(1, 6))
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append(
@@ -2506,7 +2506,7 @@ class Mammal(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 extraBehaviorRoll = True
             elif evoSkillRoll == 2:
@@ -2525,7 +2525,7 @@ class Mammal(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -2544,7 +2544,7 @@ class Mammal(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.strength += 1
             elif physicalSkillRoll == 2:
@@ -2562,7 +2562,7 @@ class Mammal(Animal):
             physicalSkillRolls -= 1
 
         # Roll for a behavior.
-        behaviorRoll = sum(roll_xdy(1, 6))
+        behaviorRoll = roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
                 self.behaviors.add("Pouncer")
@@ -2612,7 +2612,7 @@ class Mammal(Animal):
                 self.behaviors.add("Reducer")
 
         if extraBehaviorRoll:
-            behaviorRoll = sum(roll_xdy(1, 6))
+            behaviorRoll = roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
                     self.behaviors.add("Pouncer")
@@ -2674,7 +2674,7 @@ class Mammal(Animal):
 
         while quirk3 > 0:
             self.size = self.size / 2
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
             quirk3 -= 1
         if quirk4 > 0:
             self.quirks = list(
@@ -2725,7 +2725,7 @@ class Reptile(Animal):
         exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
-        dietRoll = sum(roll_xdy(1, 6))
+        dietRoll = roll_xdy(1, 6))
         if dietRoll <= 4:
             self.diet = "Carnivore"
             self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
@@ -2748,7 +2748,7 @@ class Reptile(Animal):
             socialSkillRolls += 1
 
         # Determine how many of each type of skill roll will be made.
-        evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
+        evoRollSkills = roll_xdy(1, 6)) + evolutionRollModifier
         physicalSkillRolls += 1
         if evoRollSkills == 4 or evoRollSkills == 6:
             physicalSkillRolls += 1
@@ -2760,7 +2760,7 @@ class Reptile(Animal):
         # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
-            evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
+            evoRollOther = roll_xdy(1, 6)) + evolutionRollModifier
             if evoRollOther == 1:
                 self.endurance += 2
                 self.dexterity += 1
@@ -2770,7 +2770,7 @@ class Reptile(Animal):
                 self.dexterity += 1
                 self.pack += 1
             elif evoRollOther == 4:
-                self.endurance += sum(roll_xdy(1, 6))
+                self.endurance += roll_xdy(1, 6))
             elif evoRollOther == 5:
                 self.sizeRollModifier += 1
             elif evoRollOther == 6:
@@ -2789,7 +2789,7 @@ class Reptile(Animal):
         quirk8 = False
         quirk9 = 0
         while quirkRolls > len(self.quirks):
-            quirkRoll = sum(roll_xdy(2, 6))
+            quirkRoll = roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
                 self.quirks.append(
@@ -2810,7 +2810,7 @@ class Reptile(Animal):
                 quirk6 = True
                 self.quirks.append(
                     "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare.")
-                dietRoll = sum(roll_xdy(1, 5))
+                dietRoll = roll_xdy(1, 5))
                 if dietRoll == 5:
                     self.diet = "Carnivore"
                     self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
@@ -2844,7 +2844,7 @@ class Reptile(Animal):
 
         # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
-            evoSkillRoll = sum(roll_xdy(1, 6))
+            evoSkillRoll = roll_xdy(1, 6))
             if evoSkillRoll == 1:
                 exoticWeaponRolls += 1
             elif evoSkillRoll == 2:
@@ -2863,7 +2863,7 @@ class Reptile(Animal):
 
         # Roll for social skills.
         while socialSkillRolls > 0:
-            socialSkillRoll = sum(roll_xdy(1, 6))
+            socialSkillRoll = roll_xdy(1, 6))
             if socialSkillRoll == 1:
                 self.pack += 2
             elif socialSkillRoll == 2:
@@ -2882,7 +2882,7 @@ class Reptile(Animal):
 
         # Roll for physical skills.
         while physicalSkillRolls > 0:
-            physicalSkillRoll = sum(roll_xdy(1, 6))
+            physicalSkillRoll = roll_xdy(1, 6))
             if physicalSkillRoll == 1:
                 self.strength += 1
             elif physicalSkillRoll == 2:
@@ -2901,7 +2901,7 @@ class Reptile(Animal):
 
         # Roll for a behavior.
         if not quirk6:
-            behaviorRoll = sum(roll_xdy(1, 6))
+            behaviorRoll = roll_xdy(1, 6))
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
                     self.behaviors.add("Pouncer")
@@ -2975,7 +2975,7 @@ class Reptile(Animal):
                 str(4 * quirk4) +
                     " + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
         while quirk9 > 0:
-            self.dexterity += sum(roll_xdy(1, 6))
+            self.dexterity += roll_xdy(1, 6))
             self.armor = self.armor / 2
             quirk9 -= 1
 
