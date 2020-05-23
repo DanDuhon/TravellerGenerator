@@ -60,7 +60,7 @@ def epistellar_orbits(luminosityClass):
     if luminosityClass in ["L", "D", "K-III", "M-III"]:
         return 0
     else:
-        roll = sum(roll_xdy(1, 6)) - 3
+        roll = roll_xdy(1, 6) - 3
         if luminosityClass == "M-V":
             roll -= 1
 
@@ -84,9 +84,9 @@ def inner_zone_orbits(luminosityClass):
     Returns integer
     """
     if luminosityClass == "L":
-        return sum(roll_xdy(1, 3)) - 1
+        return roll_xdy(1, 3) - 1
     else:
-        roll = sum(roll_xdy(1, 6)) - 1
+        roll = roll_xdy(1, 6) - 1
         if luminosityClass == "M-V":
             roll -= 1
 
@@ -107,7 +107,7 @@ def outer_zone_orbits(luminosityClass):
 
     Returns integer
     """
-    roll = sum(roll_xdy(1, 6)) - 1
+    roll = roll_xdy(1, 6) - 1
     if luminosityClass in ["L", "M-V"]:
         roll -= 1
 
@@ -203,9 +203,9 @@ class Star():
         # Companion stars roll 1d6 - 1 + the spetral type roll of the primary
         # star.
         if not primary and not autoBrownDwarf:
-            spectralTypeRoll = primarySpectralTypeRoll + sum(roll_xdy(1, 6)) - 1
+            spectralTypeRoll = primarySpectralTypeRoll + roll_xdy(1, 6) - 1
         else:
-            spectralTypeRoll = sum(roll_xdy(2, 6))
+            spectralTypeRoll = roll_xdy(2, 6)
 
         if autoBrownDwarf:
             self.spectralType = "L"
@@ -215,13 +215,11 @@ class Star():
         if self.spectralType in ["A", "F", "G"]:
             if (self.spectralType == "A" and systemAge == 3) or (self.spectralType ==
                                                                  "F" and systemAge == 6) or (self.spectralType == "G" and 12 <= systemAge <= 13):
-                self.luminosityClass = luminosityClassDict[self.spectralType][systemAge][sum(
-                    roll_xdy(1, 6))]
+                self.luminosityClass = luminosityClassDict[self.spectralType][systemAge][roll_xdy(1, 6)]
             else:
                 self.luminosityClass = luminosityClassDict[self.spectralType][systemAge]
         elif self.spectralType == "M":
-            self.luminosityClass = luminosityClassDict[self.spectralType][sum(
-                roll_xdy(2, 6))]
+            self.luminosityClass = luminosityClassDict[self.spectralType][roll_xdy(2, 6)]
         else:
             self.luminosityClass = luminosityClassDict[self.spectralType]
 
@@ -229,13 +227,13 @@ class Star():
         # This has a detrimental effect on some of the planets that orbit it,
         # since the temperature would greatly increase.
         if self.luminosityClass in ["D", "K-III", "M-III"]:
-            self.expansionAffectedOrbits = sum(roll_xdy(1, 6))
+            self.expansionAffectedOrbits = roll_xdy(1, 6)
         else:
             self.expansionAffectedOrbits = 0
 
         if primary:
             if numberOfStars > 1:
-                self.companion1Orbit = companionOrbitTable[sum(roll_xdy(1, 6))]
+                self.companion1Orbit = companionOrbitTable[roll_xdy(1, 6)]
                 self.companions.append(
                     Star(
                         systemHex=self.systemHex,
@@ -250,7 +248,7 @@ class Star():
                 self.companion1Orbit = None
 
             if numberOfStars > 2:
-                self.companion2Orbit = companionOrbitTable[sum(roll_xdy(1, 6))]
+                self.companion2Orbit = companionOrbitTable[roll_xdy(1, 6)]
                 self.companions.append(
                     Star(
                         systemHex=self.systemHex,
@@ -292,7 +290,7 @@ class Star():
                     self.epistellarOrbits +
                     self.innerZoneOrbits +
                     self.outerZoneOrbits):
-                roll = sum(roll_xdy(1, 6))
+                roll = roll_xdy(1, 6)
                 if self.spectralType == "L":
                     roll -= 1
 

@@ -229,7 +229,7 @@ def create_terra_luna_humans(star, maxTechLevel):
         terra.alien = Alien(terra, None, "Mammal",
                 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
-                set(), False, 0, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
+                set(), False, 0, 0, avgTechLevelScore + roll_xdy(1, 6))
     else:
         terra.alien = Alien(terra, None, "Mammal",
                 7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
@@ -316,7 +316,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     # Tech level score will be used to determine tech level.
     # This is so that species with higher instincts and pack scores have an
     # edge, but no one is completely left in the dust.
-    survivalRoll = sum(roll_xdy(1, 100))
+    survivalRoll = roll_xdy(1, 100)
     if survivalRoll <= alienSurvivalPercent:
         extinct = False
         techLevelScore = (animalToConvert.pack + animalToConvert.instinct +
@@ -386,7 +386,7 @@ def set_tech_level(maxTechLevel):
     # systems and then killing them all off becomes really hard.
     for alien in allAliens:
         if alien.extinct:
-            tl = sum(roll_xdy(1, 9))
+            tl = roll_xdy(1, 9)
             alien.maxTechLevel = tl
             alien.currentTechLevel = tl
         else:
