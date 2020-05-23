@@ -128,6 +128,7 @@ class Alien():
         for s in systemhex.allSystems:
             s.distanceFromAlienHomeSystem[self] = systemhex.distance_between_systems(s, self.homePlanet.systemHex)
 
+
 def create_terra_luna_humans(star, maxTechLevel):
     """
     This will return "Earth", the origin of humans.
@@ -218,9 +219,9 @@ def create_terra_luna_humans(star, maxTechLevel):
     luna.animals = []
     luna.satellites = []
     luna.alien = None
-    
+
     terra.satellites = [luna]
-    
+
     # Humans
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:
         avgTechLevelScore = round(statistics.mean(
@@ -231,18 +232,18 @@ def create_terra_luna_humans(star, maxTechLevel):
                 set(), False, 0, 0, avgTechLevelScore + sum(roll_xdy(1, 6)))
     else:
         terra.alien = Alien(terra, None, "Mammal",
-                7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
-                set(), set(), 1, 0, 0,
-                set(), False, 0, 0, 10)
-        
+                            7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
+                            set(), set(), 1, 0, 0,
+                            set(), False, 0, 0, 10)
+
     terra.alien.name = "Terran"
     terra.habitation[terra.alien] = "Homeworld"
     terra.alien.planets[terra] = {"outpostRoll": None,
-        "colonyRoll": None,
-        "desirability": 8,
-        "habitation": "Homeworld"}
+                                  "colonyRoll": None,
+                                  "desirability": 8,
+                                  "habitation": "Homeworld"}
     terra.settlement = 100
-    
+
     return terra
 
 
@@ -319,7 +320,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     if survivalRoll <= alienSurvivalPercent:
         extinct = False
         techLevelScore = (animalToConvert.pack + animalToConvert.instinct +
-            (aggressionModifier - 9 if aggressionModifier < 9 else 9 - aggressionModifier))
+                          (aggressionModifier - 9 if aggressionModifier < 9 else 9 - aggressionModifier))
     else:
         extinct = True
         techLevelScore = 0
@@ -355,8 +356,8 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         "colonyRoll": None,
         "desirability": 8,
         "habitation": "Homeworld"
-        }
-    
+    }
+
     if extinct:
         alienPlanet.ruins.add(planet.alien)
     else:
@@ -365,6 +366,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     # Due to how similar on paper the animal would be to the alien,
     # remove the animal from the list of all animals.
     animal.allAnimals.remove(animalToConvert)
+
 
 def set_tech_level(maxTechLevel):
     """
@@ -393,4 +395,3 @@ def set_tech_level(maxTechLevel):
             alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + (
                 (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
             alien.currentTechLevel = alien.maxTechLevel - (maxTechLevel - 9)
-            

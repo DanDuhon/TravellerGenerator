@@ -69,12 +69,12 @@ class System():
                 roll_xdy(3, 6)) + openClusterBonus]
         else:
             self.numberOfStars = 0
-        
+
         if sum(roll_xdy(1, 2)) == 1:
             self.brownDwarf = True
         else:
             self.brownDwarf = False
-            
+
         self.stars = []
         # Only the primary star and automatic brown dwarf are created at this level.
         # Companion stars to the primary star will be created from within the
@@ -126,12 +126,11 @@ class System():
 
         for a in alien.allAliens:
             self.distanceFromAlienHomeSystem[a] = distance_between_systems(self, a.homePlanet.systemHex)
-        self.systemsAtRange = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
+        self.systemsAtRange = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
         for k in self.systemsAtRange:
             for x in range(-k, k + 1):
                 for y in range(max(-k, -x - k), min(k, -x + k) + 1):
                     self.systemsAtRange[k].append((self.horizontalCoord + x, self.verticalCoord + y))
-
 
     def create_surrounding_systems(
             self,
@@ -150,10 +149,15 @@ class System():
                         openClusterBonus = 3
                     elif not openClusterTuple[0] and h <= openClusterTuple[2] and not openClusterTuple[1] and v <= openClusterTuple[2]:
                         openClusterBonus = 3
-                    System(self.horizontalCoord + x, self.verticalCoord + y, openClusterBonus, alienSurvivalPercent, maxTechLevel)
+                    System(
+                        self.horizontalCoord + x,
+                        self.verticalCoord + y,
+                        openClusterBonus,
+                        alienSurvivalPercent,
+                        maxTechLevel)
 
 
-def distance_between_systems (system1, system2):
+def distance_between_systems(system1, system2):
     """
     Calculates the distance between two Systems.  This is the absolute
     shortest route, not necessarily the route that is traversable by

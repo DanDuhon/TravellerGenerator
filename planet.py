@@ -36,6 +36,7 @@ def dwarf_satellites(group, roll1, roll2):
         else:
             return roll1
 
+
 planetSizeDict = {
     "Acheronian": sum(roll_xdy(1, 6)) + 4,
     "Arean": sum(roll_xdy(1, 6)) - 1,
@@ -56,9 +57,11 @@ planetSizeDict = {
     "Tectonic": sum(roll_xdy(1, 6)) + 4,
     "Telluric": sum(roll_xdy(1, 6)) + 4,
     "Vesperian": sum(roll_xdy(1, 6)) + 4
-    }
+}
 
-def planet_chemistry_age_modifier_class_type(category, luminosityClass, orbitType, biosphere):
+
+def planet_chemistry_age_modifier_class_type(
+        category, luminosityClass, orbitType, biosphere):
     """
     Returns the planet's chemistry type, chemistry age modifier, planet class,
     and planet type.
@@ -76,7 +79,7 @@ def planet_chemistry_age_modifier_class_type(category, luminosityClass, orbitTyp
             The calculated value of the biosphere of the planet.  Some planets
             only have a chemistry value if the biosphere is above a certain
             threshold.
-    
+
     Returns a tuple of (chemistry, ageModifier, className, type):
         chemistry: String
             The prominent chemical substance on the planet.
@@ -299,7 +302,7 @@ def planet_atmosphere(
         biosphere=None):
     """
     Returns the planet's atmosphere value.
-    
+
     Requird Parameters:
         category: String
             The category of the planet.
@@ -446,7 +449,7 @@ def planet_atmosphere(
             return 11
         else:
             return 10
-    
+
 
 def planet_biosphere(
         category,
@@ -483,7 +486,8 @@ def planet_biosphere(
         subsurfaceOceans: Boolean
             Flag indicating whether the planet has subsurface oceans.
     """
-    if (atmosphere in [0, 10, 11, 12] and not subsurfaceOceans) or hydrosphere == 0 or flareStarPresent:
+    if (atmosphere in [0, 10, 11, 12]
+            and not subsurfaceOceans) or hydrosphere == 0 or flareStarPresent:
         return 0
     elif category == "Arean":
         if systemAge >= 4 + ageModifier and atmosphere == 10:
@@ -740,7 +744,7 @@ dwarfCategoryDict = {
             (3, "Hebean"),
             (5, "Arean"),
             (6, "Promethean"))))
-    }
+}
 
 
 def dwarf_category(orbitType, parentObject):
@@ -757,7 +761,7 @@ def dwarf_category(orbitType, parentObject):
             HelianPlanet, JovianPlanet.
     """
     roll = sum(roll_xdy(1, 6))
-            
+
     if orbitType == "Epistellar":
         if isinstance(parentObject, AsteroidBelt):
             roll -= 2
@@ -784,7 +788,7 @@ def dwarf_category(orbitType, parentObject):
 
         if roll == 8:
             return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
-        
+
     return dwarfCategoryDict[orbitType][roll]
 
 
@@ -804,7 +808,7 @@ terrestrialCategoryDict = {
         (4, "Arid"),
         (6, "Tectonic"),
         (8, "Oceanic"))
-    }
+}
 
 
 def terrestrial_category(orbitType, parentObject, star):
@@ -820,13 +824,13 @@ def terrestrial_category(orbitType, parentObject, star):
             classes are Star, HelianPlanet, JovianPlanet.
     """
     roll = sum(roll_xdy(1, 6))
-            
+
     if orbitType == "Inner Zone":
         roll += sum(roll_xdy(1, 6))
     elif orbitType == "Outer Zone":
         if parentObject != star:
             roll += 2
-        
+
     return terrestrialCategoryDict[orbitType][roll]
 
 
@@ -946,14 +950,14 @@ class OrbitalBody():
         self.ruins = set()
         self.settlement = 0
         self.terraformingAlien = None
-            
+
         if parentObject == starInstance:
             self.name = parentObject.name + " " + str(order)
         else:
             self.name = parentObject.name + "-" + str(len(parentObject.satellites) + 1)
-        
+
     def set_class_chemistry_atmosphere_hydrosphere_biosphere(
-        self, systemAge, luminosityClass):
+            self, systemAge, luminosityClass):
         """
         Sets the planet's chemistry, atmosphere, hydrosphere, and biosphere
         values. Not all planet categories have the same order of operations,
@@ -1016,7 +1020,11 @@ class OrbitalBody():
                 # The atmosphere of these categories is dependent on the biosphere.
                 # If the biosphere was forced to 0, recalculate the value for
                 # atmosphere.
-                if self.category in ["Arid", "Promethean", "Tectonic", "Vesperian"]:
+                if self.category in [
+                    "Arid",
+                    "Promethean",
+                    "Tectonic",
+                    "Vesperian"]:
                     self.atmosphere = planet_atmosphere(
                         category=self.category,
                         luminosityClass=luminosityClass,
@@ -1038,8 +1046,8 @@ class OrbitalBody():
             self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
-                    0) - (1 if nearbyColony else 0)
-        
+            0) - (1 if nearbyColony else 0)
+
         # Distance penalty
         if modifiedDistance > 3 + alien.reactionModifier:
             desirability -= modifiedDistance
@@ -1047,10 +1055,10 @@ class OrbitalBody():
         # Penalty for not having an easy source of fuel in the system
         if not self.systemHex.fuelAvailable:
             desirability -= 1
-        
+
         # Penalty for having a flare star in the system
         desirability -= self.systemHex.flareStarDesirabilityPenalty
-        
+
         # Lifebelt bonus
         if self.orbitType == "Inner Zone":
             if self.star.luminosityClass in ["A-V", "F-V", "K-V"]:
@@ -1061,24 +1069,24 @@ class OrbitalBody():
         # Dry world penalty
         if self.hydrosphere in [None, 0]:
             desirability -= 1
-        
+
         # Extreme environment penalty
         if ((self.size > 12 and self.size != alien.homePlanet.size)
             or (self.atmosphere > 11 and self.atmosphere != alien.homePlanet.atmosphere)
-            or (self.hydrosphere == 15 and alien.homePlanet.hydrosphere != 15)):
+                or (self.hydrosphere == 15 and alien.homePlanet.hydrosphere != 15)):
             desirability -= 2
-        
+
         # High gravity penalty
         if self.size >= alien.homePlanet.size + 2 and self.atmosphere <= 15:
             desirability -= 1
-        
+
         # Tiny world penalty
         if self.size == 0:
             desirability -= 1
 
         # Habitable World bonuses
         if (self.chemistry == alien.homePlanet.chemistry
-            and 1 <= self.size <= min([14, alien.homePlanet.size + 3])):
+                and 1 <= self.size <= min([14, alien.homePlanet.size + 3])):
             # Garden world
             if (max([1, alien.homePlanet.size - 3]) <= self.size <= min([15, alien.homePlanet.size + 2])
                 and any([alien.homePlanet.atmosphere == self.atmosphere,
@@ -1108,11 +1116,11 @@ class OrbitalBody():
                 desirability += 4
         # Not currently habitable, but at least these worlds can be terraformed
         elif (2 <= self.size <= 12
-            and self.orbitType == "Inner Zone"
-            and self.hydrosphere < 11
-            and self.atmosphere < 13
-            and self.category not in ["Acheronian", "Asphodelian", "Stygian"]
-            and "M-Ve" not in [s.luminosityClass for s in self.systemHex.stars]):
+              and self.orbitType == "Inner Zone"
+              and self.hydrosphere < 11
+              and self.atmosphere < 13
+              and self.category not in ["Acheronian", "Asphodelian", "Stygian"]
+              and "M-Ve" not in [s.luminosityClass for s in self.systemHex.stars]):
             desirability += 1
 
         # Ideal atmosphere bonus
@@ -1122,13 +1130,13 @@ class OrbitalBody():
         return desirability
 
     def calculate_habitation(
-        self,
-        alien,
-        openClusterTuple,
-        alienSurvivalPercent,
-        maxTechLevel,
-        maxReactionModifier,
-        noOutpost):
+            self,
+            alien,
+            openClusterTuple,
+            alienSurvivalPercent,
+            maxTechLevel,
+            maxReactionModifier,
+            noOutpost):
         """
         Sets the type of Habitation an Alien will have on the planet.
         Not applicable for Homeworld because that is set at the time of Alien creation.
@@ -1141,10 +1149,10 @@ class OrbitalBody():
             if not alien.extinct:
                 self.systemHex.create_surrounding_systems(openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier)
             return "Homeworld"
-        
+
         homeSystem = alien.homePlanet.systemHex == self.systemHex
         hab = None
-        
+
         if not self.alien or not self.alien.extinct:
             if alien.currentTechLevel >= 10 or (alien.currentTechLevel == 9 and homeSystem):
                 if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
@@ -1153,7 +1161,8 @@ class OrbitalBody():
                 elif not noOutpost and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
                     hab = "Outpost"
                     self.systemHex.create_surrounding_systems(openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier)
-                # They won't abandon the planet if it's temporarily worse because of terraforming
+                # They won't abandon the planet if it's temporarily worse
+                # because of terraforming
                 elif self.terraformingAlien == alien:
                     return self.habitation[alien]
                 else:
@@ -1162,10 +1171,10 @@ class OrbitalBody():
             hab = None
 
         self.habitation[alien] = hab
-                
+
         if alien in self.habitation.keys():
             if self.habitation[alien] == "Colony" and self.habitation in [
-                None, "Outpost"]:
+                    None, "Outpost"]:
                 self.ruins.add(alien)
             elif self.habitation[alien] == "Outpost" and not self.habitation:
                 self.ruins.add(alien)
@@ -1180,7 +1189,8 @@ class OrbitalBody():
             alien: Alien class instance
                 The alien doing the terraforming.
         """
-        # If there's no chemistry, nothing has to be changed, it just happens as part of terraforming
+        # If there's no chemistry, nothing has to be changed, it just happens
+        # as part of terraforming
         if not self.chemistry:
             self.chemistry = alien.homePlanet.chemistry
         # If the chemistry is wrong, reduce Hydrosphere to 1, then convert
@@ -1191,7 +1201,7 @@ class OrbitalBody():
             else:
                 self.chemistry = alien.homePlanet.chemistry
                 return
-                
+
         # Remove Dry World penalty
         if self.hydrosphere == 0:
             self.hydrosphere += 1
@@ -1229,7 +1239,8 @@ class OrbitalBody():
             self.hydrosphere -= 1
             return
 
-        # If the planet's size would allow it to be a Garden world, work towards that
+        # If the planet's size would allow it to be a Garden world, work
+        # towards that
         if max([1, alien.homePlanet.size - 3]) <= self.size <= min([15, alien.homePlanet.size + 2]):
             # Lower Hydrosphere if it's too high
             if self.hydrosphere > min([(11 if alien.animalClass == "Aquatic" else 8), alien.homePlanet.hydrosphere + 3]):
@@ -1281,7 +1292,7 @@ class OrbitalBody():
                     self.animals.append(animal.Aquatic(planet=self, terrain="Beach/Shore"))
                     self.animals.append(animal.Avian(planet=self, terrain="Beach/Shore"))
                     self.animals.append(animal.Insect(planet=self, terrain="Beach/Shore"))
-    
+
         if self.hydrosphere <= 8:
             self.terrain.append("Clear")
             if self.biosphere >= 9:
@@ -1291,21 +1302,21 @@ class OrbitalBody():
                     self.animals.append(animal.Avian(planet=self, terrain="Clear"))
                     self.animals.append(animal.Insect(planet=self, terrain="Clear"))
                     self.animals.append(animal.Mammal(planet=self, terrain="Clear"))
-    
+
         if (self.atmosphere >= 2 and 5 <=
                 self.hydrosphere <= 11) or self.subsurfaceOceans:
             self.terrain.append("Deep Ocean")
             if self.biosphere >= 9:
                 for _ in range(3):
                     self.animals.append(animal.Aquatic(planet=self, terrain="Deep Ocean"))
-    
+
         if self.biosphere >= 9 and self.hydrosphere <= 4 and 2 <= self.atmosphere <= 7:
             self.terrain.append("Desert")
             for _ in range(3):
                 self.animals.append(animal.Avian(planet=self, terrain="Desert"))
                 self.animals.append(animal.Insect(planet=self, terrain="Desert"))
                 self.animals.append(animal.Reptile(planet=self, terrain="Desert"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 4 and 3 <= self.hydrosphere <= 8:
             self.terrain.append("Forest")
             for _ in range(3):
@@ -1313,7 +1324,7 @@ class OrbitalBody():
                 self.animals.append(animal.Fungal(planet=self, terrain="Forest"))
                 self.animals.append(animal.Insect(planet=self, terrain="Forest"))
                 self.animals.append(animal.Mammal(planet=self, terrain="Forest"))
-    
+
         if self.hydrosphere <= 8:
             self.terrain.append("Hills")
             if self.biosphere >= 9:
@@ -1322,7 +1333,7 @@ class OrbitalBody():
                     self.animals.append(animal.Insect(planet=self, terrain="Hills"))
                     self.animals.append(animal.Mammal(planet=self, terrain="Hills"))
                     self.animals.append(animal.Reptile(planet=self, terrain="Hills"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 4 and 4 <= self.hydrosphere <= 8:
             self.terrain.append("Jungle")
             for _ in range(3):
@@ -1337,14 +1348,14 @@ class OrbitalBody():
                 for _ in range(3):
                     self.animals.append(animal.Avian(planet=self, terrain="Mountains"))
                     self.animals.append(animal.Insect(planet=self, terrain="Mountains"))
-    
+
         if (self.atmosphere >= 2 and 3 <=
                 self.hydrosphere <= 11) or self.subsurfaceOceans:
             self.terrain.append("Open Ocean")
             if self.biosphere >= 9:
                 for _ in range(3):
                     self.animals.append(animal.Aquatic(planet=self, terrain="Open Ocean"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 2 and 2 <= self.hydrosphere <= 7:
             self.terrain.append("Plains")
             for _ in range(3):
@@ -1352,7 +1363,7 @@ class OrbitalBody():
                 self.animals.append(animal.Insect(planet=self, terrain="Plains"))
                 self.animals.append(animal.Mammal(planet=self, terrain="Plains"))
                 self.animals.append(animal.Reptile(planet=self, terrain="Plains"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 4 and 5 <= self.hydrosphere <= 8:
             self.terrain.append("Rainforest")
             for _ in range(3):
@@ -1360,7 +1371,7 @@ class OrbitalBody():
                 self.animals.append(animal.Fungal(planet=self, terrain="Rainforest"))
                 self.animals.append(animal.Insect(planet=self, terrain="Rainforest"))
                 self.animals.append(animal.Reptile(planet=self, terrain="Rainforest"))
-    
+
         if self.atmosphere >= 2 and 3 <= self.hydrosphere <= 8:
             self.terrain.append("Riverbank")
             if self.biosphere >= 9:
@@ -1371,7 +1382,7 @@ class OrbitalBody():
                     self.animals.append(animal.Insect(planet=self, terrain="Riverbank"))
                     self.animals.append(animal.Mammal(planet=self, terrain="Riverbank"))
                     self.animals.append(animal.Reptile(planet=self, terrain="Riverbank"))
-    
+
         if self.hydrosphere <= 8:
             self.terrain.append("Rough/Broken")
             if self.biosphere >= 9:
@@ -1379,7 +1390,7 @@ class OrbitalBody():
                     self.animals.append(animal.Avian(planet=self, terrain="Rough/Broken"))
                     self.animals.append(animal.Insect(planet=self, terrain="Rough/Broken"))
                     self.animals.append(animal.Reptile(planet=self, terrain="Rough/Broken"))
-    
+
         if (self.atmosphere >= 2 and 2 <= self.hydrosphere <= 10) or (
                 self.subsurfaceOceans and self.hydrosphere <= 10):
             self.terrain.append("Shallow Ocean")
@@ -1388,7 +1399,7 @@ class OrbitalBody():
                     self.animals.append(animal.Amphibian(planet=self, terrain="Shallow Ocean"))
                     self.animals.append(animal.Aquatic(planet=self, terrain="Shallow Ocean"))
                     self.animals.append(animal.Avian(planet=self, terrain="Shallow Ocean"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 4 and 5 <= self.hydrosphere <= 8:
             self.terrain.append("Swamp/Marsh")
             for _ in range(3):
@@ -1398,7 +1409,7 @@ class OrbitalBody():
                 self.animals.append(animal.Fungal(planet=self, terrain="Swamp/Marsh"))
                 self.animals.append(animal.Insect(planet=self, terrain="Swamp/Marsh"))
                 self.animals.append(animal.Reptile(planet=self, terrain="Swamp/Marsh"))
-    
+
         if self.biosphere >= 9 and self.atmosphere >= 2 and 2 <= self.hydrosphere <= 8:
             self.terrain.append("Woods")
             for _ in range(3):
@@ -1444,7 +1455,7 @@ class DwarfPlanet(OrbitalBody):
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
-            
+
         self.planet_terrain_animals()
 
         if self.biosphere >= 12:
@@ -1531,8 +1542,8 @@ class AsteroidBelt(OrbitalBody):
             self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
-                    0) - (1 if nearbyColony else 0)
-        
+            0) - (1 if nearbyColony else 0)
+
         # Distance penalty
         if modifiedDistance > 3 + alien.reactionModifier:
             desirability -= modifiedDistance
@@ -1540,9 +1551,9 @@ class AsteroidBelt(OrbitalBody):
         # Penalty for not having an easy source of fuel in the system
         if not self.systemHex.fuelAvailable:
             desirability -= 1
-            
-        coloniesInSystem = sum( 1 for p in self.systemHex.planets if not isinstance(p, AsteroidBelt) and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] )
-        outpostsInSystem = sum( 1 for p in self.systemHex.planets if not isinstance(p, AsteroidBelt) and alien in p.habitation.keys() and p.habitation[alien] == "Outpost" )
+
+        coloniesInSystem = sum(1 for p in self.systemHex.planets if not isinstance(p, AsteroidBelt) and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"])
+        outpostsInSystem = sum(1 for p in self.systemHex.planets if not isinstance(p, AsteroidBelt) and alien in p.habitation.keys() and p.habitation[alien] == "Outpost")
 
         if coloniesInSystem + outpostsInSystem == 0:
             desirability -= 3
@@ -1551,6 +1562,7 @@ class AsteroidBelt(OrbitalBody):
 
         return desirability
 
+
 class TerrestrialPlanet(OrbitalBody):
     """
     Defines a terrestrial planet.
@@ -1558,7 +1570,7 @@ class TerrestrialPlanet(OrbitalBody):
     Parameters:
         All parameters for __init__ are used in the OrbitalBody parent class.
     """
-    
+
     def __init__(
             self,
             star,
@@ -1584,12 +1596,12 @@ class TerrestrialPlanet(OrbitalBody):
         else:
             self.category = terrestrial_category(
                 self.orbitType, self.parentObject, self.star)
-            
+
         self.size = planetSizeDict[self.category]
-        
+
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
-            
+
         self.planet_terrain_animals()
 
         if self.biosphere >= 12:
@@ -1648,10 +1660,10 @@ class HelianPlanet(OrbitalBody):
             self.category = helian_category(self.orbitType)
 
         self.size = planetSizeDict[self.category]
-        
+
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
-            
+
         self.planet_terrain_animals()
 
         if self.biosphere >= 12:
@@ -1731,7 +1743,7 @@ class JovianPlanet(OrbitalBody):
             self.category = jovian_category(self.orbitType)
 
         self.size = planetSizeDict[self.category]
-        
+
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
 
@@ -1739,7 +1751,7 @@ class JovianPlanet(OrbitalBody):
             self.ringSystem = "Minor"
         else:
             self.ringSystem = "Complex"
-            
+
         satelliteRoll1 = sum(roll_xdy(1, 6))
         satelliteRoll2 = sum(roll_xdy(1, 6))
         satelliteRoll3 = sum(roll_xdy(1, 6))
