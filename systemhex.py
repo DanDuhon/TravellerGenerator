@@ -59,17 +59,17 @@ class System():
         allCoordinates[(self.horizontalCoord,
                         self.verticalCoord,
                         self.cubeCoord)] = self
-        self.age = roll_xdy(3, 6)) - 3
+        self.age = roll_xdy(3, 6) - 3
         self.name = namegenerator.astralNGrams.generate_name()
         self.distanceFromAlienHomeSystem = {}
         self.fuelAvailable = False
 
-        if roll_xdy(1, 2)) == 1:
-            self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6)) + openClusterBonus]
+        if roll_xdy(1, 2) == 1:
+            self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + openClusterBonus]
         else:
             self.numberOfStars = 0
 
-        if roll_xdy(1, 2)) == 1:
+        if roll_xdy(1, 2) == 1:
             self.brownDwarf = True
         else:
             self.brownDwarf = False
@@ -104,7 +104,7 @@ class System():
         self.flareStarDesirabilityPenalty = 0
         for s in self.stars:
             if s.luminosityClass == "M-Ve":
-                self.flareStarDesirabilityPenalty = roll_xdy(1, 3))
+                self.flareStarDesirabilityPenalty = roll_xdy(1, 3)
                 break
 
         self.planets = []

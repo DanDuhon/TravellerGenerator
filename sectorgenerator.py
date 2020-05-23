@@ -87,8 +87,8 @@ def sectorgen(
     for a in [a for a in alien.allAliens if a.maxTechLevel == 9 and a.extinct]:
         for p in a.homePlanet.systemHex.planets:
             a.planets[p] = {
-                "outpostRoll": roll_xdy(1, 6)),
-                "colonyRoll": roll_xdy(2, 6)),
+                "outpostRoll": roll_xdy(1, 6),
+                "colonyRoll": roll_xdy(2, 6),
                 "desirability": None,
                 "habitation": None}
             a.planets[p]["desirability"] = p.calculate_desirability(a, True)
@@ -141,8 +141,8 @@ def sectorgen(
                                 newSystem = systemhex.allCoordinates[(sys.coordinates[0] + x, sys.coordinates[1] + y, ((sys.coordinates[0] + x) * -1) - (sys.coordinates[1] + y))]
                                 if newSystem not in a.exploredSystems:
                                     for p in newSystem.planets:
-                                        a.planets[p] = {"outpostRoll": roll_xdy(1, 6)),
-                                                        "colonyRoll": roll_xdy(2, 6)),
+                                        a.planets[p] = {"outpostRoll": roll_xdy(1, 6),
+                                                        "colonyRoll": roll_xdy(2, 6),
                                                         "desirability": None,
                                                         "habitation": None}
                                         a.planets[p]["desirability"] = p.calculate_desirability(a, False)
@@ -181,8 +181,8 @@ def sectorgen(
                                         newSystemsToCheck.append(newSystem)
                                     if newSystem not in a.exploredSystems:
                                         for p in newSystem.planets:
-                                            a.planets[p] = {"outpostRoll": roll_xdy(1, 6)),
-                                                            "colonyRoll": roll_xdy(2, 6)),
+                                            a.planets[p] = {"outpostRoll": roll_xdy(1, 6),
+                                                            "colonyRoll": roll_xdy(2, 6),
                                                             "desirability": None,
                                                             "habitation": None}
                                             a.planets[p]["desirability"] = p.calculate_desirability(a, False)
