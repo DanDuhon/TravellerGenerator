@@ -286,10 +286,17 @@ class Star():
 
         if primary or primaryOrbit == "Distant":
             self.planets = []
-            for x in range(
+            for orbit in range(
                     self.epistellarOrbits +
                     self.innerZoneOrbits +
                     self.outerZoneOrbits):
+                if orbit < self.epistellarOrbits:
+                    orbitType = "Epistellar"
+                elif orbit < self.epistellarOrbits + self.innerZoneOrbits:
+                    orbitType = "Inner Zone"
+                else:
+                    orbitType = "Outer Zone"
+
                 roll = roll_xdy(1, 6)
                 if self.spectralType == "L":
                     roll -= 1
@@ -299,9 +306,8 @@ class Star():
                         planet.AsteroidBelt(
                             star=self,
                             parentObject=self,
-                            order=x + 1,
-                            orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                                self.innerZoneOrbits else "Outer Zone",
+                            order=orbit + 1,
+                            orbitType=orbitType,
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -312,9 +318,8 @@ class Star():
                         planet.DwarfPlanet(
                             star=self,
                             parentObject=self,
-                            order=x + 1,
-                            orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                                self.innerZoneOrbits else "Outer Zone",
+                            order=orbit + 1,
+                            orbitType=orbitType,
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -325,9 +330,8 @@ class Star():
                         planet.TerrestrialPlanet(
                             star=self,
                             parentObject=self,
-                            order=x + 1,
-                            orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                                self.innerZoneOrbits else "Outer Zone",
+                            order=orbit + 1,
+                            orbitType=orbitType,
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -338,9 +342,8 @@ class Star():
                         planet.HelianPlanet(
                             star=self,
                             parentObject=self,
-                            order=x + 1,
-                            orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                                self.innerZoneOrbits else "Outer Zone",
+                            order=orbit + 1,
+                            orbitType=orbitType,
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
@@ -351,9 +354,8 @@ class Star():
                         planet.JovianPlanet(
                             star=self,
                             parentObject=self,
-                            order=x + 1,
-                            orbitType="Epistellar" if x < self.epistellarOrbits else "Inner Zone" if x < self.epistellarOrbits +
-                                self.innerZoneOrbits else "Outer Zone",
+                            order=orbit + 1,
+                            orbitType=orbitType,
                             luminosityClass=self.luminosityClass,
                             expansionAffectedOrbits=self.expansionAffectedOrbits,
                             systemAge=systemAge,
