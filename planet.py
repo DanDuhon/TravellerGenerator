@@ -37,27 +37,7 @@ def dwarf_satellites(group, roll1, roll2):
             return roll1
 
 
-planetSizeDict = {
-    "Acheronian": sum(roll_xdy(1, 6)) + 4,
-    "Arean": sum(roll_xdy(1, 6)) - 1,
-    "Arid": sum(roll_xdy(1, 6)) + 4,
-    "Asphodelian": min(14, sum(roll_xdy(1, 6)) + 9),
-    "Chthonian": 16,
-    "Hebean": sum(roll_xdy(1, 6)) - 1,
-    "Helian": min(14, sum(roll_xdy(1, 6)) + 9),
-    "Jani-Lithic": sum(roll_xdy(1, 6)) + 4,
-    "Jovian": 16,
-    "Meltball": sum(roll_xdy(1, 6)) - 1,
-    "Oceanic": sum(roll_xdy(1, 6)) + 4,
-    "Panthalassic": min(14, sum(roll_xdy(1, 6)) + 9),
-    "Promethean": sum(roll_xdy(1, 6)) - 1,
-    "Rockball": sum(roll_xdy(1, 6)) - 1,
-    "Snowball": sum(roll_xdy(1, 6)) - 1,
-    "Stygian": sum(roll_xdy(1, 6)) - 1,
-    "Tectonic": sum(roll_xdy(1, 6)) + 4,
-    "Telluric": sum(roll_xdy(1, 6)) + 4,
-    "Vesperian": sum(roll_xdy(1, 6)) + 4
-}
+
 
 
 def planet_chemistry_age_modifier_class_type(
@@ -93,7 +73,7 @@ def planet_chemistry_age_modifier_class_type(
     if category == "Acheronian":
         return (None, None, "Telluric", "Acheronian")
     elif category == "Arean":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "L":
             roll += 2
         if orbitType == "Outer Zone":
@@ -106,7 +86,7 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return ("Methane", 3, "Geocyclic", "Titanian")
     elif category == "Arid":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "K-V":
             roll += 2
         elif luminosityClass == "M-V":
@@ -127,12 +107,12 @@ def planet_chemistry_age_modifier_class_type(
     elif category == "Chthonian":
         return (None, None, "Chthonian", None)
     elif category == "Hebean":
-        if sum(roll_xdy(1, 2)) == 1:
+        if roll_xdy(1, 2) == 1:
             return (None, None, "Geotidal", "Hebean")
         else:
             return (None, None, "Geotidal", "Idunnian")
     elif category == "Helian":
-        if sum(roll_xdy(1, 2)) == 1:
+        if roll_xdy(1, 2) == 1:
             return (None, None, "Geo-Helian", None)
         else:
             return (None, None, "Nebulous", None)
@@ -141,7 +121,7 @@ def planet_chemistry_age_modifier_class_type(
     elif category == "Jovian":
         if biosphere is not None:
             if biosphere > 0:
-                roll = sum(roll_xdy(1, 6))
+                roll = roll_xdy(1, 6)
                 if luminosityClass == "L":
                     roll += 1
                 if orbitType == "Epistellar":
@@ -158,8 +138,8 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return (None, None, None, None)
     elif category == "Meltball":
-        if sum(roll_xdy(1, 2)) == 1:
-            roll = sum(roll_xdy(1, 3))
+        if roll_xdy(1, 2) == 1:
+            roll = roll_xdy(1, 3)
             if roll == 1:
                 return (None, None, "Geothermic", "Phaethonic")
             elif roll == 2:
@@ -167,12 +147,12 @@ def planet_chemistry_age_modifier_class_type(
             else:
                 return (None, None, "Geothermic", "Sethian")
         else:
-            if sum(roll_xdy(1, 2)) == 1:
+            if roll_xdy(1, 2) == 1:
                 return (None, None, "Geotidal", "Hephaestian")
             else:
                 return (None, None, "Geotidal", "Lokian")
     elif category == "Oceanic":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "K-V":
             roll += 2
         elif luminosityClass == "M-V":
@@ -183,22 +163,22 @@ def planet_chemistry_age_modifier_class_type(
             roll += 2
 
         if roll <= 6:
-            if sum(roll_xdy(1, 2)) == 1:
+            if roll_xdy(1, 2) == 1:
                 return ("Water", 0, "Oceanic", "Pelagic")
             else:
                 return ("Water", 0, "Tectonic", "Bathy-Gaian")
         elif roll <= 8:
-            if sum(roll_xdy(1, 2)) == 1:
+            if roll_xdy(1, 2) == 1:
                 return ("Ammonia", 1, "Oceanic", "Nunnic")
             else:
                 return ("Ammonia", 1, "Tectonic", "Bathy-Amunian")
         else:
-            if sum(roll_xdy(1, 2)) == 1:
+            if roll_xdy(1, 2) == 1:
                 return ("Methane", 3, "Oceanic", "Teathic")
             else:
                 return ("Methane", 3, "Tectonic", "Bathy-Tartarian")
     elif category == "Panthalassic":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "K-V":
             roll += 2
         elif luminosityClass == "M-V":
@@ -207,7 +187,7 @@ def planet_chemistry_age_modifier_class_type(
             roll += 5
 
         if roll <= 6:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if roll <= 8:
                 return ("Water", 0, "Panthalassic", None)
             elif roll <= 11:
@@ -219,7 +199,7 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return ("Methane", 3, "Panthalassic", None)
     elif category == "Promethean":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "L":
             roll += 2
         if orbitType == "Epistellar":
@@ -234,7 +214,7 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return ("Methane", 3, "Geotidal", "Atlan")
     elif category == "Rockball":
-        roll = sum(roll_xdy(1, 3))
+        roll = roll_xdy(1, 3)
         if roll == 1:
             return (None, None, "Geopassive", "Ferrinian")
         elif roll == 2:
@@ -242,7 +222,7 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return (None, None, "Geopassive", "Carbonian")
     elif category == "Snowball":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "L":
             roll += 2
         if orbitType == "Outer Zone":
@@ -257,7 +237,7 @@ def planet_chemistry_age_modifier_class_type(
     elif category == "Stygian":
         return (None, None, "Geopassive", "Stygian")
     elif category == "Tectonic":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "K-V":
             roll += 2
         elif luminosityClass == "M-V":
@@ -268,7 +248,7 @@ def planet_chemistry_age_modifier_class_type(
             roll += 2
 
         if roll <= 6:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if roll <= 8:
                 return ("Water", 0, "Tectonic", "Gaian")
             elif roll <= 11:
@@ -280,12 +260,12 @@ def planet_chemistry_age_modifier_class_type(
         else:
             return ("Methane", 3, "Tectonic", "Tartarian")
     elif category == "Telluric":
-        if sum(roll_xdy(1, 2)) == 1:
+        if roll_xdy(1, 2) == 1:
             return (None, None, "Telluric", "Phosphorian")
         else:
             return (None, None, "Telluric", "Cytherean")
     elif category == "Vesperian":
-        roll = sum(roll_xdy(2, 6))
+        roll = roll_xdy(2, 6)
         if roll <= 11:
             return ("Water", None, "Epistellar", "Vesperian")
         else:
@@ -324,7 +304,7 @@ def planet_atmosphere(
     if category in ["Acheronian", "Asphodelian", "Chthonian", "Meltball"]:
         return 1
     elif category == "Arean":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if luminosityClass == "D":
             roll -= 2
 
@@ -334,7 +314,7 @@ def planet_atmosphere(
             return 10
     elif biosphere is not None and category == "Arid":
         if biosphere >= 3 and chemistry == "Water":
-            roll = sum(roll_xdy(2, 6)) - 7 + size
+            roll = roll_xdy(2, 6) - 7 + size
 
             if roll < 2:
                 return 2
@@ -345,7 +325,7 @@ def planet_atmosphere(
         else:
             return 10
     elif category == "Hebean":
-        roll = sum(roll_xdy(1, 6)) + size - 6
+        roll = roll_xdy(1, 6) + size - 6
 
         if roll <= 0:
             return 0
@@ -356,7 +336,7 @@ def planet_atmosphere(
     elif category == "Helian":
         return 13
     elif category == "Jani-Lithic":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
 
         if roll <= 3:
             return 1
@@ -368,7 +348,7 @@ def planet_atmosphere(
         return 1
     elif category == "Oceanic":
         if chemistry == "Water":
-            roll = sum(roll_xdy(2, 6)) + size - 6
+            roll = roll_xdy(2, 6) + size - 6
             if luminosityClass == "K-V":
                 roll -= 1
             elif luminosityClass == "M-V":
@@ -385,7 +365,7 @@ def planet_atmosphere(
             else:
                 return roll
         else:
-            roll = sum(roll_xdy(1, 6))
+            roll = roll_xdy(1, 6)
 
             if roll == 1:
                 return 1
@@ -394,7 +374,7 @@ def planet_atmosphere(
             else:
                 return 12
     elif category == "Panthalassic":
-        roll = sum(roll_xdy(1, 6)) + 8
+        roll = roll_xdy(1, 6) + 8
 
         if roll >= 13:
             return 13
@@ -402,7 +382,7 @@ def planet_atmosphere(
             return roll
     elif biosphere is not None and category == "Promethean":
         if chemistry == "Water" and biosphere >= 3:
-            roll = sum(roll_xdy(2, 6)) + size - 7
+            roll = roll_xdy(2, 6) + size - 7
 
             if roll <= 2:
                 return 2
@@ -413,7 +393,7 @@ def planet_atmosphere(
         else:
             return 10
     elif category == "Snowball":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
 
         if roll <= 4:
             return 0
@@ -421,7 +401,7 @@ def planet_atmosphere(
             return 1
     elif biosphere is not None and category == "Tectonic":
         if biosphere >= 3 and chemistry == "Water":
-            roll = sum(roll_xdy(2, 6)) + size - 7
+            roll = roll_xdy(2, 6) + size - 7
 
             if roll <= 2:
                 return 2
@@ -437,7 +417,7 @@ def planet_atmosphere(
         return 12
     elif biosphere is not None and category == "Vesperian":
         if biosphere >= 3 and chemistry == "Water":
-            roll = sum(roll_xdy(2, 6)) + size - 7
+            roll = roll_xdy(2, 6) + size - 7
 
             if roll <= 2:
                 return 2
@@ -491,27 +471,27 @@ def planet_biosphere(
         return 0
     elif category == "Arean":
         if systemAge >= 4 + ageModifier and atmosphere == 10:
-            roll = sum(roll_xdy(1, 6)) + size - 2
+            roll = roll_xdy(1, 6) + size - 2
 
             if roll <= 0:
                 return 0
             else:
                 return roll
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
             if atmosphere == 1:
-                roll = sum(roll_xdy(1, 6)) - 4
+                roll = roll_xdy(1, 6) - 4
 
                 if roll <= 0:
                     return 0
                 else:
                     return roll
             else:
-                return sum(roll_xdy(1, 3))
+                return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Arid":
         if systemAge >= 4 + ageModifier:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if luminosityClass == "D":
                 roll -= 3
 
@@ -519,20 +499,20 @@ def planet_biosphere(
                 return 0
             else:
                 return roll
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
-            return sum(roll_xdy(1, 3))
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
+            return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Jovian":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if orbitType == "Inner Zone":
             roll += 2
 
         if roll >= 6:
-            if systemAge >= sum(roll_xdy(1, 6)):
-                return sum(roll_xdy(1, 3))
+            if systemAge >= roll_xdy(1, 6):
+                return roll_xdy(1, 3)
             elif systemAge >= 7:
-                roll = sum(roll_xdy(2, 6))
+                roll = roll_xdy(2, 6)
                 if luminosityClass == "D":
                     roll -= 3
 
@@ -546,7 +526,7 @@ def planet_biosphere(
             return 0
     elif category == "Oceanic":
         if systemAge >= 4 + ageModifier:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if luminosityClass == "D":
                 roll -= 3
 
@@ -554,20 +534,20 @@ def planet_biosphere(
                 return 0
             else:
                 return roll
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
-            return sum(roll_xdy(1, 3))
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
+            return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Panthalassic":
         if systemAge >= 4 + ageModifier:
-            return sum(roll_xdy(2, 6))
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
-            return sum(roll_xdy(1, 3))
+            return roll_xdy(2, 6)
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
+            return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Promethean":
         if systemAge >= 4 + ageModifier:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if luminosityClass == "D":
                 roll -= 3
 
@@ -575,20 +555,20 @@ def planet_biosphere(
                 return 0
             else:
                 return roll
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
-            return sum(roll_xdy(1, 3))
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
+            return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Snowball":
         if subsurfaceOceans and systemAge >= 6 + ageModifier:
-            roll = sum(roll_xdy(1, 6)) + size - 2
+            roll = roll_xdy(1, 6) + size - 2
 
             if roll <= 0:
                 return 0
             else:
                 return roll
-        elif subsurfaceOceans and systemAge >= sum(roll_xdy(1, 6)):
-            roll = sum(roll_xdy(1, 6)) - 3
+        elif subsurfaceOceans and systemAge >= roll_xdy(1, 6):
+            roll = roll_xdy(1, 6) - 3
 
             if roll <= 0:
                 return 0
@@ -598,7 +578,7 @@ def planet_biosphere(
             return 0
     elif category == "Tectonic":
         if systemAge >= 4 + ageModifier:
-            roll = sum(roll_xdy(2, 6))
+            roll = roll_xdy(2, 6)
             if luminosityClass == "D":
                 roll -= 3
 
@@ -606,15 +586,15 @@ def planet_biosphere(
                 return 0
             else:
                 return roll
-        elif systemAge >= sum(roll_xdy(1, 3)) + ageModifier:
-            return sum(roll_xdy(1, 3))
+        elif systemAge >= roll_xdy(1, 3) + ageModifier:
+            return roll_xdy(1, 3)
         else:
             return 0
     elif category == "Vesperian":
         if systemAge >= 4:
-            return sum(roll_xdy(2, 6))
-        elif systemAge >= sum(roll_xdy(1, 3)):
-            return sum(roll_xdy(1, 3))
+            return roll_xdy(2, 6)
+        elif systemAge >= roll_xdy(1, 3):
+            return roll_xdy(1, 3)
         else:
             return 0
     else:
@@ -645,7 +625,7 @@ def planet_hydrosphere_subsurface_oceans(
             The atmosphere value of the planet.
     """
     if category == "Arean":
-        roll = sum(roll_xdy(2, 3)) + size - 7
+        roll = roll_xdy(2, 3) + size - 7
         if atmosphere == 1:
             roll -= 4
 
@@ -654,9 +634,9 @@ def planet_hydrosphere_subsurface_oceans(
         else:
             return (roll, False)
     elif category == "Arid":
-        return (sum(roll_xdy(1, 3)), False)
+        return (roll_xdy(1, 3), False)
     elif category == "Hebean":
-        roll = sum(roll_xdy(2, 6)) + size - 11
+        roll = roll_xdy(2, 6) + size - 11
 
         if roll <= 0:
             return (0, False)
@@ -665,12 +645,12 @@ def planet_hydrosphere_subsurface_oceans(
         else:
             return (roll, False)
     elif category == "Helian":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
 
         if roll <= 2:
             return (0, False)
         elif roll <= 4:
-            return (sum(roll_xdy(2, 6)) - 1, False)
+            return (roll_xdy(2, 6) - 1, False)
         else:
             return (15, False)
     elif category == "Jovian":
@@ -685,9 +665,9 @@ def planet_hydrosphere_subsurface_oceans(
     elif category == "Panthalassic":
         return (11, False)
     elif category == "Promethean":
-        return (sum(roll_xdy(2, 6)) - 2, False)
+        return (roll_xdy(2, 6) - 2, False)
     elif category == "Rockball":
-        roll = sum(roll_xdy(2, 6)) + size - 11
+        roll = roll_xdy(2, 6) + size - 11
         if luminosityClass == "L":
             roll += 1
 
@@ -703,20 +683,20 @@ def planet_hydrosphere_subsurface_oceans(
         else:
             return (roll, False)
     elif category == "Snowball":
-        if sum(roll_xdy(1, 6)) <= 3:
+        if roll_xdy(1, 6) <= 3:
             return (10, False)
         else:
-            return (sum(roll_xdy(2, 6)) - 2, True)
+            return (roll_xdy(2, 6) - 2, True)
     elif category == "Tectonic":
-        return (sum(roll_xdy(2, 6)) - 2, False)
+        return (roll_xdy(2, 6) - 2, False)
     elif category == "Telluric":
-        roll = sum(roll_xdy(1, 6))
+        roll = roll_xdy(1, 6)
         if roll <= 4:
             return (0, False)
         else:
             return (15, False)
     elif category == "Vesperian":
-        return (sum(roll_xdy(2, 6)) - 2, False)
+        return (roll_xdy(2, 6) - 2, False)
     else:
         return (0, False)
 
@@ -760,14 +740,14 @@ def dwarf_category(orbitType, parentObject):
             classes are Star, AsteroidBelt, DwarfPlanet, TerrestrialPlanet,
             HelianPlanet, JovianPlanet.
     """
-    roll = sum(roll_xdy(1, 6))
+    roll = roll_xdy(1, 6)
 
     if orbitType == "Epistellar":
         if isinstance(parentObject, AsteroidBelt):
             roll -= 2
 
         if roll == 6:
-            return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
+            return dwarfCategoryDict[orbitType][roll][roll_xdy(1, 6)]
     elif orbitType == "Inner Zone":
         if isinstance(parentObject, AsteroidBelt):
             roll -= 2
@@ -777,7 +757,7 @@ def dwarf_category(orbitType, parentObject):
             roll += 2
 
         if roll == 8:
-            return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
+            return dwarfCategoryDict[orbitType][roll][roll_xdy(1, 6)]
     else:  # Outer Zone
         if isinstance(parentObject, AsteroidBelt):
             roll -= 1
@@ -787,7 +767,7 @@ def dwarf_category(orbitType, parentObject):
             roll += 2
 
         if roll == 8:
-            return dwarfCategoryDict[orbitType][roll][sum(roll_xdy(1, 6))]
+            return dwarfCategoryDict[orbitType][roll][roll_xdy(1, 6)]
 
     return dwarfCategoryDict[orbitType][roll]
 
@@ -823,10 +803,10 @@ def terrestrial_category(orbitType, parentObject, star):
             The orbit object that caused this planet to be created. Valid
             classes are Star, HelianPlanet, JovianPlanet.
     """
-    roll = sum(roll_xdy(1, 6))
+    roll = roll_xdy(1, 6)
 
     if orbitType == "Inner Zone":
-        roll += sum(roll_xdy(1, 6))
+        roll += roll_xdy(1, 6)
     elif orbitType == "Outer Zone":
         if parentObject != star:
             roll += 2
@@ -843,9 +823,9 @@ def helian_category(orbitType):
             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
             Outer Zone)
     """
-    if orbitType == "Epistellar" and sum(roll_xdy(1, 6)) == 6:
+    if orbitType == "Epistellar" and roll_xdy(1, 6) == 6:
         return "Asphodelian"
-    elif orbitType == "Inner Zone" and sum(roll_xdy(1, 6)) >= 5:
+    elif orbitType == "Inner Zone" and roll_xdy(1, 6) >= 5:
         return "Panthalassic"
     else:  # Outer Zone and other rolls
         return "Helian"
@@ -860,7 +840,7 @@ def jovian_category(orbitType):
             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
             Outer Zone)
     """
-    if orbitType == "Epistellar" and sum(roll_xdy(1, 6)) == 6:
+    if orbitType == "Epistellar" and roll_xdy(1, 6) == 6:
         return "Chthonian"
     else:  # Inner Zone, Outer Zone, and other rolls
         return "Jovian"
@@ -955,6 +935,48 @@ class OrbitalBody():
             self.name = parentObject.name + " " + str(order)
         else:
             self.name = parentObject.name + "-" + str(len(parentObject.satellites) + 1)
+
+    def set_planetSize(self):
+        if self.category == "Acheronian":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Arean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Arid":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Asphodelian":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Chthonian":
+            self.size = 16
+        elif self.category == "Hebean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Helian":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Jani-Lithic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Jovian":
+            self.size = 16
+        elif self.category == "Meltball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Oceanic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Panthalassic":
+            self.size = min(14, roll_xdy(1, 6) + 9)
+        elif self.category == "Promethean":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Rockball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Snowball":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Stygian":
+            self.size = roll_xdy(1, 6) - 1
+        elif self.category == "Tectonic":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Telluric":
+            self.size = roll_xdy(1, 6) + 4
+        elif self.category == "Vesperian":
+            self.size = roll_xdy(1, 6) + 4
+        else:
+            raise ValueError("Unrecognized planet category " + str(self.category))
 
     def set_class_chemistry_atmosphere_hydrosphere_biosphere(
             self, systemAge, luminosityClass):
@@ -1451,7 +1473,7 @@ class DwarfPlanet(OrbitalBody):
         else:
             self.category = dwarf_category(self.orbitType, self.parentObject)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1461,7 +1483,7 @@ class DwarfPlanet(OrbitalBody):
         if self.biosphere >= 12:
             alien.create_alien(self, alienSurvivalPercent)
 
-        if sum(roll_xdy(1, 6)) == 6 and not isinstance(parentObject, DwarfPlanet):
+        if roll_xdy(1, 6) == 6 and not isinstance(parentObject, DwarfPlanet):
             self.satellites.append(
                 DwarfPlanet(
                     star=self.star,
@@ -1510,9 +1532,9 @@ class AsteroidBelt(OrbitalBody):
         self.hydrosphere = 0
         self.chemistry = None
         self.subsurfaceOceans = False
-        self.baseDesirability = sum(roll_xdy(1, 6)) - sum(roll_xdy(1, 6))
+        self.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
 
-        if sum(roll_xdy(1, 6)) <= 4:
+        if roll_xdy(1, 6) <= 4:
             self.satellites.append(
                 DwarfPlanet(
                     star=self.star,
@@ -1597,7 +1619,7 @@ class TerrestrialPlanet(OrbitalBody):
             self.category = terrestrial_category(
                 self.orbitType, self.parentObject, self.star)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1607,7 +1629,7 @@ class TerrestrialPlanet(OrbitalBody):
         if self.biosphere >= 12:
             alien.create_alien(self, alienSurvivalPercent)
 
-        if sum(roll_xdy(1, 6)) >= 5:
+        if roll_xdy(1, 6) >= 5:
             self.satellites.append(
                 DwarfPlanet(
                     star=self.star,
@@ -1659,7 +1681,7 @@ class HelianPlanet(OrbitalBody):
         else:
             self.category = helian_category(self.orbitType)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
@@ -1669,8 +1691,8 @@ class HelianPlanet(OrbitalBody):
         if self.biosphere >= 12:
             alien.create_alien(self, alienSurvivalPercent)
 
-        satelliteRoll1 = sum(roll_xdy(1, 6))
-        satelliteRoll2 = sum(roll_xdy(1, 6))
+        satelliteRoll1 = roll_xdy(1, 6)
+        satelliteRoll2 = roll_xdy(1, 6)
 
         for _ in range(
             dwarf_satellites(
@@ -1742,19 +1764,19 @@ class JovianPlanet(OrbitalBody):
         else:
             self.category = jovian_category(self.orbitType)
 
-        self.size = planetSizeDict[self.category]
+        self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
             systemAge, luminosityClass)
 
-        if sum(roll_xdy(1, 6)) <= 4:
+        if roll_xdy(1, 6) <= 4:
             self.ringSystem = "Minor"
         else:
             self.ringSystem = "Complex"
 
-        satelliteRoll1 = sum(roll_xdy(1, 6))
-        satelliteRoll2 = sum(roll_xdy(1, 6))
-        satelliteRoll3 = sum(roll_xdy(1, 6))
+        satelliteRoll1 = roll_xdy(1, 6)
+        satelliteRoll2 = roll_xdy(1, 6)
+        satelliteRoll3 = roll_xdy(1, 6)
 
         for _ in range(
             dwarf_satellites(
