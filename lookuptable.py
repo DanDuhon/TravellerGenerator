@@ -1,6 +1,7 @@
 from bisect import bisect_left
 from collections.abc import Mapping
 
+
 class LookupTable(Mapping):
     """A lookup table with contiguous ranges of small integers as
     keys. Initialize a table by passing pairs (max, value) as
@@ -18,6 +19,7 @@ class LookupTable(Mapping):
     (1, '-10 - 10')
 
     """
+
     def __init__(self, *table):
         self.table = sorted(table)
         self.max = self.table[-1][0]

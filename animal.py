@@ -3,23 +3,22 @@ import namegenerator
 
 allAnimals = []
 
-behaviorDescriptions = {
-    "Carrion-Eater": "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
-    "Chaser": "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
-    "Eater": "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
-    "Filter": "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
-    "Gatherer": "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
-    "Grazer": "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
-    "Hijacker": "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
-    "Hunter": "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
-    "Intermittent": "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
-    "Intimidator": "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
-    "Killer": "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
-    "Pouncer": "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
-    "Reducer": "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or ‘bottom feeders’, Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
-    "Siren": "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
-    "Trapper": "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"
-    }
+behaviorDescriptions = {"Carrion-Eater": "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
+                        "Chaser": "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
+                        "Eater": "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
+                        "Filter": "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
+                        "Gatherer": "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
+                        "Grazer": "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
+                        "Hijacker": "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
+                        "Hunter": "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
+                        "Intermittent": "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
+                        "Intimidator": "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
+                        "Killer": "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
+                        "Pouncer": "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
+                        "Reducer": "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or ‘bottom feeders’, Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
+                        "Siren": "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
+                        "Trapper": "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"}
+
 
 class Animal():
     """
@@ -32,7 +31,8 @@ class Animal():
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
+
+    def __init__(self, planet, terrain):
         allAnimals.append(self)
         self.name = namegenerator.animalNGrams.generate_name()
         self.planet = planet
@@ -68,8 +68,8 @@ class Animal():
         self.weaponDamageModifier = 0
         self.initiative = 0
 
-        #The type of terrain the animal lives in helps determine how
-        #large the animal is.
+        # The type of terrain the animal lives in helps determine how
+        # large the animal is.
         if terrain == "Desert":
             self.sizeRollModifier -= 3
         elif terrain == "Forest":
@@ -89,14 +89,14 @@ class Animal():
         elif terrain == "Riverbank":
             self.sizeRollModifier += 1
         elif terrain == "Shallow Ocean":
-            self.sizeRollModifier  += 1
+            self.sizeRollModifier += 1
         elif terrain == "Open Ocean":
             self.sizeRollModifier -= 4
         elif terrain == "Deep Ocean":
             self.sizeRollModifier += 2
 
-        #The type of terrain also helps determine the type of movement
-        #favored by the animal. This may be overridden by the child class.
+        # The type of terrain also helps determine the type of movement
+        # favored by the animal. This may be overridden by the child class.
         self.primaryMovement = None
         roll = sum(roll_xdy(1, 6))
         burrowRoll = sum(roll_xdy(2, 6))
@@ -385,7 +385,7 @@ class Animal():
             self.weight = "5,000 kg"
         elif self.size == 14:
             self.weight = "8,000 kg"
-        else: #15+
+        else:  # 15+
             self.weight = "10,000 kg"
 
     def set_strength(self, sizeRoll):
@@ -425,9 +425,9 @@ class Animal():
             self.strength += sum(roll_xdy(7, 6))
         elif self.sizeRoll == 14:
             self.strength += sum(roll_xdy(8, 6))
-        else: #15+
+        else:  # 15+
             self.strength += sum(roll_xdy(9, 6))
-            
+
     def set_endurance(self, sizeRoll):
         """
         Sets the endurance of the animal based on the size roll
@@ -465,9 +465,9 @@ class Animal():
             self.endurance += sum(roll_xdy(7, 6))
         elif self.sizeRoll == 14:
             self.endurance += sum(roll_xdy(8, 6))
-        else: #15+
+        else:  # 15+
             self.endurance += sum(roll_xdy(9, 6))
-            
+
     def set_dexterity(self, sizeRoll):
         """
         Sets the dexterity of the animal based on the size roll
@@ -505,7 +505,7 @@ class Animal():
             self.dexterity += sum(roll_xdy(1, 6))
         elif self.sizeRoll == 14:
             self.dexterity += 2
-        else: #15+
+        else:  # 15+
             self.dexterity += 1
 
     def set_exotic_weapons(self, exoticWeaponRolls):
@@ -517,12 +517,13 @@ class Animal():
                 The number of rolls for exotic weapons to make.
         """
         if exoticWeaponRolls >= 6:
-            self.exoticWeapons = set([ "Diseased", "Poison", "Bleed", "Bioelectric", "Concealing Mist", "Ranged" ])
+            self.exoticWeapons = set(
+                ["Diseased", "Poison", "Bleed", "Bioelectric", "Concealing Mist", "Ranged"])
             exoticWeaponRolls = 0
-            
+
         if exoticWeaponRolls > 0 and "Carrion-Eater" in self.behaviors:
             self.exoticWeapons.add("Diseased")
-            
+
         while exoticWeaponRolls > len(self.exoticWeapons):
             roll = sum(roll_xdy(1, 6))
             if roll == 1:
@@ -554,7 +555,8 @@ class Animal():
             elif self.diet == "Omnivore":
                 roll += 4
 
-        if self.meleeNaturalWeapons == -3 and (roll >= 2 or len(self.exoticWeapons) > 0):
+        if (self.meleeNaturalWeapons == -3 and
+                (roll >= 2 or len(self.exoticWeapons) > 0)):
             self.meleeNaturalWeapons = 0
 
         if 7 <= roll <= 9:
@@ -754,7 +756,7 @@ class Animal():
                 self.weapons.add("Constriction")
             else:
                 self.weapons.add("Trample")
-        else: #1 or less
+        else:  # 1 or less
             self.weapons.add("None")
 
     def set_weapon_damage(self):
@@ -871,7 +873,7 @@ class Animal():
             self.initiative += 3
 
         if self.terrain == "Rainforest":
-            self.initiative -=2
+            self.initiative -= 2
         elif self.terrain == "Deep Ocean":
             self.initiative -= 2
         elif self.terrain == "Forest":
@@ -946,6 +948,7 @@ class Animal():
             self.attackTrigger = "10+"
             self.fleeTrigger = "7-"
 
+
 class Amphibian(Animal):
     """
     Defines an amphibian.
@@ -957,11 +960,12 @@ class Amphibian(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Amphibian, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Amphibian, self).__init__(planet, terrain)
         self.animalClass = "Amphibian"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.recon = 0
         self.survival = 0
@@ -973,7 +977,7 @@ class Amphibian(Animal):
         quirkRolls = 0
         exoticWeaponRolls = 0
 
-        #Determine the diet and modify attributes.
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
@@ -996,7 +1000,7 @@ class Amphibian(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         socialSkillRolls += 1
         if evoRollSkills == 7:
@@ -1006,7 +1010,7 @@ class Amphibian(Animal):
         if evoRollSkills >= 5:
             physicalSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -1025,10 +1029,10 @@ class Amphibian(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk3 = False
         quirk4 = False
@@ -1041,43 +1045,53 @@ class Amphibian(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
-                self.quirks.append("Whenever packs of these animals make any noise at all, they all make the exact same sound simultaneously several times in a row.")
+                self.quirks.append(
+                    "Whenever packs of these animals make any noise at all, they all make the exact same sound simultaneously several times in a row.")
             if quirkRoll == 3 and not quirk3:
                 quirk3 = True
-                self.quirks.append("Apparently blind, these amphibians have no visible eyes or means of sight.")
+                self.quirks.append(
+                    "Apparently blind, these amphibians have no visible eyes or means of sight.")
                 self.recon -= 1
             if quirkRoll == 4 and not quirk4:
                 quirk4 = True
-                self.quirks.append("These animals make no sound at all, even when they move in natural surroundings.")
+                self.quirks.append(
+                    "These animals make no sound at all, even when they move in natural surroundings.")
                 if self.stealth < 1:
                     self.stealth = 1
             if quirkRoll == 5 and not quirk5:
                 quirk5 = True
-                self.quirks.append("The colours of this amphibian’s hide are vivid and clashing, a sort of natural reverse camouflage. Natural predators dislike this display and leave it alone.")
+                self.quirks.append(
+                    "The colours of this amphibian’s hide are vivid and clashing, a sort of natural reverse camouflage. Natural predators dislike this display and leave it alone.")
             if quirkRoll == 6:
-                self.quirks.append("Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world.")
+                self.quirks.append(
+                    "Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world.")
                 self.raise_skill_level("survival", 1)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
-                self.quirks.append("These amphibians emit a natural pheromone that other animals find highly attractive.")
+                self.quirks.append(
+                    "These amphibians emit a natural pheromone that other animals find highly attractive.")
                 self.behaviors.add("Siren")
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
-                self.quirks.append("When threatened, these amphibians emit a piercing scream that sounds like a sentient creature in terrible pain.")
+                self.quirks.append(
+                    "When threatened, these amphibians emit a piercing scream that sounds like a sentient creature in terrible pain.")
             if quirkRoll == 9 and not quirk9:
                 quirk9 = True
-                self.quirks.append("On rare occasions, these amphibians swarm viciously.")
+                self.quirks.append(
+                    "On rare occasions, these amphibians swarm viciously.")
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
-                self.quirks.append("The skin of these animals is naturally coated in a thick, foul-smelling emulsion.")
+                self.quirks.append(
+                    "The skin of these animals is naturally coated in a thick, foul-smelling emulsion.")
                 self.exoticWeapons.add("Stench")
             if quirkRoll == 11:
-                self.quirks.append("Unusually for its kind, these amphibians have developed a rigid shell over their forelimbs and torsos.")
+                self.quirks.append(
+                    "Unusually for its kind, these amphibians have developed a rigid shell over their forelimbs and torsos.")
                 self.armor += 2
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -1095,7 +1109,7 @@ class Amphibian(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -1113,7 +1127,7 @@ class Amphibian(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -1131,7 +1145,7 @@ class Amphibian(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         behaviorRoll = sum(roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
@@ -1203,6 +1217,7 @@ class Amphibian(Animal):
         if self.intelligence > 2:
             self.intelligence = 2
 
+
 class Aquatic(Animal):
     """
     Defines an aquatic.
@@ -1214,15 +1229,16 @@ class Aquatic(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Aquatic, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Aquatic, self).__init__(planet, terrain)
         self.animalClass = "Aquatic"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.recon = 0
         self.survival = 0
-        
+
         self.primaryMovement = "Swim"
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1231,8 +1247,8 @@ class Aquatic(Animal):
         evoSkillRollModifier = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 3:
             self.diet = "Carnivore"
@@ -1255,7 +1271,7 @@ class Aquatic(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills == 1 or 2 <= evoRollSkills <= 3 or evoRollSkills >= 6:
             socialSkillRolls += 1
@@ -1266,7 +1282,7 @@ class Aquatic(Animal):
         if evoRollSkills >= 4:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -1288,7 +1304,7 @@ class Aquatic(Animal):
 
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk3 = False
         quirk4 = False
@@ -1300,42 +1316,50 @@ class Aquatic(Animal):
         while quirkRolls > len(self.quirks):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
-                self.quirks.append("This aquatic is found in the darkest parts of its habitat and sees through bioluminescent eyes.")
+                self.quirks.append(
+                    "This aquatic is found in the darkest parts of its habitat and sees through bioluminescent eyes.")
             if quirkRoll == 3 and not quirk3 and not quirk9:
                 quirk3 = True
-                self.quirks.append("This creature is never found alone and will die within 1d6 days of natural causes if it cannot find a pack to join.")
+                self.quirks.append(
+                    "This creature is never found alone and will die within 1d6 days of natural causes if it cannot find a pack to join.")
             if quirkRoll == 4 and not quirk4:
                 quirk4 = True
-                self.quirks.append("Posseses a frail physique and has the ability to engage in extremely swift movement.")
+                self.quirks.append(
+                    "Posseses a frail physique and has the ability to engage in extremely swift movement.")
                 self.behaviors.add("Pouncer")
                 self.armor = 0
             if quirkRoll == 5 and not quirk5:
                 quirk5 = True
-                self.quirks.append("Possessed of a unique biology, this aquatic can survive for 1d6 hours on dry land and can walk in addition to its ability to swim.")
+                self.quirks.append(
+                    "Possessed of a unique biology, this aquatic can survive for 1d6 hours on dry land and can walk in addition to its ability to swim.")
             if quirkRoll == 6:
                 self.quirks.append("Unnaturally large for the local ecology.")
                 self.sizeRollModifier += 1
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
-                self.quirks.append("Capable of surviving for long periods of time without any nourishment, this aquatic goes dormant for long periods of time, awaking for 3d6 days at a time to feed and breed.")
+                self.quirks.append(
+                    "Capable of surviving for long periods of time without any nourishment, this aquatic goes dormant for long periods of time, awaking for 3d6 days at a time to feed and breed.")
             if quirkRoll == 8:
-                self.quirks.append("This aquatic breed has volatile genetics and is prone to mutation.")
+                self.quirks.append(
+                    "This aquatic breed has volatile genetics and is prone to mutation.")
                 evoSkillRollModifier += 1
             if quirkRoll == 9 and not quirk9 and not quirk3:
                 quirk9 = True
-                self.quirks.append("Unlike most aquatics, this species reproduces asexually and is never encountered with others of its kind.")
+                self.quirks.append(
+                    "Unlike most aquatics, this species reproduces asexually and is never encountered with others of its kind.")
                 self.pack = 0
                 self.endurance += sum(roll_xdy(1, 6))
             if quirkRoll == 10:
                 quirk10 += 1
-                self.quirks.append("Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
+                self.quirks.append(
+                    "Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
             if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("Unusually bright and clever.")
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6)) + evoSkillRollModifier
             if evoSkillRoll == 1:
@@ -1349,11 +1373,11 @@ class Aquatic(Animal):
             elif evoSkillRoll == 5:
                 socialSkillRolls += 1
             else:
-                exoticWeaponRolls  += 1
+                exoticWeaponRolls += 1
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -1371,7 +1395,7 @@ class Aquatic(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -1389,7 +1413,7 @@ class Aquatic(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         behaviorRoll = sum(roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
@@ -1446,7 +1470,7 @@ class Aquatic(Animal):
                 self.reactionModifier -= 2
 
         self.behavior_effects()
-        
+
         if quirk3 and self.pack < 1:
             self.pack = 1
 
@@ -1461,14 +1485,20 @@ class Aquatic(Animal):
         self.set_number_encountered()
         self.set_initiative()
         self.set_reactions()
-        
+
         if quirk4:
             self.armor = 0
         if quirk9:
             self.pack = 0
         if quirk10 > 0:
-            self.quirks = list(filter(("Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.").__ne__, self.quirks))
-            self.quirks.append("Extremely vicious, this animal gains a +" + str(quirk10) + " DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
+            self.quirks = list(
+                filter(
+                    ("Extremely vicious, this animal gains a +1 DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.").__ne__,
+                    self.quirks))
+            self.quirks.append(
+                "Extremely vicious, this animal gains a +" +
+                str(quirk10) +
+                " DM to all Melee (natural weapons) and damage rolls after it or its opponent suffers damage in combat.")
         if quirk11:
             if self.instinct < 9:
                 self.instinct = 9
@@ -1477,6 +1507,7 @@ class Aquatic(Animal):
 
         if self.intelligence > 2:
             self.intelligence = 2
+
 
 class Avian(Animal):
     """
@@ -1489,15 +1520,16 @@ class Avian(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Avian, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Avian, self).__init__(planet, terrain)
         self.animalClass = "Avian"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.recon = 1
         self.survival = 0
-        
+
         self.primaryMovement = "Fly"
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1505,8 +1537,8 @@ class Avian(Animal):
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
@@ -1530,7 +1562,7 @@ class Avian(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills != 5:
             socialSkillRolls += 1
@@ -1541,7 +1573,7 @@ class Avian(Animal):
         if evoRollSkills >= 4:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -1563,10 +1595,10 @@ class Avian(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk3 = False
         quirk4 = False
@@ -1578,42 +1610,52 @@ class Avian(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
-                self.quirks.append("The plumage of this animal is highly exotic and valuable, exhibiting colours rarely found within its habitat.")
+                self.quirks.append(
+                    "The plumage of this animal is highly exotic and valuable, exhibiting colours rarely found within its habitat.")
             if quirkRoll == 3 and not quirk3:
                 quirk3 = True
-                self.quirks.append("Extremely social, these animals live in immense flocks.")
+                self.quirks.append(
+                    "Extremely social, these animals live in immense flocks.")
             if quirkRoll == 4 and not quirk4:
                 quirk4 = True
-                self.quirks.append("Quite at home on the ground, this species has evolved away from flight.")
+                self.quirks.append(
+                    "Quite at home on the ground, this species has evolved away from flight.")
             if quirkRoll == 5:
-                self.quirks.append("Far smaller than their evolutionary niche would suggest.")
+                self.quirks.append(
+                    "Far smaller than their evolutionary niche would suggest.")
                 self.sizeRollModifier = -4
             if quirkRoll == 6:
-                self.quirks.append("These avians have adapted a very unusual way of dealing with enemies.")
+                self.quirks.append(
+                    "These avians have adapted a very unusual way of dealing with enemies.")
                 exoticWeaponRolls += 1
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
-                self.quirks.append("These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer.")
+                self.quirks.append(
+                    "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer.")
                 self.behaviors.add("Siren")
             if quirkRoll == 8:
-                self.quirks.append("Environmental pressures have forced this animal to adapt to a hostile environment.")
+                self.quirks.append(
+                    "Environmental pressures have forced this animal to adapt to a hostile environment.")
                 self.endurance += 1
                 self.armor += 1
             if quirkRoll == 9 and not quirk9:
                 quirk9 = True
-                self.quirks.append("Not just ground bound, this flightless species thrives because of it.")
+                self.quirks.append(
+                    "Not just ground bound, this flightless species thrives because of it.")
                 self.behaviors.add("Chaser")
                 self.endurance += 1
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
-                self.quirks.append("Possessed of a deadly main attack, these avians are truly vicious and always press their attack once they wound an enemy.")
+                self.quirks.append(
+                    "Possessed of a deadly main attack, these avians are truly vicious and always press their attack once they wound an enemy.")
             if quirkRoll == 11 and not quirk11:
                 quirk11 = True
-                self.quirks.append("These avians mate for life, are never encountered in packs larger than a pair of adults. If one is killed the other will automatically flee if possible.")
+                self.quirks.append(
+                    "These avians mate for life, are never encountered in packs larger than a pair of adults. If one is killed the other will automatically flee if possible.")
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -1631,7 +1673,7 @@ class Avian(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -1649,7 +1691,7 @@ class Avian(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -1667,7 +1709,7 @@ class Avian(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         behaviorRoll = sum(roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
@@ -1719,7 +1761,7 @@ class Avian(Animal):
                 self.reactionModifier -= 1
             else:
                 self.behaviors.add("Reducer")
-                self.reactionModifier -=2
+                self.reactionModifier -= 2
 
         self.behavior_effects()
         self.set_size(self.sizeRoll, self.sizeRollModifier)
@@ -1747,6 +1789,7 @@ class Avian(Animal):
         if self.intelligence > 2:
             self.intelligence = 2
 
+
 class Fungal(Animal):
     """
     Defines a fungal.
@@ -1758,24 +1801,25 @@ class Fungal(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Fungal, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Fungal, self).__init__(planet, terrain)
         self.animalClass = "Fungal"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.stealth = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll == 1:
             self.diet = "Carnivore"
@@ -1796,7 +1840,7 @@ class Fungal(Animal):
             evolutionRollModifier += 1
             physicalSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills <= 4 or evoRollSkills == 7:
             socialSkillRolls += 1
@@ -1807,7 +1851,7 @@ class Fungal(Animal):
         if evoRollSkills >= 4:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -1827,10 +1871,10 @@ class Fungal(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk3 = False
         quirk4 = False
@@ -1844,23 +1888,28 @@ class Fungal(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2:
                 quirk2 = True
-                self.quirks.append("This Fungal is an absolutely bizarre colour and smells rancid. It cannot succeed at Stealth rolls.")
+                self.quirks.append(
+                    "This Fungal is an absolutely bizarre colour and smells rancid. It cannot succeed at Stealth rolls.")
                 exoticWeaponRolls += 1
             if quirkRoll == 3 and not quirk3:
                 quirk3 = True
-                self.quirks.append("Unlike other fungus-based life, this species has developed a rudimentary vocal structure. The sounds it can make may be extremely strange, similar to nothing else found in nature.")
+                self.quirks.append(
+                    "Unlike other fungus-based life, this species has developed a rudimentary vocal structure. The sounds it can make may be extremely strange, similar to nothing else found in nature.")
             if quirkRoll == 4 and not quirk4 and not quirk5:
                 quirk4 = True
-                self.quirks.append("The Fungal can inflate itself with a light gas, allowing for a slow form of flight.")
+                self.quirks.append(
+                    "The Fungal can inflate itself with a light gas, allowing for a slow form of flight.")
                 self.primaryMovement = "Fly"
             if quirkRoll == 5 and not quirk5 and not quirk4 and not quirk11:
                 quirk5 = True
-                self.quirks.append("Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
+                self.quirks.append(
+                    "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
                 self.behaviors.add("Siren")
                 self.primaryMovement = "Stationary"
                 self.endurance += sum(roll_xdy(1, 6))
             if quirkRoll == 6:
-                self.quirks.append("This species propagates very quickly and easily, dwelling in large family structures with its progeny. It is never encountered alone.")
+                self.quirks.append(
+                    "This species propagates very quickly and easily, dwelling in large family structures with its progeny. It is never encountered alone.")
                 self.pack += sum(roll_xdy(1, 6))
             if quirkRoll == 7:
                 quirk7 = True
@@ -1868,23 +1917,26 @@ class Fungal(Animal):
                 self.endurance += sum(roll_xdy(1, 6))
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
-                self.quirks.append("The scent and outlandish appearance of this fungal terrifies other animals.")
+                self.quirks.append(
+                    "The scent and outlandish appearance of this fungal terrifies other animals.")
                 self.behaviors.add("Hijacker")
             if quirkRoll == 9 and not quirk9:
                 quirk9 = True
                 self.quirks.append("Unfortunately for this fungal, its biological structure is extremely nutritious, capable of feeding even carnivores in its environment. When encountered, there is a 50% chance that a predator of another species is also in the area.")
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
-                self.quirks.append("Capable of rapid regrowth from even very small samples, this species must be completely destroyed or it will regenerate completely in 1d6 days.")
+                self.quirks.append(
+                    "Capable of rapid regrowth from even very small samples, this species must be completely destroyed or it will regenerate completely in 1d6 days.")
             if quirkRoll == 11 and not quirk11 and not quirk5:
                 quirk11 = True
-                self.quirks.append("Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts.")
+                self.quirks.append(
+                    "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts.")
                 self.behaviors.add("Pouncer")
                 self.dexterity += 2
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -1902,7 +1954,7 @@ class Fungal(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -1920,7 +1972,7 @@ class Fungal(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -1939,7 +1991,7 @@ class Fungal(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         if not quirk5:
             behaviorRoll = sum(roll_xdy(1, 6))
             if self.diet == "Carnivore":
@@ -2015,6 +2067,7 @@ class Fungal(Animal):
         if self.intelligence > 2:
             self.intelligence = 2
 
+
 class Insect(Animal):
     """
     Defines an insect.
@@ -2026,24 +2079,25 @@ class Insect(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Insect, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Insect, self).__init__(planet, terrain)
         self.animalClass = "Insect"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 3:
             self.diet = "Carnivore"
@@ -2066,7 +2120,7 @@ class Insect(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         physicalSkillRolls += 1
         if evoRollSkills == 6:
@@ -2076,7 +2130,7 @@ class Insect(Animal):
         if evoRollSkills >= 5:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -2096,10 +2150,10 @@ class Insect(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk5 = False
         quirk6 = False
@@ -2112,12 +2166,15 @@ class Insect(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
-                self.quirks.append("Extremely unusual in appearance, these insects have apparently useless and garish physical structures and barely fit in their own ecosystems.")
+                self.quirks.append(
+                    "Extremely unusual in appearance, these insects have apparently useless and garish physical structures and barely fit in their own ecosystems.")
             if quirkRoll == 3:
-                self.quirks.append("Slow moving because of heavy exoskeleton plating, these insects travel at half speed.")
+                self.quirks.append(
+                    "Slow moving because of heavy exoskeleton plating, these insects travel at half speed.")
                 armorQuirkCount += 1
             if quirkRoll == 4:
-                self.quirks.append("This perk granted flying if the insect didn't have it, or takes it away to add strength.")
+                self.quirks.append(
+                    "This perk granted flying if the insect didn't have it, or takes it away to add strength.")
                 if self.primaryMovement == "Fly":
                     self.primaryMovement = "Walk"
                     self.strength += sum(roll_xdy(1, 6))
@@ -2136,7 +2193,8 @@ class Insect(Animal):
                 self.quirks.append("These insects form veritable swarms.")
             if quirkRoll == 6 and not quirk6 and not quirk5:
                 quirk6 = True
-                self.quirks.append("Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus.")
+                self.quirks.append(
+                    "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus.")
                 if self.primaryMovement != "Fly":
                     self.behaviors.add("Trapper")
                 else:
@@ -2146,9 +2204,11 @@ class Insect(Animal):
                 self.quirks.append("Acutely self-aware.")
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
-                self.quirks.append("These insects have a hive mind and a minimum Pack score of 6. One of their number has an Intelligence of 2, all the rest are 0 and serve its will without question.")
+                self.quirks.append(
+                    "These insects have a hive mind and a minimum Pack score of 6. One of their number has an Intelligence of 2, all the rest are 0 and serve its will without question.")
             if quirkRoll == 9:
-                self.quirks.append("Evolved in a particularly dangerous habitat, these insects developed an unusual defence.")
+                self.quirks.append(
+                    "Evolved in a particularly dangerous habitat, these insects developed an unusual defence.")
                 exoticWeaponRolls += 1
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
@@ -2160,7 +2220,7 @@ class Insect(Animal):
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -2179,7 +2239,7 @@ class Insect(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -2197,7 +2257,7 @@ class Insect(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -2217,7 +2277,7 @@ class Insect(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         behaviorRoll = sum(roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
@@ -2292,9 +2352,10 @@ class Insect(Animal):
             self.intelligence = 2
         if quirk8 and self.pack < 6:
             self.pack = 6
-            
+
         if self.intelligence > 2:
             self.intelligence = 2
+
 
 class Mammal(Animal):
     """
@@ -2307,24 +2368,25 @@ class Mammal(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Mammal, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Mammal, self).__init__(planet, terrain)
         self.animalClass = "Mammal"
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.athletics = 0
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 2:
             self.diet = "Carnivore"
@@ -2346,7 +2408,7 @@ class Mammal(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         if evoRollSkills == 1 or 3 <= evoRollSkills <= 4 or evoRollSkills >= 6:
             physicalSkillRolls += 1
@@ -2357,7 +2419,7 @@ class Mammal(Animal):
         if evoRollSkills >= 5:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -2378,14 +2440,13 @@ class Mammal(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk3 = 0
         quirk4 = 0
-        quirk7 = False
         quirk8 = False
         quirk10 = False
         quirk11 = False
@@ -2393,31 +2454,37 @@ class Mammal(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
-                self.quirks.append("This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment.")
+                self.quirks.append(
+                    "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment.")
                 self.behaviors.add("Pouncer")
             if quirkRoll == 3:
                 quirk3 += 1
                 self.quirks.append("Extremely swift.")
             if quirkRoll == 4:
                 quirk4 += 1
-                self.quirks.append("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain one lost Endurance point every other round of combat starting at the beginning of the second round.")
+                self.quirks.append(
+                    "These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain one lost Endurance point every other round of combat starting at the beginning of the second round.")
             if quirkRoll == 5:
-                self.quirks.append("Bright even for its class, these mammals show a devious cunning that borders on compulsive mischief.")
+                self.quirks.append(
+                    "Bright even for its class, these mammals show a devious cunning that borders on compulsive mischief.")
                 self.raise_skill_level("stealth", 1)
                 self.raise_skill_level("deception", 1)
             if quirkRoll == 6:
-                self.quirks.append("Profuse body hair marks this species as a sign of its innate adaptability.")
+                self.quirks.append(
+                    "Profuse body hair marks this species as a sign of its innate adaptability.")
                 self.raise_skill_level("survival", 1)
             if quirkRoll == 7:
-                quirk7 = True
-                self.quirks.append("Herd-oriented and nomadic, these are mostly peaceful mammals.")
+                self.quirks.append(
+                    "Herd-oriented and nomadic, these are mostly peaceful mammals.")
                 self.pack += sum(roll_xdy(1, 6))
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
-                self.quirks.append("These animals have prodigious horns and know how to use them in combat.")
+                self.quirks.append(
+                    "These animals have prodigious horns and know how to use them in combat.")
                 self.weapons.add("Horns")
             if quirkRoll == 9:
-                self.quirks.append("Unusually vicious, these mammals are hostile to any species but their own.")
+                self.quirks.append(
+                    "Unusually vicious, these mammals are hostile to any species but their own.")
                 if "Killer" in self.behaviors:
                     self.reactionModifier += 2
                     self.strength += 2
@@ -2425,17 +2492,19 @@ class Mammal(Animal):
                     self.behaviors.add("Killer")
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
-                self.quirks.append("Adapted to an aquatic environment even if they do not normally live near one.")
+                self.quirks.append(
+                    "Adapted to an aquatic environment even if they do not normally live near one.")
                 self.primaryMovement = "Swim"
             if quirkRoll == 11 and not quirk11:
                 quirk11 = True
-                self.quirks.append("This animal species is on the verge of evolving into sentience.")
+                self.quirks.append(
+                    "This animal species is on the verge of evolving into sentience.")
             if quirkRoll == 12:
                 quirkRolls += 1
 
         extraBehaviorRoll = False
-        
-        #Roll for evolutionary skills.
+
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -2454,7 +2523,7 @@ class Mammal(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -2473,7 +2542,7 @@ class Mammal(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -2492,7 +2561,7 @@ class Mammal(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         behaviorRoll = sum(roll_xdy(1, 6))
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
@@ -2590,7 +2659,7 @@ class Mammal(Animal):
 
         if "Herd-oriented and nomadic, these are mostly peaceful mammals." in self.quirks and self.pack < 2:
             self.pack = 2
-        
+
         self.set_size(self.sizeRoll, self.sizeRollModifier)
         self.set_strength(self.sizeRoll)
         self.set_endurance(self.sizeRoll)
@@ -2608,8 +2677,14 @@ class Mammal(Animal):
             self.dexterity += sum(roll_xdy(1, 6))
             quirk3 -= 1
         if quirk4 > 0:
-            self.quirks = list(filter(("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain one lost Endurance point every other round of combat starting at the beginning of the second round.").__ne__, self.quirks))
-            self.quirks.append("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain " + str(quirk4) + " lost Endurance point every other round of combat starting at the beginning of the second round.")
+            self.quirks = list(
+                filter(
+                    ("These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain one lost Endurance point every other round of combat starting at the beginning of the second round.").__ne__,
+                    self.quirks))
+            self.quirks.append(
+                "These animals have remarkably fast metabolisms, enabling them to recover quickly from injuries. They regain " +
+                str(quirk4) +
+                " lost Endurance point every other round of combat starting at the beginning of the second round.")
         if quirk11:
             if self.intelligence < 2:
                 self.intelligence = 2
@@ -2618,6 +2693,7 @@ class Mammal(Animal):
 
         if self.intelligence > 2:
             self.intelligence = 2
+
 
 class Reptile(Animal):
     """
@@ -2630,24 +2706,25 @@ class Reptile(Animal):
         terrain: String
             The type of terrain that this animal calls home.
     """
-    def __init__ (self, planet, terrain):
-        super(Reptile, self).__init__ (planet, terrain)
+
+    def __init__(self, planet, terrain):
+        super(Reptile, self).__init__(planet, terrain)
         self.animalClass = "Reptile"
         self.armor += 1
-        
-        #Skills this class innately has.
+
+        # Skills this class innately has.
         self.meleeNaturalWeapons = 0
         self.recon = 0
         self.survival = 0
-        
+
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
         exoticWeaponRolls = 0
-        
-        #Determine the diet and modify attributes.
+
+        # Determine the diet and modify attributes.
         dietRoll = sum(roll_xdy(1, 6))
         if dietRoll <= 4:
             self.diet = "Carnivore"
@@ -2670,7 +2747,7 @@ class Reptile(Animal):
             physicalSkillRolls += 1
             socialSkillRolls += 1
 
-        #Determine how many of each type of skill roll will be made.
+        # Determine how many of each type of skill roll will be made.
         evoRollSkills = sum(roll_xdy(1, 6)) + evolutionRollModifier
         physicalSkillRolls += 1
         if evoRollSkills == 4 or evoRollSkills == 6:
@@ -2680,7 +2757,7 @@ class Reptile(Animal):
         if evoRollSkills >= 5:
             evolutionSkillRolls += 1
 
-        #Roll for "other" evolutionary benefits.
+        # Roll for "other" evolutionary benefits.
         evoOtherRolls = 1
         while evoOtherRolls > 0:
             evoRollOther = sum(roll_xdy(1, 6)) + evolutionRollModifier
@@ -2701,10 +2778,10 @@ class Reptile(Animal):
             else:
                 evoOtherRolls += 1
                 continue
-            
+
             evoOtherRolls -= 1
 
-        #Roll for quirks.
+        # Roll for quirks.
         quirk2 = False
         quirk4 = 0
         quirk6 = False
@@ -2715,19 +2792,24 @@ class Reptile(Animal):
             quirkRoll = sum(roll_xdy(2, 6))
             if quirkRoll == 2 and not quirk2:
                 quirk2 = True
-                self.quirks.append("Outlandish colours and adaptations make this reptile a bizarre sight and remarkably intimidating to other non-sentient species.")
+                self.quirks.append(
+                    "Outlandish colours and adaptations make this reptile a bizarre sight and remarkably intimidating to other non-sentient species.")
             if quirkRoll == 3:
-                self.quirks.append("Mottled in appearance and adapted to its surroundings.")
+                self.quirks.append(
+                    "Mottled in appearance and adapted to its surroundings.")
                 self.raise_skill_level("stealth", 1)
             if quirkRoll == 4:
                 quirk4 += 1
-                self.quirks.append("Several of the scales on this reptile are jagged and sharp, letting it inflict 4 + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
+                self.quirks.append(
+                    "Several of the scales on this reptile are jagged and sharp, letting it inflict 4 + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
             if quirkRoll == 5:
-                self.quirks.append("Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals.")
+                self.quirks.append(
+                    "Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals.")
                 self.raise_skill_level("survival", 1)
             if quirkRoll == 6 and not quirk6:
                 quirk6 = True
-                self.quirks.append("This reptile buries itself in its terrain, blending in and waiting for prey to ensnare.")
+                self.quirks.append(
+                    "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare.")
                 dietRoll = sum(roll_xdy(1, 5))
                 if dietRoll == 5:
                     self.diet = "Carnivore"
@@ -2739,24 +2821,28 @@ class Reptile(Animal):
                 self.raise_skill_level("stealth", 1)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
-                self.quirks.append("These reptiles see heat, allowing them to have normal vision even in total darkness.")
+                self.quirks.append(
+                    "These reptiles see heat, allowing them to have normal vision even in total darkness.")
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("Capable of flying, these reptiles have adapted body structures that generate heat through wind friction, allowing them to stay warm during flight. They do not sleep, they never land intentionally and will die within 1d6 hours if grounded.")
                 self.primaryMovement = "Fly"
             if quirkRoll == 9:
                 quirk9 += 1
-                self.quirks.append("Unlike other reptiles, these animals have no scales and rely on a dense hide for defence.")
+                self.quirks.append(
+                    "Unlike other reptiles, these animals have no scales and rely on a dense hide for defence.")
             if quirkRoll == 10:
-                self.quirks.append("An oddity even within an evolutionarily diverse class, this reptile has a very complex genetic history.")
+                self.quirks.append(
+                    "An oddity even within an evolutionarily diverse class, this reptile has a very complex genetic history.")
                 exoticWeaponRolls += 2
             if quirkRoll == 11:
-                self.quirks.append("Relative safety in its environment has allowed this species to evolve mentally.")
+                self.quirks.append(
+                    "Relative safety in its environment has allowed this species to evolve mentally.")
                 self.intelligence += 1
             if quirkRoll == 12:
                 quirkRolls += 1
 
-        #Roll for evolutionary skills.
+        # Roll for evolutionary skills.
         while evolutionSkillRolls > 0:
             evoSkillRoll = sum(roll_xdy(1, 6))
             if evoSkillRoll == 1:
@@ -2775,7 +2861,7 @@ class Reptile(Animal):
 
             evolutionSkillRolls -= 1
 
-        #Roll for social skills.
+        # Roll for social skills.
         while socialSkillRolls > 0:
             socialSkillRoll = sum(roll_xdy(1, 6))
             if socialSkillRoll == 1:
@@ -2794,7 +2880,7 @@ class Reptile(Animal):
 
             socialSkillRolls -= 1
 
-        #Roll for physical skills.
+        # Roll for physical skills.
         while physicalSkillRolls > 0:
             physicalSkillRoll = sum(roll_xdy(1, 6))
             if physicalSkillRoll == 1:
@@ -2813,7 +2899,7 @@ class Reptile(Animal):
 
             physicalSkillRolls -= 1
 
-        #Roll for a behavior.
+        # Roll for a behavior.
         if not quirk6:
             behaviorRoll = sum(roll_xdy(1, 6))
             if self.diet == "Carnivore":
@@ -2880,8 +2966,14 @@ class Reptile(Animal):
         self.set_reactions()
 
         if quirk4 > 0:
-            self.quirks = list(filter(("Several of the scales on this reptile are jagged and sharp, letting it inflict 4 + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.").__ne__, self.quirks))
-            self.quirks.append("Several of the scales on this reptile are jagged and sharp, letting it inflict " + str(4 * quirk4) + " + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
+            self.quirks = list(
+                filter(
+                    ("Several of the scales on this reptile are jagged and sharp, letting it inflict 4 + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.").__ne__,
+                    self.quirks))
+            self.quirks.append(
+                "Several of the scales on this reptile are jagged and sharp, letting it inflict " +
+                str(4 * quirk4) +
+                    " + the Effect in damage when it grapples. This becomes its main way to hunt if the animal eats live prey.")
         while quirk9 > 0:
             self.dexterity += sum(roll_xdy(1, 6))
             self.armor = self.armor / 2

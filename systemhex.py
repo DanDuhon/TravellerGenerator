@@ -1,7 +1,9 @@
 import itertools
 
 import star
+import planet
 import namegenerator
+import alien
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -9,6 +11,7 @@ allSystems = []
 allCoordinates = {}
 
 numberOfStarsTable = LookupTable((10, 1), (15, 2), (21, 3))
+
 
 class System():
     """
@@ -38,59 +41,72 @@ class System():
             passed along through the planet to the alien module to determine
             the tech level of each species.
     """
-    def __init__ (self, horizontalCoord, verticalCoord, openClusterBonus, alienSurvivalPercent, maxTechLevel):
+
+    def __init__(
+            self,
+            horizontalCoord,
+            verticalCoord,
+            openClusterBonus,
+            alienSurvivalPercent,
+            maxTechLevel):
         allSystems.append(self)
         self.horizontalCoord = horizontalCoord
         self.verticalCoord = verticalCoord
         self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
-        allCoordinates[(self.horizontalCoord, self.verticalCoord)] = self
+        self.coordinates = (self.horizontalCoord,
+                            self.verticalCoord,
+                            self.cubeCoord)
+        allCoordinates[(self.horizontalCoord,
+                        self.verticalCoord,
+                        self.cubeCoord)] = self
         self.age = sum(roll_xdy(3, 6)) - 3
-        self.name = namegenerator.alienNGrams.generate_name()
-
-        #This lists the system coordinates that are x hexes distant from this system,
-        #where x is the dictionary key. Coordinates will be listed even if there is
-        #no System for those coordinates.
-        self.systemsAtRange = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
-        for k in self.systemsAtRange.keys():
-            self.systemsAtRange[k] = [ (s[0], s[1]) for s in list(itertools.product(*[ [ x for x in range(self.horizontalCoord - k, self.horizontalCoord + k + 1) ],
-                                                                                       [ x for x in range(self.verticalCoord - k, self.verticalCoord + k + 1) ],
-                                                                                       [ x for x in range(self.cubeCoord - k, self.cubeCoord + k + 1) ] ])) if s[0] + s[1] + s[2] == 0 ]
+        self.name = namegenerator.astralNGrams.generate_name()
+        self.distanceFromAlienHomeSystem = {}
+        self.fuelAvailable = False
 
         if sum(roll_xdy(1, 2)) == 1:
-            self.numberOfStars = numberOfStarsTable[sum(roll_xdy(3, 6)) + openClusterBonus]
+            self.numberOfStars = numberOfStarsTable[sum(
+                roll_xdy(3, 6)) + openClusterBonus]
         else:
             self.numberOfStars = 0
-        
+
         if sum(roll_xdy(1, 2)) == 1:
             self.brownDwarf = True
         else:
             self.brownDwarf = False
-            
+
         self.stars = []
-        #Only the primary star and automatic brown dwarf are created at this level.
-        #Companion stars to the primary star will be created from within the Star class.
+        # Only the primary star and automatic brown dwarf are created at this level.
+        # Companion stars to the primary star will be created from within the
+        # Star class.
         if self.numberOfStars > 0:
             self.stars.append(star.Star(
-                systemHex = self,
-                systemName = self.name,
-                systemAge = self.age,
-                starNumber = 1,
-                alienSurvivalPercent = alienSurvivalPercent,
-                maxTechLevel = maxTechLevel,
-                primary = True,
-                numberOfStars = self.numberOfStars))
+                systemHex=self,
+                systemName=self.name,
+                systemAge=self.age,
+                starNumber=1,
+                alienSurvivalPercent=alienSurvivalPercent,
+                maxTechLevel=maxTechLevel,
+                primary=True,
+                numberOfStars=self.numberOfStars))
             self.stars.extend(self.stars[0].companions)
         if self.brownDwarf:
             self.numberOfStars += 1
             self.stars.append(star.Star(
-                systemHex = self,
-                systemName = self.name,
-                systemAge = self.age,
-                starNumber = self.numberOfStars,
-                alienSurvivalPercent = alienSurvivalPercent,
-                maxTechLevel = maxTechLevel,
-                autoBrownDwarf = self.brownDwarf,
-                primaryOrbit = "Distant"))
+                systemHex=self,
+                systemName=self.name,
+                systemAge=self.age,
+                starNumber=self.numberOfStars,
+                alienSurvivalPercent=alienSurvivalPercent,
+                maxTechLevel=maxTechLevel,
+                autoBrownDwarf=self.brownDwarf,
+                primaryOrbit="Distant"))
+
+        self.flareStarDesirabilityPenalty = 0
+        for s in self.stars:
+            if s.luminosityClass == "M-Ve":
+                self.flareStarDesirabilityPenalty = sum(roll_xdy(1, 3))
+                break
 
         self.planets = []
         self.animals = []
@@ -103,7 +119,45 @@ class System():
                 if planetInstance.alien is not None:
                     self.homeSystemOfAliens.append(planetInstance.alien)
 
-def distance_between_systems (system1, system2):
+        for p in self.planets:
+            if isinstance(p, planet.JovianPlanet) or p.chemistry == "Water":
+                self.fuelAvailable = True
+                break
+
+        for a in alien.allAliens:
+            self.distanceFromAlienHomeSystem[a] = distance_between_systems(self, a.homePlanet.systemHex)
+        self.systemsAtRange = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
+        for k in self.systemsAtRange:
+            for x in range(-k, k + 1):
+                for y in range(max(-k, -x - k), min(k, -x + k) + 1):
+                    self.systemsAtRange[k].append((self.horizontalCoord + x, self.verticalCoord + y))
+
+    def create_surrounding_systems(
+            self,
+            openClusterTuple,
+            alienSurvivalPercent,
+            maxTechLevel,
+            maxReactionModifier):
+        hexRange = (3 + maxReactionModifier) * (maxTechLevel - 9)
+        for x in range(-hexRange, hexRange + 1):
+            for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
+                if (self.horizontalCoord + x, self.verticalCoord + y, ((self.horizontalCoord + x) * -1) - (self.verticalCoord + y)) not in allCoordinates:
+                    h = self.horizontalCoord + x
+                    v = self.verticalCoord + y
+                    openClusterBonus = 0
+                    if openClusterTuple[0] and h >= openClusterTuple[2] and openClusterTuple[1] and v >= openClusterTuple[2]:
+                        openClusterBonus = 3
+                    elif not openClusterTuple[0] and h <= openClusterTuple[2] and not openClusterTuple[1] and v <= openClusterTuple[2]:
+                        openClusterBonus = 3
+                    System(
+                        self.horizontalCoord + x,
+                        self.verticalCoord + y,
+                        openClusterBonus,
+                        alienSurvivalPercent,
+                        maxTechLevel)
+
+
+def distance_between_systems(system1, system2):
     """
     Calculates the distance between two Systems.  This is the absolute
     shortest route, not necessarily the route that is traversable by
