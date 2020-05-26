@@ -1,6 +1,15 @@
 import random
 import json
 
+def save(obj):
+    for x in inspect.getmembers(object):
+        if x[0].startswith('_'):
+            print("Dunder", x)
+            continue
+        if inspect.ismethod(x[1]):
+            print("Method", x)
+            continue
+        print("Property", x)
 
 class System:
     def __init__(self):
@@ -67,3 +76,4 @@ system = System()
 system.save('file2.trav')
 system.load('file1.trav')
 system.save('file3.trav')
+save(system)
