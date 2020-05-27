@@ -37,9 +37,6 @@ def dwarf_satellites(group, roll1, roll2):
             return roll1
 
 
-
-
-
 def planet_chemistry_age_modifier_class_type(
         category, luminosityClass, orbitType, biosphere):
     """
@@ -900,16 +897,13 @@ class OrbitalBody():
 
     def __init__(
             self,
-            starInstance,
+            star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge):
+            orbitType):
         allPlanets.append(self)
-        self.systemHex = starInstance.systemHex
-        self.star = starInstance
+        self.systemHex = star.systemHex
+        self.star = star
         self.parentObject = parentObject
         self.order = order
         self.orbitType = orbitType
@@ -931,7 +925,7 @@ class OrbitalBody():
         self.settlement = 0
         self.terraformingAlien = None
 
-        if parentObject == starInstance:
+        if parentObject == self.star:
             self.name = parentObject.name + " " + str(order)
         else:
             self.name = parentObject.name + "-" + str(len(parentObject.satellites) + 1)
@@ -1211,6 +1205,7 @@ class OrbitalBody():
             alien: Alien class instance
                 The alien doing the terraforming.
         """
+        
         # If there's no chemistry, nothing has to be changed, it just happens
         # as part of terraforming
         if not self.chemistry:
@@ -1273,33 +1268,36 @@ class OrbitalBody():
                 self.hydrosphere -= 1
                 return
             # Lower Atmosphere if it's too high
-            if any(alien.homePlanet.atmosphere == 2 and self.atmosphere > 4,
+            if any([alien.homePlanet.atmosphere == 2 and self.atmosphere > 4,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere > 5,
                     alien.homePlanet.atmosphere == 4 and self.atmosphere > 7,
                     alien.homePlanet.atmosphere == 5 and self.atmosphere > 6,
                     alien.homePlanet.atmosphere == 6 and self.atmosphere > 8,
                     alien.homePlanet.atmosphere == 7 and self.atmosphere > 9,
                     alien.homePlanet.atmosphere == 8 and self.atmosphere > 9,
-                    alien.homePlanet.atmosphere == 9 and self.atmosphere > 9):
+                    alien.homePlanet.atmosphere == 9 and self.atmosphere > 9]):
                 self.atmosphere -= 1
                 return
             # Raise Atmosphere if it's too low
-            if any(alien.homePlanet.atmosphere == 2 and self.atmosphere < 2,
+            if any([alien.homePlanet.atmosphere == 2 and self.atmosphere < 2,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere < 3,
                     alien.homePlanet.atmosphere == 4 and self.atmosphere < 2,
                     alien.homePlanet.atmosphere == 5 and self.atmosphere < 3,
                     alien.homePlanet.atmosphere == 6 and self.atmosphere < 5,
-                    alien.homePlanet.atmosphere == 7 and self.atmosphere < 4):
+                    alien.homePlanet.atmosphere == 7 and self.atmosphere < 4]):
                 self.atmosphere += 1
                 return
 
         # Get the Atmosphere to match the homeworld's
         if self.atmosphere > alien.homePlanet.atmosphere:
             self.atmosphere -= 1
-            return
+            return True
         elif self.atmosphere < alien.homePlanet.atmosphere:
             self.atmosphere += 1
             return
+
+        return
+        
 
     def planet_terrain_animals(self):
         """
@@ -1454,21 +1452,15 @@ class DwarfPlanet(OrbitalBody):
             parentObject,
             order,
             orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge,
             alienSurvivalPercent,
             maxTechLevel):
         super(DwarfPlanet, self).__init__(
             star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge)
+            orbitType)
 
-        if expansionAffectedOrbits >= order:
+        if self.star.expansionAffectedOrbits >= order:
             self.category = "Stygian"
         else:
             self.category = dwarf_category(self.orbitType, self.parentObject)
@@ -1476,7 +1468,7 @@ class DwarfPlanet(OrbitalBody):
         self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
-            systemAge, luminosityClass)
+            self.systemHex.age, self.star.luminosityClass)
 
         self.planet_terrain_animals()
 
@@ -1490,9 +1482,6 @@ class DwarfPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
 
@@ -1511,19 +1500,14 @@ class AsteroidBelt(OrbitalBody):
             parentObject,
             order,
             orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge,
             alienSurvivalPercent,
             maxTechLevel):
         super(AsteroidBelt, self).__init__(
             star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge)
+            orbitType)
+        
         self.category = "Asteroid Belt"
         self.size = 0
         self.className = "Asteroid Belt"
@@ -1541,9 +1525,6 @@ class AsteroidBelt(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
 
@@ -1599,21 +1580,15 @@ class TerrestrialPlanet(OrbitalBody):
             parentObject,
             order,
             orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge,
             alienSurvivalPercent,
             maxTechLevel):
         super(TerrestrialPlanet, self).__init__(
             star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge)
+            orbitType)
 
-        if expansionAffectedOrbits >= order:
+        if self.star.expansionAffectedOrbits >= order:
             self.category = "Acheronian"
         else:
             self.category = terrestrial_category(
@@ -1622,7 +1597,7 @@ class TerrestrialPlanet(OrbitalBody):
         self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
-            systemAge, luminosityClass)
+            self.systemHex.age, self.star.luminosityClass)
 
         self.planet_terrain_animals()
 
@@ -1636,9 +1611,6 @@ class TerrestrialPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
 
@@ -1662,21 +1634,15 @@ class HelianPlanet(OrbitalBody):
             parentObject,
             order,
             orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge,
             alienSurvivalPercent,
             maxTechLevel):
         super(HelianPlanet, self).__init__(
             star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge)
+            orbitType)
 
-        if expansionAffectedOrbits >= order:
+        if self.star.expansionAffectedOrbits >= order:
             self.category = "Asphodelian"
         else:
             self.category = helian_category(self.orbitType)
@@ -1684,7 +1650,7 @@ class HelianPlanet(OrbitalBody):
         self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
-            systemAge, luminosityClass)
+            self.systemHex.age, self.star.luminosityClass)
 
         self.planet_terrain_animals()
 
@@ -1705,9 +1671,6 @@ class HelianPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
         if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
@@ -1717,9 +1680,6 @@ class HelianPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
 
@@ -1745,21 +1705,15 @@ class JovianPlanet(OrbitalBody):
             parentObject,
             order,
             orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge,
             alienSurvivalPercent,
             maxTechLevel):
         super(JovianPlanet, self).__init__(
             star,
             parentObject,
             order,
-            orbitType,
-            luminosityClass,
-            expansionAffectedOrbits,
-            systemAge)
+            orbitType)
 
-        if expansionAffectedOrbits >= order:
+        if self.star.expansionAffectedOrbits >= order:
             self.category = "Chthonian"
         else:
             self.category = jovian_category(self.orbitType)
@@ -1767,7 +1721,7 @@ class JovianPlanet(OrbitalBody):
         self.set_planetSize()
 
         self.set_class_chemistry_atmosphere_hydrosphere_biosphere(
-            systemAge, luminosityClass)
+            self.systemHex.age, self.star.luminosityClass)
 
         if roll_xdy(1, 6) <= 4:
             self.ringSystem = "Minor"
@@ -1789,9 +1743,6 @@ class JovianPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
         if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
@@ -1801,9 +1752,6 @@ class JovianPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
         if satelliteRoll2 == 6 and satelliteRoll3 == 6:
@@ -1813,9 +1761,6 @@ class JovianPlanet(OrbitalBody):
                     parentObject=self,
                     order=self.order,
                     orbitType=self.orbitType,
-                    luminosityClass=luminosityClass,
-                    expansionAffectedOrbits=expansionAffectedOrbits,
-                    systemAge=systemAge,
                     alienSurvivalPercent=alienSurvivalPercent,
                     maxTechLevel=maxTechLevel))
 

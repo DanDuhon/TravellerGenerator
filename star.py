@@ -126,8 +126,6 @@ class Star():
     Requied Parameters:
         systemHex: SystemHex class
             The system in which the star is located.
-        systemName: String
-            The name of the system, used to name the star.
         starNumber: Integer
             Indicates the number of the star.  1 is the primary star.
         alienSurvivalPercent: Integer
@@ -147,11 +145,6 @@ class Star():
         numberOfStars: Integer. Generated in the systemhex module, this
             determines star naming and whether companion stars need to be
             generated.
-            Default: 0
-        systemAge: Integer
-            Generated in the systemhex module, this is a representation of how
-            old the stars in this system are and helps determine luminosity
-            class.
             Default: 0
         primary: Boolean
             Indicates whether this star is the primary star of the system.
@@ -175,8 +168,6 @@ class Star():
     def __init__(
             self,
             systemHex,
-            systemName,
-            systemAge,
             starNumber,
             alienSurvivalPercent,
             maxTechLevel,
@@ -191,7 +182,7 @@ class Star():
         # The name of a star is the name of the system hex.
         # If there is more than one star in a system, a roman numeral is
         # appended.
-        self.name = systemName + num[starNumber]
+        self.name = systemHex.name + num[starNumber]
         self.starNumber = starNumber
         self.epistellarOrbits = 0
         self.innerZoneOrbits = 0
@@ -213,11 +204,12 @@ class Star():
             self.spectralType = spectralTypeTable[spectralTypeRoll]
 
         if self.spectralType in ["A", "F", "G"]:
-            if (self.spectralType == "A" and systemAge == 3) or (self.spectralType ==
-                                                                 "F" and systemAge == 6) or (self.spectralType == "G" and 12 <= systemAge <= 13):
-                self.luminosityClass = luminosityClassDict[self.spectralType][systemAge][roll_xdy(1, 6)]
+            if ((self.spectralType == "A" and systemHex.age == 3)
+                or (self.spectralType == "F" and systemHex.age == 6)
+                or (self.spectralType == "G" and 12 <= systemHex.age <= 13)):
+                self.luminosityClass = luminosityClassDict[self.spectralType][systemHex.age][roll_xdy(1, 6)]
             else:
-                self.luminosityClass = luminosityClassDict[self.spectralType][systemAge]
+                self.luminosityClass = luminosityClassDict[self.spectralType][systemHex.age]
         elif self.spectralType == "M":
             self.luminosityClass = luminosityClassDict[self.spectralType][roll_xdy(2, 6)]
         else:
@@ -237,11 +229,9 @@ class Star():
                 self.companions.append(
                     Star(
                         systemHex=self.systemHex,
-                        systemName=systemName,
                         starNumber=2,
                         alienSurvivalPercent=alienSurvivalPercent,
                         maxTechLevel=maxTechLevel,
-                        systemAge=systemAge,
                         primaryOrbit=self.companion1Orbit,
                         primarySpectralTypeRoll=spectralTypeRoll))
             else:
@@ -252,11 +242,9 @@ class Star():
                 self.companions.append(
                     Star(
                         systemHex=self.systemHex,
-                        systemName=systemName,
                         starNumber=3,
                         alienSurvivalPercent=alienSurvivalPercent,
                         maxTechLevel=maxTechLevel,
-                        systemAge=systemAge,
                         primaryOrbit=self.companion2Orbit,
                         primarySpectralTypeRoll=spectralTypeRoll))
             else:
@@ -279,6 +267,10 @@ class Star():
                 self.outerZoneOrbits = outer_zone_orbits(self.luminosityClass)
         # Companion stars with a Distant distance and automatic brown dwarf
         # stars have their own planetary systems.
+        # Companion stars that are closer to the primary star than "Distant"
+        # do not have their own planetary systems.  Planets that orbit the
+        # primary star also orbit the companion star(s) but for organizational
+        # purposes we only track the planets under the primary star.
         elif primaryOrbit == "Distant" or autoBrownDwarf:
             self.epistellarOrbits = epistellar_orbits(self.luminosityClass)
             self.innerZoneOrbits = inner_zone_orbits(self.luminosityClass)
@@ -308,9 +300,6 @@ class Star():
                             parentObject=self,
                             order=orbit + 1,
                             orbitType=orbitType,
-                            luminosityClass=self.luminosityClass,
-                            expansionAffectedOrbits=self.expansionAffectedOrbits,
-                            systemAge=systemAge,
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel))
                 elif roll == 2:
@@ -320,9 +309,6 @@ class Star():
                             parentObject=self,
                             order=orbit + 1,
                             orbitType=orbitType,
-                            luminosityClass=self.luminosityClass,
-                            expansionAffectedOrbits=self.expansionAffectedOrbits,
-                            systemAge=systemAge,
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel))
                 elif roll == 3:
@@ -332,9 +318,6 @@ class Star():
                             parentObject=self,
                             order=orbit + 1,
                             orbitType=orbitType,
-                            luminosityClass=self.luminosityClass,
-                            expansionAffectedOrbits=self.expansionAffectedOrbits,
-                            systemAge=systemAge,
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel))
                 elif roll == 4:
@@ -344,9 +327,6 @@ class Star():
                             parentObject=self,
                             order=orbit + 1,
                             orbitType=orbitType,
-                            luminosityClass=self.luminosityClass,
-                            expansionAffectedOrbits=self.expansionAffectedOrbits,
-                            systemAge=systemAge,
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel))
                 else:
@@ -356,25 +336,5 @@ class Star():
                             parentObject=self,
                             order=orbit + 1,
                             orbitType=orbitType,
-                            luminosityClass=self.luminosityClass,
-                            expansionAffectedOrbits=self.expansionAffectedOrbits,
-                            systemAge=systemAge,
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel))
-        else:
-            # Companion stars that are closer to the primary star than "Distant"
-            # do not have their own planetary systems.  Planets that orbit the
-            # primary star also orbit the companion star(s).
-            self.planets = primaryPlanets
-
-        for planetInstance in self.planets:
-            self.planets.extend(planetInstance.satellites)
-
-        self.animals = []
-        for planetInstance in self.planets:
-            self.animals.extend(planetInstance.animals)
-
-        self.homeStarOfAliens = []
-        for planetInstance in self.planets:
-            if planetInstance.alien is not None:
-                self.homeStarOfAliens.append(planetInstance.alien)

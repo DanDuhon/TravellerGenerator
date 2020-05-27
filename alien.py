@@ -149,9 +149,6 @@ def create_terra_luna_humans(star, maxTechLevel):
         parentObject=star,
         order=star.epistellarOrbits + star.innerZoneOrbits + 1,
         orbitType="Inner Zone",
-        luminosityClass=star.luminosityClass,
-        expansionAffectedOrbits=0,
-        systemAge=0,
         alienSurvivalPercent=0,
         maxTechLevel=maxTechLevel)
 
@@ -198,9 +195,6 @@ def create_terra_luna_humans(star, maxTechLevel):
         parentObject=terra,
         order=terra.order,
         orbitType="Inner Zone",
-        luminosityClass=star.luminosityClass,
-        expansionAffectedOrbits=0,
-        systemAge=0,
         alienSurvivalPercent=0,
         maxTechLevel=maxTechLevel)
 

@@ -75,14 +75,14 @@ class System():
             self.brownDwarf = False
 
         self.stars = []
+        self.planets = []
+        
         # Only the primary star and automatic brown dwarf are created at this level.
         # Companion stars to the primary star will be created from within the
         # Star class.
         if self.numberOfStars > 0:
             self.stars.append(star.Star(
                 systemHex=self,
-                systemName=self.name,
-                systemAge=self.age,
                 starNumber=1,
                 alienSurvivalPercent=alienSurvivalPercent,
                 maxTechLevel=maxTechLevel,
@@ -93,8 +93,6 @@ class System():
             self.numberOfStars += 1
             self.stars.append(star.Star(
                 systemHex=self,
-                systemName=self.name,
-                systemAge=self.age,
                 starNumber=self.numberOfStars,
                 alienSurvivalPercent=alienSurvivalPercent,
                 maxTechLevel=maxTechLevel,
@@ -105,22 +103,6 @@ class System():
         for s in self.stars:
             if s.luminosityClass == "M-Ve":
                 self.flareStarDesirabilityPenalty = roll_xdy(1, 3)
-                break
-
-        self.planets = []
-        self.animals = []
-        self.homeSystemOfAliens = []
-        for starInstance in self.stars:
-            self.planets.extend(starInstance.planets)
-
-            for planetInstance in starInstance.planets:
-                self.animals.extend(planetInstance.animals)
-                if planetInstance.alien is not None:
-                    self.homeSystemOfAliens.append(planetInstance.alien)
-
-        for p in self.planets:
-            if isinstance(p, planet.JovianPlanet) or p.chemistry == "Water":
-                self.fuelAvailable = True
                 break
 
         for a in alien.allAliens:
