@@ -46,88 +46,51 @@ companionOrbitTable = LookupTable((2, "Tight"),
                                   (6, "Distant"))
 
 
-def epistellar_orbits(luminosityClass):
-    """
-    Returns the number of objects closely orbiting the star
-    based on the star's luminosity class.
-
-    Parameters:
-        luminosityClass: String
-        Single letter luminosity class of the star.
-
-    Returns integer
-    """
-    if luminosityClass in ["L", "D", "K-III", "M-III"]:
-        return 0
-    else:
-        roll = roll_xdy(1, 6) - 3
-        if luminosityClass == "M-V":
-            roll -= 1
-
-        if roll > 2:
-            return 2
-        elif roll < 0:
-            return 0
-        else:
-            return roll
+def create_primary_star(
+        systemHex,
+        alienSurvivalPercent,
+        maxTechLevel):
+    Star(
+        systemHex=systemHex,
+        alienSurvivalPercent=alienSurvivalPercent,
+        maxTechLevel=maxTechLevel,
+        primary=True)
 
 
-def inner_zone_orbits(luminosityClass):
-    """
-    Returns the number of objects orbiting a star in the "inner zone",
-    or "Goldilock's zone", based on the star's luminosity class.
-
-    Parameters:
-        luminosityClass: String
-        Single letter luminosity class of the star.
-
-    Returns integer
-    """
-    if luminosityClass == "L":
-        return roll_xdy(1, 3) - 1
-    else:
-        roll = roll_xdy(1, 6) - 1
-        if luminosityClass == "M-V":
-            roll -= 1
-
-        if roll < 0:
-            return 0
-        else:
-            return roll
+def create_companion_star(
+        systemHex,
+        alienSurvivalPercent,
+        maxTechLevel,
+        primaryOrbit,
+        primarySpectralTypeRoll):
+    Star(
+        systemHex=systemHex,
+        alienSurvivalPercent=alienSurvivalPercent,
+        maxTechLevel=maxTechLevel,
+        primaryOrbit=primaryOrbit,
+        primarySpectralTypeRoll=primarySpectralTypeRoll)
 
 
-def outer_zone_orbits(luminosityClass):
-    """
-    Returns the number of objects orbiting a star in the outer zone
-    based on the star's luminosity class.
-
-    Parameters:
-        luminosityClass: String
-        Single letter luminosity class of the star.
-
-    Returns integer
-    """
-    roll = roll_xdy(1, 6) - 1
-    if luminosityClass in ["L", "M-V"]:
-        roll -= 1
-
-    if roll < 0:
-        return 0
-    else:
-        return roll
+def create_brown_dwarf_star(
+        systemHex,
+        alienSurvivalPercent,
+        maxTechLevel):
+    Star(
+        systemHex=systemHex,
+        alienSurvivalPercent=alienSurvivalPercent,
+        maxTechLevel=maxTechLevel,
+        autoBrownDwarf=True)
 
 
 class Star():
     """
-    Defines a star.  A primary star will also generate companion stars, if any.
-    Primary stars, automatic brown dwarf stars, and companion stars that are
-    "Distant" from the primary star generate the planets that orbit them.
+    Defines a star.  Primary stars, automatic brown dwarf stars, and
+    companion stars that are "Distant" from the primary star generate
+    the planets that orbit them.
 
-    Requied Parameters:
+    Required Parameters:
         systemHex: SystemHex class
             The system in which the star is located.
-        starNumber: Integer
-            Indicates the number of the star.  1 is the primary star.
         alienSurvivalPercent: Integer
             Represents a percentage. This gets passed along through to the
             planets and then aliens to determine how likely it is that the
@@ -142,10 +105,6 @@ class Star():
             Indicates whether this star is an "automatic brown dwarf".  Each
             system has a 50% chance of having one of these.
             Default: False
-        numberOfStars: Integer. Generated in the systemhex module, this
-            determines star naming and whether companion stars need to be
-            generated.
-            Default: 0
         primary: Boolean
             Indicates whether this star is the primary star of the system.
             Primary stars have companion stars and being a primary star
@@ -159,49 +118,43 @@ class Star():
             The spectral type roll of the primary star. This is used to
             determine the spectral type of companion stars.
             Default: 0
-        primaryPlanets: List of Planet class instances
-            If a star is not distant enough from the primary star, the planets
-            that orbit the primary star also orbit this companion.
-            Default: empty list
     """
 
     def __init__(
             self,
             systemHex,
-            starNumber,
             alienSurvivalPercent,
             maxTechLevel,
             autoBrownDwarf=False,
-            numberOfStars=0,
             primary=False,
             primaryOrbit=None,
-            primarySpectralTypeRoll=0,
-            primaryPlanets=[]):
+            primarySpectralTypeRoll=0):
         allStars.append(self)
         self.systemHex = systemHex
+        self.systemHex.stars.append(self)
         # The name of a star is the name of the system hex.
         # If there is more than one star in a system, a roman numeral is
         # appended.
-        self.name = systemHex.name + num[starNumber]
-        self.starNumber = starNumber
+        self.name = systemHex.name + num[len(systemHex.stars)]
         self.epistellarOrbits = 0
         self.innerZoneOrbits = 0
         self.outerZoneOrbits = 0
         self.primaryOrbit = primaryOrbit
-        self.companions = []
+        self.companionOrbits = []
+        self.planets = []
 
         # The primary star rolls 2d6 for spectral type.
         # Companion stars roll 1d6 - 1 + the spetral type roll of the primary
         # star.
         if not primary and not autoBrownDwarf:
-            spectralTypeRoll = primarySpectralTypeRoll + roll_xdy(1, 6) - 1
+            self.spectralTypeRoll = primarySpectralTypeRoll + roll_xdy(1, 6) - 1
         else:
-            spectralTypeRoll = roll_xdy(2, 6)
+            self.spectralTypeRoll = roll_xdy(2, 6)
 
         if autoBrownDwarf:
             self.spectralType = "L"
         else:
-            self.spectralType = spectralTypeTable[spectralTypeRoll]
+            self.spectralType = spectralTypeTable[self.spectralTypeRoll]
 
         if self.spectralType in ["A", "F", "G"]:
             if ((self.spectralType == "A" and systemHex.age == 3)
@@ -215,56 +168,34 @@ class Star():
         else:
             self.luminosityClass = luminosityClassDict[self.spectralType]
 
-        # Stars of these luminosity classes are expanding into supergiants.
-        # This has a detrimental effect on some of the planets that orbit it,
-        # since the temperature would greatly increase.
+        # Stars of these luminosity classes expanded or are expanding into
+        # supergiants. This has a detrimental effect on some of the planets
+        # that orbit it.
         if self.luminosityClass in ["D", "K-III", "M-III"]:
             self.expansionAffectedOrbits = roll_xdy(1, 6)
         else:
             self.expansionAffectedOrbits = 0
 
         if primary:
-            if numberOfStars > 1:
-                self.companion1Orbit = companionOrbitTable[roll_xdy(1, 6)]
-                self.companions.append(
-                    Star(
-                        systemHex=self.systemHex,
-                        starNumber=2,
-                        alienSurvivalPercent=alienSurvivalPercent,
-                        maxTechLevel=maxTechLevel,
-                        primaryOrbit=self.companion1Orbit,
-                        primarySpectralTypeRoll=spectralTypeRoll))
-            else:
-                self.companion1Orbit = None
+            for _ in range(1, self.systemHex.numberOfStars + 1):
+                self.companionOrbits.append(companionOrbitTable[roll_xdy(1, 6)])
 
-            if numberOfStars > 2:
-                self.companion2Orbit = companionOrbitTable[roll_xdy(1, 6)]
-                self.companions.append(
-                    Star(
-                        systemHex=self.systemHex,
-                        starNumber=3,
-                        alienSurvivalPercent=alienSurvivalPercent,
-                        maxTechLevel=maxTechLevel,
-                        primaryOrbit=self.companion2Orbit,
-                        primarySpectralTypeRoll=spectralTypeRoll))
-            else:
-                self.companion2Orbit = None
-
-            self.epistellarOrbits = epistellar_orbits(self.luminosityClass)
+            self.epistellarOrbits = self.epistellar_orbits()
 
             # Stars with a Close distance companion star cannot have Inner Zone
             # orbits.
-            if self.companion1Orbit == "Close" or self.companion2Orbit == "Close":
+            if "Close" in self.companionOrbits:
                 self.innerZoneOrbits = 0
             else:
-                self.innerZoneOrbits = inner_zone_orbits(self.luminosityClass)
+                self.innerZoneOrbits = self.inner_zone_orbits()
 
             # Stars with a Moderate distance companion star cannot have Outer
             # Zone orbits.
-            if self.companion1Orbit == "Moderate" or self.companion2Orbit == "Moderate":
+            if "Moderate" in self.companionOrbits:
                 self.outerZoneOrbits = 0
             else:
-                self.outerZoneOrbits = outer_zone_orbits(self.luminosityClass)
+                self.outerZoneOrbits = self.outer_zone_orbits()
+
         # Companion stars with a Distant distance and automatic brown dwarf
         # stars have their own planetary systems.
         # Companion stars that are closer to the primary star than "Distant"
@@ -272,12 +203,11 @@ class Star():
         # primary star also orbit the companion star(s) but for organizational
         # purposes we only track the planets under the primary star.
         elif primaryOrbit == "Distant" or autoBrownDwarf:
-            self.epistellarOrbits = epistellar_orbits(self.luminosityClass)
-            self.innerZoneOrbits = inner_zone_orbits(self.luminosityClass)
-            self.outerZoneOrbits = outer_zone_orbits(self.luminosityClass)
+            self.epistellarOrbits = self.epistellar_orbits()
+            self.innerZoneOrbits = self.inner_zone_orbits()
+            self.outerZoneOrbits = self.outer_zone_orbits()
 
-        if primary or primaryOrbit == "Distant":
-            self.planets = []
+        if primary or primaryOrbit == "Distant" or autoBrownDwarf:
             for orbit in range(
                     self.epistellarOrbits +
                     self.innerZoneOrbits +
@@ -294,47 +224,96 @@ class Star():
                     roll -= 1
 
                 if roll <= 1:
-                    self.planets.append(
-                        planet.AsteroidBelt(
-                            star=self,
-                            parentObject=self,
-                            order=orbit + 1,
-                            orbitType=orbitType,
-                            alienSurvivalPercent=alienSurvivalPercent,
-                            maxTechLevel=maxTechLevel))
+                    planet.create_asteroid_belt(
+                        star=self,
+                        parentObject=self,
+                        order=orbit + 1,
+                        orbitType=orbitType,
+                        alienSurvivalPercent=alienSurvivalPercent)
                 elif roll == 2:
-                    self.planets.append(
-                        planet.DwarfPlanet(
-                            star=self,
-                            parentObject=self,
-                            order=orbit + 1,
-                            orbitType=orbitType,
-                            alienSurvivalPercent=alienSurvivalPercent,
-                            maxTechLevel=maxTechLevel))
+                    planet.create_dwarf_planet(
+                        star=self,
+                        parentObject=self,
+                        order=orbit + 1,
+                        orbitType=orbitType,
+                        alienSurvivalPercent=alienSurvivalPercent)
                 elif roll == 3:
-                    self.planets.append(
-                        planet.TerrestrialPlanet(
-                            star=self,
-                            parentObject=self,
-                            order=orbit + 1,
-                            orbitType=orbitType,
-                            alienSurvivalPercent=alienSurvivalPercent,
-                            maxTechLevel=maxTechLevel))
+                    planet.create_terrestrial_planet(
+                        star=self,
+                        parentObject=self,
+                        order=orbit + 1,
+                        orbitType=orbitType,
+                        alienSurvivalPercent=alienSurvivalPercent)
                 elif roll == 4:
-                    self.planets.append(
-                        planet.HelianPlanet(
-                            star=self,
-                            parentObject=self,
-                            order=orbit + 1,
-                            orbitType=orbitType,
-                            alienSurvivalPercent=alienSurvivalPercent,
-                            maxTechLevel=maxTechLevel))
+                    planet.create_helian_planet(
+                        star=self,
+                        parentObject=self,
+                        order=orbit + 1,
+                        orbitType=orbitType,
+                        alienSurvivalPercent=alienSurvivalPercent)
                 else:
-                    self.planets.append(
-                        planet.JovianPlanet(
-                            star=self,
-                            parentObject=self,
-                            order=orbit + 1,
-                            orbitType=orbitType,
-                            alienSurvivalPercent=alienSurvivalPercent,
-                            maxTechLevel=maxTechLevel))
+                    planet.create_jovian_planet(
+                        star=self,
+                        parentObject=self,
+                        order=orbit + 1,
+                        orbitType=orbitType,
+                        alienSurvivalPercent=alienSurvivalPercent)
+
+
+    def epistellar_orbits(self):
+        """
+        Returns the number of objects closely orbiting the star
+        based on the star's luminosity class.
+
+        Returns integer
+        """
+        if self.luminosityClass in ["L", "D", "K-III", "M-III"]:
+            return 0
+        else:
+            roll = roll_xdy(1, 6) - 3
+            if self.luminosityClass == "M-V":
+                roll -= 1
+
+            if roll > 2:
+                return 2
+            elif roll < 0:
+                return 0
+            else:
+                return roll
+
+
+    def inner_zone_orbits(self):
+        """
+        Returns the number of objects orbiting a star in the "inner zone",
+        or "Goldilock's zone", based on the star's luminosity class.
+
+        Returns integer
+        """
+        if self.luminosityClass == "L":
+            return roll_xdy(1, 3) - 1
+        else:
+            roll = roll_xdy(1, 6) - 1
+            if self.luminosityClass == "M-V":
+                roll -= 1
+
+            if roll < 0:
+                return 0
+            else:
+                return roll
+
+
+    def outer_zone_orbits(self):
+        """
+        Returns the number of objects orbiting a star in the outer zone
+        based on the star's luminosity class.
+
+        Returns integer
+        """
+        roll = roll_xdy(1, 6) - 1
+        if self.luminosityClass in ["L", "M-V"]:
+            roll -= 1
+
+        if roll < 0:
+            return 0
+        else:
+            return roll
