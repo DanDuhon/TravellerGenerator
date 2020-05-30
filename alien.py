@@ -138,19 +138,18 @@ def create_terra_luna_humans(star, maxTechLevel):
         star: Star class instance
             The star that Terra orbits.
             the star it is orbiting.
-        spectralType: String
-            The spectral type of the star this planet is orbiting.
         maxTechLevel: Integer
             The user-provided maximum tech level for any species.
     """
     # Terra
-    terra = planet.TerrestrialPlanet(
+    planet.create_terrestrial_planet(
         star=star,
         parentObject=star,
         order=star.epistellarOrbits + star.innerZoneOrbits + 1,
         orbitType="Inner Zone",
-        alienSurvivalPercent=0,
-        maxTechLevel=maxTechLevel)
+        alienSurvivalPercent=0)
+
+    terra = star.planets[-1]
 
     terra.properName = "Terra"
     terra.category = "Tectonic"
@@ -180,23 +179,27 @@ def create_terra_luna_humans(star, maxTechLevel):
         "Shallow Ocean",
         "Swamp Marsh",
         "Woods"]
-    terra.animals = []
+    terra.animals = ["The animals of Earth."]
+
     # Remove any satellites that were created.
     for s in terra.satellites:
         for s2 in s.satellites:
             if s2 in planet.allPlanets:
                 planet.allPlanets.remove(s2)
+            s.satellites.remove(s2)
         if s in planet.allPlanets:
             planet.allPlanets.remove(s)
+        terra.satellites.remove(s)
 
     # Luna
-    luna = planet.DwarfPlanet(
+    planet.create_dwarf_planet(
         star=star,
         parentObject=terra,
         order=terra.order,
         orbitType="Inner Zone",
-        alienSurvivalPercent=0,
-        maxTechLevel=maxTechLevel)
+        alienSurvivalPercent=0)
+
+    luna = terra.satellites[-1]
 
     luna.properName = "Luna"
     luna.category = "Rockball"
@@ -213,8 +216,6 @@ def create_terra_luna_humans(star, maxTechLevel):
     luna.animals = []
     luna.satellites = []
     luna.alien = None
-
-    terra.satellites = [luna]
 
     # Humans
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:

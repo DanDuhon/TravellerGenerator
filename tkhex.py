@@ -140,7 +140,7 @@ class SystemDisplay:
                     3
 
         """
-        xCell, yCell = system.horizontalCoord, system.verticalCoord
+        xCell, yCell = system.coordinates[0], system.coordinates[1]
 
         size = self.hexaSize
         Δx = (size**2 - (size / 2)**2)**0.5
@@ -235,7 +235,7 @@ class SystemDisplay:
         system = systemhex.allCoordinates[coord]
 
         text = "Name: {}\n".format(system.name)
-        text += "Coordinates: {}\n".format((system.horizontalCoord, system.verticalCoord))
+        text += "Coordinates: {}\n".format((system.coordinates[0], system.coordinates[1]))
 
         self.info.config(text=text)
         self.systemlabel.config(text=system.name)
@@ -263,8 +263,9 @@ class SystemDisplay:
     def selectstar(self, star):
         self.clearstar()
         self.starlabel.config(text=star.name)
-        x_center = 60 * star.starNumber
-        y_center = 100 + 50 * (-1)**star.starNumber
+        starNumber = star.systemHex.stars.index(star) + 1
+        x_center = 60 * starNumber
+        y_center = 100 + 50 * (-1)**starNumber
         outer = 30
         inner = 20
 

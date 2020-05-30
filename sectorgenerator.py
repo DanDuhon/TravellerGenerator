@@ -17,26 +17,15 @@ def sectorgen(
         maxTechLevel):
     sectorMax = math.ceil(initialSectorSize / 2)
     sectorMin = -sectorMax
-    right = (random.random() > 0.5)
-    up = (random.random() > 0.5)
-    openClusterBorder = math.floor(
-        initialSectorSize * random.randint(1, 100) / 100) - sectorMax
-    openClusterTuple = (right, up, openClusterBorder)
 
     for h in range(sectorMin, sectorMax + 1):
         for v in range(sectorMin, sectorMax + 1):
-            openClusterBonus = 0
-            if (openClusterBonus == 0
-                and right and h >= openClusterBorder
-                    and up and v >= openClusterBorder):
-                openClusterBonus = 3
-            if (openClusterBonus == 0
-                and not right and h <= openClusterBorder
-                    and not up and v <= openClusterBorder):
-                openClusterBonus = 3
-
-            systemhex.System(
-                h, v, openClusterBonus, alienSurvivalPercent, maxTechLevel)
+            if (h, v, -h - v) not in systemhex.allCoordinates:
+                systemhex.create_normal_system(
+                    horizontalCoord=h,
+                    verticalCoord=v,
+                    alienSurvivalPercent=alienSurvivalPercent,
+                    maxTechLevel=maxTechLevel)
 
     validTerraTargets = [targetStar for targetStar in star.allStars
                          if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
@@ -44,34 +33,37 @@ def sectorgen(
                                and targetStar.innerZoneOrbits < 5)
                               or (targetStar.luminosityClass == "M-V"
                                   and targetStar.innerZoneOrbits < 4))
-                         and ((targetStar.companions == []
-                               and targetStar.primaryOrbit is None)
+                         and (targetStar.primaryOrbit is None
                               or targetStar.primaryOrbit == "Distant")
+                         and "Close" not in targetStar.companionOrbits
                          and targetStar.systemHex.age >= 4]
     terraTarget = random.choice(validTerraTargets)
 
     terra = alien.create_terra_luna_humans(terraTarget, maxTechLevel)
-    terra.animals = ["The animals of Earth."]
-    luna = terra.satellites[0]
     terraTarget.innerZoneOrbits += 1
-    terraTarget.planets.append(terra)
-    terraTarget.planets.append(luna)
-    terraTarget.systemHex.planets.append(terra)
-    terraTarget.systemHex.planets.append(luna)
     for p in terraTarget.planets:
         if p.orbitType == "Outer Zone":
             p.order += 1
-        if p.parentObject == p.star:
             p.name = p.parentObject.name + " " + str(p.order)
-        else:
-            p.name = p.parentObject.name + "-" + str(p.parentObject.satellites.index(p) + 1)
+
+            for s1 in p.satellites:
+                s1.order += 1
+                s1.name = s1.parentObject.name + "-" + str(s1.parentObject.satellites.index(s1) + 1)
+                for s2 in s1.satellites:
+                    s2.order += 1
+                    s2.name = s2.parentObject.name + "-" + str(s2.parentObject.satellites.index(s2) + 1)
+                    for s3 in s2.satellites:
+                        s3.order += 1
+                        s3.name = s3.parentObject.name + "-" + str(s3.parentObject.satellites.index(s3) + 1)
+                        for s4 in s3.satellites:
+                            s4.order += 1
+                            s4.name = s4.parentObject.name + "-" + str(s4.parentObject.satellites.index(s4) + 1)
 
     alien.set_tech_level(maxTechLevel)
     maxReactionModifier = max(
         [a.reactionModifier for a in alien.allAliens if not a.extinct])
     for a in [a for a in alien.allAliens if not a.extinct]:
         a.homePlanet.systemHex.create_surrounding_systems(
-            openClusterTuple,
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier)
@@ -94,7 +86,6 @@ def sectorgen(
             a.planets[p]["desirability"] = p.calculate_desirability(a, True)
             a.planets[p]["habitation"] = p.calculate_habitation(
                 a,
-                openClusterTuple,
                 alienSurvivalPercent,
                 maxTechLevel,
                 maxReactionModifier,
@@ -146,14 +137,18 @@ def sectorgen(
                                                         "desirability": None,
                                                         "habitation": None}
                                         a.planets[p]["desirability"] = p.calculate_desirability(a, False)
-                                        a.planets[p]["habitation"] = p.calculate_habitation(a, openClusterTuple, alienSurvivalPercent, maxTechLevel, maxReactionModifier, False)
+                                        a.planets[p]["habitation"] = p.calculate_habitation(
+                                            a,
+                                            alienSurvivalPercent,
+                                            maxTechLevel,
+                                            maxReactionModifier,
+                                            False)
                                     a.exploredSystems.add(newSystem)
                                 else:
                                     for p in newSystem.planets:
                                         a.planets[p]["desirability"] = p.calculate_desirability(a, False)
                                         a.planets[p]["habitation"] = p.calculate_habitation(
                                             a,
-                                            openClusterTuple,
                                             alienSurvivalPercent,
                                             maxTechLevel,
                                             maxReactionModifier,
@@ -188,7 +183,6 @@ def sectorgen(
                                             a.planets[p]["desirability"] = p.calculate_desirability(a, False)
                                             a.planets[p]["habitation"] = p.calculate_habitation(
                                                 a,
-                                                openClusterTuple,
                                                 alienSurvivalPercent,
                                                 maxTechLevel,
                                                 maxReactionModifier,
@@ -199,7 +193,6 @@ def sectorgen(
                                             a.planets[p]["desirability"] = p.calculate_desirability(a, False)
                                             a.planets[p]["habitation"] = p.calculate_habitation(
                                                 a,
-                                                openClusterTuple,
                                                 alienSurvivalPercent,
                                                 maxTechLevel,
                                                 maxReactionModifier,
@@ -226,7 +219,6 @@ def sectorgen(
     existingSystems = systemhex.allSystems.copy()
     for s in existingSystems:
         s.create_surrounding_systems(
-            openClusterTuple,
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier)

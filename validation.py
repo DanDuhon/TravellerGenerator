@@ -67,19 +67,12 @@ def validation(maxTechLevel):
             badStar = s
             raise ValueError("Invalid luminosity class")
 
-        for c in s.companions:
-            if s in s.systemHex.stars[1:] and (
-                    c.primaryOrbit is None or c.primaryOrbit == "Distant") and s.systemHex.stars[0].planets == c.planets:
-                badHex = s.systemHex
-                badStar = c
-                raise ValueError(
-                    "Distant or brown dwarf star has the same planets as the primary star.")
-
-            if s in s.systemHex.stars[1:] and c.primaryOrbit is not None and c.primaryOrbit != "Distant" and s.systemHex.stars[0].planets != c.planets:
-                badHex = s.systemHex
-                badStar = c
-                raise ValueError(
-                    "Companion star does not have the same planets as the primary star.")
+        if s in s.systemHex.stars[1:] and (
+                s.primaryOrbit is None or s.primaryOrbit == "Distant") and len(s.systemHex.stars[0].planets) > 0 and len(s.planets) > 0 and s.systemHex.stars[0].planets == s.planets:
+            badHex = s.systemHex
+            badStar = s
+            raise ValueError(
+                "Distant or brown dwarf star has the same planets as the primary star.")
 
         if ((s.luminosityClass in ["D", "L", "K-III", "M-III"] and (s.epistellarOrbits > 0 or sum(
                 [1 for p in s.planets if p.orbitType == "Epistellar"]))) or s.epistellarOrbits > 2):
@@ -87,7 +80,7 @@ def validation(maxTechLevel):
             badStar = s
             raise ValueError("Wrong number of epistellar orbits.")
 
-        if (((s.primaryOrbit == "Close" or sum([1 for c in s.companions if c.primaryOrbit == "Close"])) and s.innerZoneOrbits > 0)
+        if (("Close" in s.companionOrbits and s.innerZoneOrbits > 0)
             or (s.luminosityClass == "M-V" and s.innerZoneOrbits > 4)
             or (s.luminosityClass == "L" and s.innerZoneOrbits > 2)
                 or s.innerZoneOrbits > 5):
@@ -95,7 +88,7 @@ def validation(maxTechLevel):
             badStar = s
             raise ValueError("Wrong number of inner zone orbits.")
 
-        if (((s.primaryOrbit == "Moderate" or sum([1 for c in s.companions if c.primaryOrbit == "Moderate"])) and s.outerZoneOrbits > 0)
+        if (("Moderate" in s.companionOrbits and s.outerZoneOrbits > 0)
             or (s.luminosityClass in ["M-V", "L"] and s.outerZoneOrbits > 4)
                 or s.outerZoneOrbits > 5):
             badHex = s.systemHex
@@ -112,8 +105,7 @@ def validation(maxTechLevel):
                 [1 for p in s.planets if p.orbitType == "Inner Zone" and p.parentObject == s]):
             badHex = s.systemHex
             badStar = s
-            print(s.name)
-            print("Wrong number of inner zone planets.")
+            raise ValueError("Wrong number of inner zone planets.")
 
         if s.outerZoneOrbits != sum(
                 [1 for p in s.planets if p.orbitType == "Outer Zone" and p.parentObject == s]):
@@ -129,35 +121,35 @@ def validation(maxTechLevel):
             badPlanet = p
             raise ValueError("Duplicate name found: " + p.name)
 
-        if isinstance(p, planet.AsteroidBelt) and sum(
+        if p.groupName == "Asteroid Belt" and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             badHex = p.star.systemHex
             badStar = p.star
             badPlanet = p
             raise ValueError("Asteroid belt has too many satellites.")
 
-        if isinstance(p, planet.DwarfPlanet) and sum(
+        if p.groupName == "Dwarf" and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             badHex = p.star.systemHex
             badStar = p.star
             badPlanet = p
             raise ValueError("Dwarf has too many satellites.")
 
-        if isinstance(p, planet.TerrestrialPlanet) and sum(
+        if p.groupName == "Terrestrial" and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             badHex = p.star.systemHex
             badStar = p.star
             badPlanet = p
             raise ValueError("Terrestrial has too many satellites.")
 
-        if isinstance(p, planet.HelianPlanet) and sum(
+        if p.groupName == "Helian" and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 3:
             badHex = p.star.systemHex
             badStar = p.star
             badPlanet = p
             raise ValueError("Helian has too many satellites.")
 
-        if isinstance(p, planet.JovianPlanet) and sum(
+        if p.groupName == "Jovian" and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 6:
             badHex = p.star.systemHex
             badStar = p.star
@@ -168,10 +160,10 @@ def validation(maxTechLevel):
             "D",
             "K-III",
                 "M-III"] and p.order <= p.star.expansionAffectedOrbits:
-            if (isinstance(p, planet.DwarfPlanet) and p.category != "Stygian"
-                or isinstance(p, planet.TerrestrialPlanet) and p.category != "Acheronian"
-                or isinstance(p, planet.HelianPlanet) and p.category != "Asphodelian"
-                    or isinstance(p, planet.JovianPlanet) and p.category != "Chthonian"):
+            if (p.groupName == "Dwarf" and p.category != "Stygian"
+                or p.groupName == "Terrestrial" and p.category != "Acheronian"
+                or p.groupName == "Helian" and p.category != "Asphodelian"
+                    or p.groupName == "Jovian" and p.category != "Chthonian"):
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -181,24 +173,16 @@ def validation(maxTechLevel):
         if p.star.luminosityClass not in [
                 "D", "K-III", "M-III"] or p.order > p.star.expansionAffectedOrbits:
             if (
-                isinstance(
-                    p,
-                    planet.DwarfPlanet) and p.category == "Stygian" or isinstance(
-                    p,
-                    planet.TerrestrialPlanet) and p.category == "Acheronian" or isinstance(
-                    p,
-                    planet.HelianPlanet) and p.orbitType != "Epistellar" and p.category == "Asphodelian" or isinstance(
-                    p,
-                    planet.JovianPlanet) and p.orbitType != "Epistellar" and p.category == "Chthonian"):
+                p.groupName == "Dwarf" and p.category == "Stygian" or p.groupName == "Terrestrial" and p.category == "Acheronian" or p.groupName == "Helian" and p.orbitType != "Epistellar" and p.category == "Asphodelian" or p.groupName == "Jovian" and p.orbitType != "Epistellar" and p.category == "Chthonian"):
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
                 raise ValueError(
                     "Planet should NOT have category determined by star, but category is wrong.")
 
-            if isinstance(p, planet.DwarfPlanet):
+            if p.groupName == "Dwarf":
                 if p.orbitType == "Epistellar":
-                    if isinstance(p.parentObject, planet.AsteroidBelt):
+                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
                         if p.category in ["Hebean", "Promethean"]:
                             badHex = p.star.systemHex
                             badStar = p.star
@@ -214,7 +198,7 @@ def validation(maxTechLevel):
                         raise ValueError(
                             "Epistellar dwarf planet has an invalid category.")
                 elif p.orbitType == "Inner Zone":
-                    if isinstance(p.parentObject, planet.AsteroidBelt):
+                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
                         if p.category in ["Hebean", "Promethean"]:
                             badHex = p.star.systemHex
                             badStar = p.star
@@ -234,7 +218,7 @@ def validation(maxTechLevel):
                         raise ValueError(
                             "Inner zone dwarf planet has an invalid category.")
                 elif p.orbitType == "Outer Zone":
-                    if isinstance(p.parentObject, planet.AsteroidBelt):
+                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
                         if p.category in [
                                 "Hebean", "Promethean", "Arean", "Meltball"]:
                             badHex = p.star.systemHex
@@ -256,7 +240,7 @@ def validation(maxTechLevel):
                         raise ValueError(
                             "Outer zone dwarf planet has an invalid category.")
 
-            if isinstance(p, planet.TerrestrialPlanet):
+            if p.groupName == "Terrestrial":
                 if p.orbitType == "Epistellar" and p.category not in [
                         "Jani-Lithic", "Vesperian", "Telluric"]:
                     badHex = p.star.systemHex
@@ -287,7 +271,7 @@ def validation(maxTechLevel):
                             raise ValueError(
                                 "Outer zone terrestrial planet has an invalid category.")
 
-            if isinstance(p, planet.HelianPlanet):
+            if p.groupName == "Helian":
                 if p.orbitType == "Epistellar" and p.category not in [
                         "Helian", "Asphodelian"]:
                     badHex = p.star.systemHex
@@ -309,7 +293,7 @@ def validation(maxTechLevel):
                     raise ValueError(
                         "Outer zone helian planet has an invalid category.")
 
-            if isinstance(p, planet.JovianPlanet):
+            if p.groupName == "Jovian":
                 if p.orbitType == "Epistellar" and p.category not in [
                         "Jovian", "Chthonian"]:
                     badHex = p.star.systemHex
@@ -414,11 +398,6 @@ def validation(maxTechLevel):
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
             if p.atmosphere == 1 and (p.biosphere < 0 or p.biosphere > 2):
-                badHex = p.star.systemHex
-                badStar = p.star
-                badPlanet = p
-                raise ValueError("Invalid biosphere.")
-            if p.atmosphere == 10 and (p.biosphere < 0 or p.biosphere > 9):
                 badHex = p.star.systemHex
                 badStar = p.star
                 badPlanet = p
@@ -793,7 +772,7 @@ def validation(maxTechLevel):
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
-            if p.star.systemHex.age >= 4 + p.ageModifier:
+            elif p.star.systemHex.age >= 4 + p.ageModifier:
                 if p.star.luminosityClass == "D":
                     if p.biosphere < 0 or p.biosphere > 9:
                         badHex = p.star.systemHex
@@ -801,7 +780,7 @@ def validation(maxTechLevel):
                         badPlanet = p
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if p.biosphere < 2 or p.biosphere > 12:
+                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12):
                         badHex = p.star.systemHex
                         badStar = p.star
                         badPlanet = p
@@ -855,7 +834,7 @@ def validation(maxTechLevel):
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age >= 4 + p.ageModifier:
-                if p.biosphere < 2 or p.biosphere > 12:
+                if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12):
                     badHex = p.star.systemHex
                     badStar = p.star
                     badPlanet = p
@@ -910,7 +889,7 @@ def validation(maxTechLevel):
                 badStar = p.star
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
-            if p.star.systemHex.age >= 4 + p.ageModifier:
+            elif p.star.systemHex.age >= 4 + p.ageModifier:
                 if p.star.luminosityClass == "D":
                     if p.biosphere < 0 or p.biosphere > 9:
                         badHex = p.star.systemHex
@@ -918,7 +897,7 @@ def validation(maxTechLevel):
                         badPlanet = p
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if p.biosphere < 2 or p.biosphere > 12:
+                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12):
                         badHex = p.star.systemHex
                         badStar = p.star
                         badPlanet = p
@@ -1114,7 +1093,7 @@ def validation(maxTechLevel):
                         badPlanet = p
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if p.biosphere < 2 or p.biosphere > 12:
+                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12):
                         badHex = p.star.systemHex
                         badStar = p.star
                         badPlanet = p
@@ -1197,7 +1176,7 @@ def validation(maxTechLevel):
                 badPlanet = p
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age >= 4:
-                if p.biosphere < 2 or p.biosphere > 12:
+                if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12):
                     badHex = p.star.systemHex
                     badStar = p.star
                     badPlanet = p
@@ -1645,8 +1624,8 @@ def validation(maxTechLevel):
             badAlien = a
             raise ValueError("Duplicate alien name found: " + a.name)
 
-        if (not a.extinct and (a.techLevel < 0 or a.techLevel > maxTechLevel)) or (
-                a.extinct and (a.techLevel < 0 or a.techLevel > 9)):
+        if (not a.extinct and (a.currentTechLevel < 0 or a.currentTechLevel > maxTechLevel)) or (
+                a.extinct and (a.currentTechLevel < 0 or a.currentTechLevel > 9)):
             badHex = a.planet.star.systemHex
             badStar = a.planet.star
             badPlanet = a.planet
