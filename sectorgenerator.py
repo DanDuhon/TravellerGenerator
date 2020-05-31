@@ -39,7 +39,7 @@ def sectorgen(
                          and targetStar.systemHex.age >= 4]
     terraTarget = random.choice(validTerraTargets)
 
-    terra = alien.create_terra_luna_humans(terraTarget, maxTechLevel)
+    alien.create_terra_luna_humans(terraTarget, maxTechLevel)
     terraTarget.innerZoneOrbits += 1
     for p in terraTarget.planets:
         if p.orbitType == "Outer Zone":
@@ -83,7 +83,10 @@ def sectorgen(
                 "colonyRoll": roll_xdy(2, 6),
                 "desirability": None,
                 "habitation": None}
-            a.planets[p]["desirability"] = p.calculate_desirability(a, True)
+            if p.category == "Asteroid Belt":
+                a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, True)
+            else:
+                a.planets[p]["desirability"] = p.calculate_desirability(a, True)
             a.planets[p]["habitation"] = p.calculate_habitation(
                 a,
                 alienSurvivalPercent,
@@ -115,51 +118,20 @@ def sectorgen(
                 colonizedSystems = set()
                 maxRange = a.currentTechLevel - 9
                 alreadyChecked = []
-
-                # Check for systems in which to create an Outpost (this can also create a Colony)
-                # Outposts need the support of a Colony within 1 Jump
+                
                 for p in a.planets:
                     if a.planets[p]["habitation"] in ["Colony", "Homeworld"]:
                         colonizedSystems.add(p.systemHex)
+                        p.systemHex.set_nearby_colony_systems(a)
 
-                for sys in colonizedSystems:
-                    if not sys.planets or sys in alreadyChecked:
-                        continue
-                    alreadyChecked.append(sys)
-                    for k in range(1, maxRange + 1):
-                        for x in range(-k, k + 1):
-                            for y in range(max(-k, -x - k), min(k, -x + k) + 1):
-                                newSystem = systemhex.allCoordinates[(sys.coordinates[0] + x, sys.coordinates[1] + y, ((sys.coordinates[0] + x) * -1) - (sys.coordinates[1] + y))]
-                                if newSystem not in a.exploredSystems:
-                                    for p in newSystem.planets:
-                                        a.planets[p] = {"outpostRoll": roll_xdy(1, 6),
-                                                        "colonyRoll": roll_xdy(2, 6),
-                                                        "desirability": None,
-                                                        "habitation": None}
-                                        a.planets[p]["desirability"] = p.calculate_desirability(a, False)
-                                        a.planets[p]["habitation"] = p.calculate_habitation(
-                                            a,
-                                            alienSurvivalPercent,
-                                            maxTechLevel,
-                                            maxReactionModifier,
-                                            False)
-                                    a.exploredSystems.add(newSystem)
-                                else:
-                                    for p in newSystem.planets:
-                                        a.planets[p]["desirability"] = p.calculate_desirability(a, False)
-                                        a.planets[p]["habitation"] = p.calculate_habitation(
-                                            a,
-                                            alienSurvivalPercent,
-                                            maxTechLevel,
-                                            maxReactionModifier,
-                                            False)
-
-                # Check for systems in which to create a Colony (this cannot create an Outpost)
-                # Colonies should be self-sufficient, therefore can be farther
-                # out
+                # Check for planets to colonize. Outposts require the support
+                # of a non-Asteroid Belt Colony, but Colonies are generally
+                # self-sufficient so they can be created farther out.
                 for p in a.planets:
                     if a.planets[p]["habitation"]:
                         systemsToExplore.add(p.systemHex)
+
+                newSystem = a.homePlanet.systemHex
 
                 systemsToCheck = systemsToExplore.copy()
                 for _ in range(1, 4 + a.reactionModifier):
@@ -167,7 +139,6 @@ def sectorgen(
                     for sys in systemsToCheck:
                         if not sys.planets or sys in alreadyChecked:
                             continue
-                        alreadyChecked.append(newSystem)
                         for k in range(maxRange):
                             for x in range(-k, k + 1):
                                 for y in range(max(-k, -x - k), min(k, -x + k) + 1):
@@ -180,23 +151,18 @@ def sectorgen(
                                                             "colonyRoll": roll_xdy(2, 6),
                                                             "desirability": None,
                                                             "habitation": None}
-                                            a.planets[p]["desirability"] = p.calculate_desirability(a, False)
+                                            if p.category == "Asteroid Belt":
+                                                a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                                            else:
+                                                a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
                                             a.planets[p]["habitation"] = p.calculate_habitation(
                                                 a,
                                                 alienSurvivalPercent,
                                                 maxTechLevel,
                                                 maxReactionModifier,
-                                                True)
+                                                p.systemHex.alienNearbyColony.get(a))
                                         a.exploredSystems.add(newSystem)
-                                    else:
-                                        for p in newSystem.planets:
-                                            a.planets[p]["desirability"] = p.calculate_desirability(a, False)
-                                            a.planets[p]["habitation"] = p.calculate_habitation(
-                                                a,
-                                                alienSurvivalPercent,
-                                                maxTechLevel,
-                                                maxReactionModifier,
-                                                True)
+                        alreadyChecked.append(newSystem)
                     systemsToCheck = newSystemsToCheck
 
                 for p in a.planets:
@@ -214,6 +180,21 @@ def sectorgen(
 
         for a in [a for a in alien.allAliens if not a.extinct]:
             a.currentTechLevel += 1
+
+            # With new technology, some places are more desirable.
+            # Recheck all outposts and colonies when the TL increases.
+            for p in a.planets:
+                if a.planets[p]["habitation"]:
+                    if p.category == "Asteroid Belt":
+                        a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                    else:
+                        a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                    a.planets[p]["habitation"] = p.calculate_habitation(
+                        a,
+                        alienSurvivalPercent,
+                        maxTechLevel,
+                        maxReactionModifier,
+                        p.systemHex.alienNearbyColony.get(a))
 
     # Create the uninhabited space beyond the frontier.
     existingSystems = systemhex.allSystems.copy()

@@ -17,13 +17,13 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=12,
+    default=13,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(
     "-v",
     dest='validation',
-    default=True,
+    default=False,
     action='store_true',
     help="run validations")
 

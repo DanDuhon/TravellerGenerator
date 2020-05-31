@@ -298,6 +298,7 @@ class OrbitalBody():
             orbitType):
         allPlanets.append(self)
         self.systemHex = star.systemHex
+        self.systemHex.planets.append(self)
         self.star = star
         self.parentObject = parentObject
         self.order = order
@@ -1191,12 +1192,12 @@ class OrbitalBody():
         if not self.systemHex.fuelAvailable:
             desirability -= 1
 
-        coloniesInSystem = sum(1 for p in self.systemHex.planets if p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"])
-        outpostsInSystem = sum(1 for p in self.systemHex.planets if p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] == "Outpost")
+        colonyInSystem = any(p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] for p in self.systemHex.planets)
+        outpostInSystem = any(p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] == "Outpost" for p in self.systemHex.planets)
 
-        if coloniesInSystem + outpostsInSystem == 0:
+        if not colonyInSystem and not outpostInSystem:
             desirability -= 3
-        elif coloniesInSystem == 0 and outpostsInSystem > 0:
+        elif not colonyInSystem and outpostInSystem:
             desirability -= 1
 
         return desirability
@@ -1207,7 +1208,7 @@ class OrbitalBody():
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier,
-            noOutpost):
+            outpostPossible):
         """
         Sets the type of Habitation an Alien will have on the planet.
         Not applicable for Homeworld because that is set at the time of Alien creation.
@@ -1229,7 +1230,7 @@ class OrbitalBody():
                 if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
                     hab = "Colony"
                     self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
-                elif not noOutpost and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
+                elif outpostPossible and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
                     hab = "Outpost"
                     self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
                 # They won't abandon the planet if it's temporarily worse
