@@ -324,6 +324,9 @@ class OrbitalBody():
         self.ruins = set()
         self.settlement = 0
         self.terraformingAlien = None
+        self.terraformingPoints = 0
+        self.terraformingPointsUsed = 0
+        self.terraformingDone = False
 
         if self.parentObject == self.star:
             self.name = self.parentObject.name + " " + str(self.order)
@@ -1260,6 +1263,8 @@ class OrbitalBody():
         Parameters:
             alien: Alien class instance
                 The alien doing the terraforming.
+
+        Returns True if something was changed, otherwise returns False.
         """
         
         # If there's no chemistry, nothing has to be changed, it just happens
@@ -1270,47 +1275,47 @@ class OrbitalBody():
         elif self.chemistry != alien.homePlanet.chemistry:
             if self.hydrosphere > 1:
                 self.hydrosphere -= 1
-                return
+                return True
             else:
                 self.chemistry = alien.homePlanet.chemistry
-                return
+                return True
 
         # Remove Dry World penalty
         if self.hydrosphere == 0:
             self.hydrosphere += 1
-            return
+            return True
 
         # Get Atmosphere into the Habitable range.
         # If Hydrosphere 2+ and Atmosphere 12-13, reduce Hydrosphere to 1
         # then reduce the Atmosphere
         if self.atmosphere == 13:
             self.atmosphere -= 1
-            return
+            return True
         elif self.atmosphere == 12:
             if 2 <= self.hydrosphere <= 10:
                 self.hydrosphere -= 1
-                return
+                return True
             elif self.hydrosphere < 2:
                 self.atmosphere -= 1
-                return
+                return True
         elif self.atmosphere > 9:
             self.atmosphere -= 1
-            return
+            return True
         elif self.atmosphere < 2:
             self.atmosphere += 1
-            return
+            return True
 
         # At this point, the planet should have one of the Habitable World bonuses
         # If it's Poor, improve it to Other by raising Hydrosphere
         if self.hydrosphere <= max([(4 if alien.animalClass == "Aquatic" else 3), alien.homePlanet.hydrosphere - 4]):
             self.hydrosphere += 1
-            return
+            return True
 
         # If it's Water World and Hydrosphere 10, reduce Hydrosphere to improve it to Other
         # Does not apply to Aquatics
         if self.hydrosphere == 10 and alien.animalClass != "Aquatic":
             self.hydrosphere -= 1
-            return
+            return True
 
         # If the planet's size would allow it to be a Garden world, work
         # towards that
@@ -1318,11 +1323,11 @@ class OrbitalBody():
             # Lower Hydrosphere if it's too high
             if self.hydrosphere > min([(11 if alien.animalClass == "Aquatic" else 8), alien.homePlanet.hydrosphere + 3]):
                 self.hydrosphere -= 1
-                return
+                return True
             # Raise Hydrosphere if it's too low
             if self.hydrosphere < max([(5 if alien.animalClass == "Aquatic" else 2), alien.homePlanet.hydrosphere - 3]):
                 self.hydrosphere -= 1
-                return
+                return True
             # Lower Atmosphere if it's too high
             if any([alien.homePlanet.atmosphere == 2 and self.atmosphere > 4,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere > 5,
@@ -1333,7 +1338,7 @@ class OrbitalBody():
                     alien.homePlanet.atmosphere == 8 and self.atmosphere > 9,
                     alien.homePlanet.atmosphere == 9 and self.atmosphere > 9]):
                 self.atmosphere -= 1
-                return
+                return True
             # Raise Atmosphere if it's too low
             if any([alien.homePlanet.atmosphere == 2 and self.atmosphere < 2,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere < 3,
@@ -1342,7 +1347,7 @@ class OrbitalBody():
                     alien.homePlanet.atmosphere == 6 and self.atmosphere < 5,
                     alien.homePlanet.atmosphere == 7 and self.atmosphere < 4]):
                 self.atmosphere += 1
-                return
+                return True
 
         # Get the Atmosphere to match the homeworld's
         if self.atmosphere > alien.homePlanet.atmosphere:
@@ -1350,9 +1355,14 @@ class OrbitalBody():
             return True
         elif self.atmosphere < alien.homePlanet.atmosphere:
             self.atmosphere += 1
-            return
+            return True
 
-        return
+        # If nothing was done, the planet has been
+        # terraformed as much as it can, set a flag
+        # so we don't run this method for this instance
+        # anymore.
+        self.terraformingDone = True
+        return False
         
 
     def planet_terrain_animals(self):

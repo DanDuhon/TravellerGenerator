@@ -1,6 +1,6 @@
 import random
 import math
-import datetime
+import copy
 
 import systemhex
 import star
@@ -107,6 +107,57 @@ def sectorgen(
             for p in [p for p in planet.allPlanets if {"Outpost", "Colony"} & set(p.habitation.values())]:
                 p.settlement += 1
 
+                terraformingDone = False
+                
+                if (p.orbitType == "Inner Zone"
+                    and 1 <= p.size <= 11
+                    and 1 <= p.atmosphere <= 13
+                    and p.hydrosphere < 15):
+                    p.terraformingPoints = -15 + p.settlement + p.terraformingAlien.currentTechLevel
+                    if (p.groupName == "Dwarf"
+                        and not p.terraformingDone
+                        and p.terraformingPoints > p.terraformingPointsUsed):
+                        terraformingDone = p.terraform_planet(p.terraformingAlien)
+                        if terraformingDone:
+                            p.terraformingPointsUsed += 1
+                    elif (p.groupName == "Terrestrial"
+                        and not p.terraformingDone
+                        and p.terraformingPoints - p.terraformingPointsUsed >= 2):
+                        terraformingDone = p.terraform_planet(p.terraformingAlien)
+                        if terraformingDone:
+                            p.terraformingPointsUsed += 2
+                    elif (p.groupName == "Helian"
+                        and not p.terraformingDone
+                        and p.terraformingPoints - p.terraformingPointsUsed >= 3):
+                        terraformingDone = p.terraform_planet(p.terraformingAlien)
+                        if terraformingDone:
+                            p.terraformingPointsUsed += 3
+
+                    if terraformingDone:
+                        for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
+                            if not a.planets.get(p) or a.planets[p].get("habitation"):
+                                continue
+
+                            previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
+                            a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                            a.planets[p]["habitation"] = p.calculate_habitation(
+                                a,
+                                alienSurvivalPercent,
+                                maxTechLevel,
+                                maxReactionModifier,
+                                p.systemHex.alienNearbyColony.get(a))
+
+                            # If an alien is in the process of terraforming and they
+                            # have made the planet temporarily worse, they won't
+                            # abandon it. Otherwise, a lower level of habitation
+                            # causes ruins to be present on the planet.
+                            if previousHabitation and not a.planets[p]["habitation"] and p.terraformingAlien == a:
+                                a.planets[p]["habitation"] = "Outpost"
+                            elif previousHabitation == "Colony" and a.planets[p]["habitation"] != "Colony":
+                                p.ruins.add(a)
+                            elif previousHabitation and not a.planets[p]["habitation"]:
+                                p.ruins.add(a)
+
             for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
                 preExplored = len(a.exploredSystems)
                 preHabitations = {}
@@ -119,10 +170,9 @@ def sectorgen(
                 maxRange = a.currentTechLevel - 9
                 alreadyChecked = []
                 
-                for p in a.planets:
-                    if a.planets[p]["habitation"] in ["Colony", "Homeworld"]:
-                        colonizedSystems.add(p.systemHex)
-                        p.systemHex.set_nearby_colony_systems(a)
+                for p in [p for p in a.planets if a.planets[p]["habitation"] in ["Colony", "Homeworld"]]:
+                    colonizedSystems.add(p.systemHex)
+                    p.systemHex.set_nearby_colony_systems(a)
 
                 # Check for planets to colonize. Outposts require the support
                 # of a non-Asteroid Belt Colony, but Colonies are generally
@@ -155,12 +205,16 @@ def sectorgen(
                                                 a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                                             else:
                                                 a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+
                                             a.planets[p]["habitation"] = p.calculate_habitation(
                                                 a,
                                                 alienSurvivalPercent,
                                                 maxTechLevel,
                                                 maxReactionModifier,
                                                 p.systemHex.alienNearbyColony.get(a))
+                                            
+                                            if not p.terraformingAlien:
+                                                p.terraformingAlien = a
                                         a.exploredSystems.add(newSystem)
                         alreadyChecked.append(newSystem)
                     systemsToCheck = newSystemsToCheck
@@ -182,19 +236,21 @@ def sectorgen(
             a.currentTechLevel += 1
 
             # With new technology, some places are more desirable.
-            # Recheck all outposts and colonies when the TL increases.
+            # Recheck all explored planets when the TL increases.
             for p in a.planets:
-                if a.planets[p]["habitation"]:
-                    if p.category == "Asteroid Belt":
-                        a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
-                    else:
-                        a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
-                    a.planets[p]["habitation"] = p.calculate_habitation(
-                        a,
-                        alienSurvivalPercent,
-                        maxTechLevel,
-                        maxReactionModifier,
-                        p.systemHex.alienNearbyColony.get(a))
+                if p.category == "Asteroid Belt":
+                    a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                else:
+                    a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                a.planets[p]["habitation"] = p.calculate_habitation(
+                    a,
+                    alienSurvivalPercent,
+                    maxTechLevel,
+                    maxReactionModifier,
+                    p.systemHex.alienNearbyColony.get(a))
+                                            
+                if not p.terraformingAlien:
+                    p.terraformingAlien = a
 
     # Create the uninhabited space beyond the frontier.
     existingSystems = systemhex.allSystems.copy()
