@@ -23,7 +23,7 @@ parser.add_argument(
 parser.add_argument(
     "-v",
     dest='validation',
-    default=True,
+    default=False,
     action='store_true',
     help="run validations")
 

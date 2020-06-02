@@ -83,8 +83,8 @@ def sectorgen(
                 "colonyRoll": roll_xdy(2, 6),
                 "desirability": None,
                 "habitation": None}
-            if p.category == "Asteroid Belt":
-                a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, True)
+            if p.category in ["Jovian", "Asteroid Belt"]:
+                a.planets[p]["desirability"] = p.calculate_desirability_jovian_asteroid_belt(a, True)
             else:
                 a.planets[p]["desirability"] = p.calculate_desirability(a, True)
             a.planets[p]["habitation"] = p.calculate_habitation(
@@ -93,8 +93,17 @@ def sectorgen(
                 maxTechLevel,
                 maxReactionModifier,
                 True)
+            p.habitation[a] = a.planets[p]["habitation"]
 
-    # Exploration and colonization
+    # Turn all inhabited planets of extinct aliens to None and add ruins.
+    for a in [a for a in alien.allAliens if a.extinct]:
+        for p in [p for p in a.planets if a.planets[p]["habitation"]]:
+            a.planets[p]["habitation"] = None
+            p.habitation[a] = None
+            p.terraformingAlien = None
+            p.ruins.add(a)
+
+    # Exploration, colonization, and terraforming
     # The current Tech Level of the most advanced aliens start at 9, and
     # each other alien's current Tech Level is also appropriately reduced.
     # Loop through Tech Levels exploring and colonizing until the maxTechLevel
@@ -107,33 +116,35 @@ def sectorgen(
             for p in [p for p in planet.allPlanets if {"Outpost", "Colony"} & set(p.habitation.values())]:
                 p.settlement += 1
 
-                terraformingDone = False
+                terraformingOccurred = False
                 
-                if (p.orbitType == "Inner Zone"
+                if (not p.terraformingDone
+                    and p.orbitType == "Inner Zone"
                     and 1 <= p.size <= 11
                     and 1 <= p.atmosphere <= 13
-                    and p.hydrosphere < 15):
+                    and p.hydrosphere < 15
+                    and p.category not in ["Stygian", "Acheronian", "Asphodelian"]):
                     p.terraformingPoints = -15 + p.settlement + p.terraformingAlien.currentTechLevel
                     if (p.groupName == "Dwarf"
                         and not p.terraformingDone
                         and p.terraformingPoints > p.terraformingPointsUsed):
-                        terraformingDone = p.terraform_planet(p.terraformingAlien)
-                        if terraformingDone:
+                        terraformingOccurred = p.terraform_planet(p.terraformingAlien)
+                        if terraformingOccurred:
                             p.terraformingPointsUsed += 1
                     elif (p.groupName == "Terrestrial"
                         and not p.terraformingDone
                         and p.terraformingPoints - p.terraformingPointsUsed >= 2):
-                        terraformingDone = p.terraform_planet(p.terraformingAlien)
-                        if terraformingDone:
+                        terraformingOccurred = p.terraform_planet(p.terraformingAlien)
+                        if terraformingOccurred:
                             p.terraformingPointsUsed += 2
                     elif (p.groupName == "Helian"
                         and not p.terraformingDone
                         and p.terraformingPoints - p.terraformingPointsUsed >= 3):
-                        terraformingDone = p.terraform_planet(p.terraformingAlien)
-                        if terraformingDone:
+                        terraformingOccurred = p.terraform_planet(p.terraformingAlien)
+                        if terraformingOccurred:
                             p.terraformingPointsUsed += 3
 
-                    if terraformingDone:
+                    if terraformingOccurred:
                         for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
                             if not a.planets.get(p) or a.planets[p].get("habitation"):
                                 continue
@@ -146,14 +157,13 @@ def sectorgen(
                                 maxTechLevel,
                                 maxReactionModifier,
                                 p.systemHex.alienNearbyColony.get(a))
+                            p.habitation[a] = a.planets[p]["habitation"]
 
                             # If an alien is in the process of terraforming and they
                             # have made the planet temporarily worse, they won't
                             # abandon it. Otherwise, a lower level of habitation
                             # causes ruins to be present on the planet.
-                            if previousHabitation and not a.planets[p]["habitation"] and p.terraformingAlien == a:
-                                a.planets[p]["habitation"] = "Outpost"
-                            elif previousHabitation == "Colony" and a.planets[p]["habitation"] != "Colony":
+                            if previousHabitation == "Colony" and a.planets[p]["habitation"] != "Colony":
                                 p.ruins.add(a)
                             elif previousHabitation and not a.planets[p]["habitation"]:
                                 p.ruins.add(a)
@@ -201,8 +211,8 @@ def sectorgen(
                                                             "colonyRoll": roll_xdy(2, 6),
                                                             "desirability": None,
                                                             "habitation": None}
-                                            if p.category == "Asteroid Belt":
-                                                a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                                            if p.category in ["Jovian", "Asteroid Belt"]:
+                                                a.planets[p]["desirability"] = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                                             else:
                                                 a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
 
@@ -212,8 +222,9 @@ def sectorgen(
                                                 maxTechLevel,
                                                 maxReactionModifier,
                                                 p.systemHex.alienNearbyColony.get(a))
+                                            p.habitation[a] = a.planets[p]["habitation"]
                                             
-                                            if not p.terraformingAlien:
+                                            if not p.terraformingAlien and not p.alien:
                                                 p.terraformingAlien = a
                                         a.exploredSystems.add(newSystem)
                         alreadyChecked.append(newSystem)
@@ -238,8 +249,8 @@ def sectorgen(
             # With new technology, some places are more desirable.
             # Recheck all explored planets when the TL increases.
             for p in a.planets:
-                if p.category == "Asteroid Belt":
-                    a.planets[p]["desirability"] = p.calculate_desirability_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                if p.category in ["Jovian", "Asteroid Belt"]:
+                    a.planets[p]["desirability"] = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                 else:
                     a.planets[p]["desirability"] = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
                 a.planets[p]["habitation"] = p.calculate_habitation(
@@ -248,8 +259,9 @@ def sectorgen(
                     maxTechLevel,
                     maxReactionModifier,
                     p.systemHex.alienNearbyColony.get(a))
+                p.habitation[a] = a.planets[p]["habitation"]
                                             
-                if not p.terraformingAlien:
+                if not p.terraformingAlien and not p.alien:
                     p.terraformingAlien = a
 
     # Create the uninhabited space beyond the frontier.

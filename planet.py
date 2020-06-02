@@ -1171,10 +1171,12 @@ class OrbitalBody():
 
         return desirability
 
-    def calculate_desirability_asteroid_belt(self, alien, nearbyColony):
+    def calculate_desirability_jovian_asteroid_belt(self, alien, nearbyColony):
         """
         Returns the planet's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
+        This applies only to Jovians and Asteroid Belts as you don't live
+        "on" them, but in stations.
 
         Parameters:
             alien: Alien class instance
@@ -1195,8 +1197,8 @@ class OrbitalBody():
         if not self.systemHex.fuelAvailable:
             desirability -= 1
 
-        colonyInSystem = any(p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] for p in self.systemHex.planets)
-        outpostInSystem = any(p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] == "Outpost" for p in self.systemHex.planets)
+        colonyInSystem = any(p.groupName not in ["Jovian", "Asteroid Belt"] and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] for p in self.systemHex.planets)
+        outpostInSystem = any(p.groupName not in ["Jovian", "Asteroid Belt"] and alien in p.habitation.keys() and p.habitation[alien] == "Outpost" for p in self.systemHex.planets)
 
         if not colonyInSystem and not outpostInSystem:
             desirability -= 3
@@ -1236,23 +1238,18 @@ class OrbitalBody():
                 elif outpostPossible and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
                     hab = "Outpost"
                     self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
-                # They won't abandon the planet if it's temporarily worse
-                # because of terraforming
-                elif self.terraformingAlien == alien:
-                    return self.habitation[alien]
                 else:
                     hab = None
         else:
             hab = None
 
-        self.habitation[alien] = hab
-
-        if alien in self.habitation.keys():
-            if self.habitation[alien] == "Colony" and self.habitation in [
-                    None, "Outpost"]:
-                self.ruins.add(alien)
-            elif self.habitation[alien] == "Outpost" and not self.habitation:
-                self.ruins.add(alien)
+        # If an alien is in the process of terraforming and they
+        # have made the planet temporarily worse, they won't
+        # abandon it. Otherwise, a lower level of habitation
+        # causes ruins to be present on the planet.
+        previousHabitation = self.habitation.get(alien)
+        if previousHabitation and not hab and self.terraformingAlien == alien:
+            hab = "Outpost"
 
         return hab
 

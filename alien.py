@@ -346,6 +346,8 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         aggressionModifier=aggressionModifier,
         techLevelScore=techLevelScore)
     alienPlanet.habitation[alienPlanet.alien] = "Homeworld"
+    alienPlanet.terraformingAlien = alienPlanet.alien
+    alienPlanet.terraformingDone = True
     alienPlanet.alien.planets[alienPlanet] = {"outpostRoll": None,
         "colonyRoll": None,
         "desirability": 8,
