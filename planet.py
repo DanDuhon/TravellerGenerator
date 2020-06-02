@@ -270,6 +270,75 @@ def create_jovian_planet(
             orbitType=newPlanet.orbitType,
             alienSurvivalPercent=alienSurvivalPercent)
 
+        
+def create_terra(star):
+    newPlanet = OrbitalBody(
+        star=star,
+        parentObject=star,
+        order=star.epistellarOrbits + star.innerZoneOrbits + 1,
+        orbitType="Inner Zone")
+
+    newPlanet.groupName = "Terrestrial"
+    newPlanet.properName = "Terra"
+    newPlanet.category = "Tectonic"
+    newPlanet.size = 8
+    newPlanet.chemistry = "Water"
+    newPlanet.ageModifier = 0
+    newPlanet.className = "Tectonic"
+    newPlanet.type = "Gaian"
+    newPlanet.atmosphere = 6
+    newPlanet.hydrosphere = 7
+    newPlanet.subsurfaceOceans = False
+    newPlanet.biosphere = 12
+    newPlanet.terrain = [
+        "Beach/Shore",
+        "Clear",
+        "Deep Ocean",
+        "Desert",
+        "Forest",
+        "Hills",
+        "Jungle",
+        "Mountains",
+        "Open Ocean",
+        "Plains",
+        "Rainforest",
+        "Riverbank",
+        "Rough/Broken",
+        "Shallow Ocean",
+        "Swamp Marsh",
+        "Woods"]
+    newPlanet.animals = ["The animals of Earth."]
+    newPlanet.satellites = []
+
+        
+def create_luna(
+        star,
+        parentObject,
+        order,
+        orbitType):
+    newPlanet = OrbitalBody(
+        star=star,
+        parentObject=star.planets[-1],
+        order=star.planets[-1].order,
+        orbitType="Inner Zone")
+
+    newPlanet.groupName = "Dwarf"
+    newPlanet.properName = "Luna"
+    newPlanet.category = "Rockball"
+    newPlanet.size = 2
+    newPlanet.chemistry = None
+    newPlanet.ageModifier = None
+    newPlanet.className = "Geopassive"
+    newPlanet.type = "Lithic"
+    newPlanet.atmosphere = 0
+    newPlanet.hydrosphere = 0
+    newPlanet.subsurfaceOceans = False
+    newPlanet.biosphere = 0
+    newPlanet.terrain = ["Clear", "Hills", "Mountains", "Rough/Broken"]
+    newPlanet.animals = []
+    newPlanet.satellites = []
+    newPlanet.alien = None
+
 
 class OrbitalBody():
     """
