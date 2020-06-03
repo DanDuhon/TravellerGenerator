@@ -311,11 +311,7 @@ def create_terra(star):
     newPlanet.satellites = []
 
         
-def create_luna(
-        star,
-        parentObject,
-        order,
-        orbitType):
+def create_luna(star):
     newPlanet = OrbitalBody(
         star=star,
         parentObject=star.planets[-1],
