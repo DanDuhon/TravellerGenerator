@@ -70,23 +70,10 @@ def sectorgen(
 
     alien.create_terra_luna_humans(terraTarget, maxTechLevel)
     terraTarget.innerZoneOrbits += 1
-    for p in terraTarget.planets:
-        if p.orbitType == "Outer Zone":
-            p.order += 1
-            p.name = p.parentObject.name + " " + str(p.order)
-
-            for s1 in p.satellites:
-                s1.order += 1
-                s1.name = s1.parentObject.name + "-" + str(s1.parentObject.satellites.index(s1) + 1)
-                for s2 in s1.satellites:
-                    s2.order += 1
-                    s2.name = s2.parentObject.name + "-" + str(s2.parentObject.satellites.index(s2) + 1)
-                    for s3 in s2.satellites:
-                        s3.order += 1
-                        s3.name = s3.parentObject.name + "-" + str(s3.parentObject.satellites.index(s3) + 1)
-                        for s4 in s3.satellites:
-                            s4.order += 1
-                            s4.name = s4.parentObject.name + "-" + str(s4.parentObject.satellites.index(s4) + 1)
+    for p in [p for p in terraTarget.systemHex.planets if (p.star == terraTarget
+        and p.orbitType == "Outer Zone"
+        and p.name not in ["Terra", "Luna"])]:
+        p.order += 1
 
     alien.set_tech_level(maxTechLevel)
     maxReactionModifier = max(
