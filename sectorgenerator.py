@@ -12,31 +12,60 @@ from diceroller import roll_xdy
 
 
 def sectorgen(
-        initialSectorSize,
         alienSurvivalPercent,
         maxTechLevel):
+    # This creates an initial area in which aliens can
+    # survive to TL10. The initial area is on the very
+    # low end of what the final area will probably be,
+    # allowing surviving aliens to be far apart since
+    # no aliens created outside this initial area survive.
+    if maxTechLevel == 9:
+        initialSectorSize = 1
+    elif maxTechLevel == 10:
+        initialSectorSize = 10
+    elif maxTechLevel == 11:
+        initialSectorSize = 17
+    elif maxTechLevel == 12:
+        initialSectorSize = 50
+    elif maxTechLevel == 13:
+        initialSectorSize = 70
+    elif maxTechLevel == 14:
+        initialSectorSize = 94
+    elif maxTechLevel == 15:
+        initialSectorSize = 118
     sectorMax = math.ceil(initialSectorSize / 2)
     sectorMin = -sectorMax
 
-    for h in range(sectorMin, sectorMax + 1):
-        for v in range(sectorMin, sectorMax + 1):
-            if (h, v, -h - v) not in systemhex.allCoordinates:
-                systemhex.create_normal_system(
-                    horizontalCoord=h,
-                    verticalCoord=v,
-                    alienSurvivalPercent=alienSurvivalPercent,
-                    maxTechLevel=maxTechLevel)
+    validTerraTargets = []
 
-    validTerraTargets = [targetStar for targetStar in star.allStars
-                         if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
-                         and ((targetStar.luminosityClass != "M-V"
-                               and targetStar.innerZoneOrbits < 5)
-                              or (targetStar.luminosityClass == "M-V"
-                                  and targetStar.innerZoneOrbits < 4))
-                         and (targetStar.primaryOrbit is None
-                              or targetStar.primaryOrbit == "Distant")
-                         and "Close" not in targetStar.companionOrbits
-                         and targetStar.systemHex.age >= 4]
+    while not validTerraTargets:
+        systemhex.allCoordinates = {}
+        systemhex.allSystems = []
+        star.allStars = []
+        planet.allPlanets = []
+        animal.allAnimals = []
+        alien.allAliens = []
+
+        for h in range(sectorMin, sectorMax + 1):
+            for v in range(sectorMin, sectorMax + 1):
+                if (h, v, -h - v) not in systemhex.allCoordinates:
+                    systemhex.create_normal_system(
+                        horizontalCoord=h,
+                        verticalCoord=v,
+                        alienSurvivalPercent=alienSurvivalPercent,
+                        maxTechLevel=maxTechLevel)
+
+        validTerraTargets = [targetStar for targetStar in star.allStars
+                            if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
+                            and ((targetStar.luminosityClass != "M-V"
+                                and targetStar.innerZoneOrbits < 5)
+                                or (targetStar.luminosityClass == "M-V"
+                                    and targetStar.innerZoneOrbits < 4))
+                            and (targetStar.primaryOrbit is None
+                                or targetStar.primaryOrbit == "Distant")
+                            and "Close" not in targetStar.companionOrbits
+                            and targetStar.systemHex.age >= 4]
+                            
     terraTarget = random.choice(validTerraTargets)
 
     alien.create_terra_luna_humans(terraTarget, maxTechLevel)
@@ -177,7 +206,7 @@ def sectorgen(
 
                 systemsToExplore = set()
                 colonizedSystems = set()
-                maxRange = a.currentTechLevel - 9
+                maxRange = a.currentTechLevel - 8
                 alreadyChecked = []
                 
                 for p in [p for p in a.planets if a.planets[p]["habitation"] in ["Colony", "Homeworld"]]:

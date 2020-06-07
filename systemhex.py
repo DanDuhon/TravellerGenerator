@@ -184,7 +184,7 @@ class System():
                 self.flareStarDesirabilityPenalty = roll_xdy(1, 3)
                 break
 
-        for a in [a for a in alien.allAliens if not a.extinct]:
+        for a in alien.allAliens:
             self.distanceFromAlienHomeSystem[a] = distance_between_systems(self, a.homePlanet.systemHex)
         self.systemsAtRange = {0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: []}
         for k in self.systemsAtRange:
