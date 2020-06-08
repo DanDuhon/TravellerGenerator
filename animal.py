@@ -34,7 +34,7 @@ class Animal():
 
     def __init__(self, planet, terrain):
         allAnimals.append(self)
-        self.name = namegenerator.animalNGrams.generate_name()
+        self.name = None#namegenerator.animalNGrams.generate_name()
         self.planet = planet
         self.terrain = terrain
         self.animalClass = None

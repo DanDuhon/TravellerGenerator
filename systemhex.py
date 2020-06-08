@@ -130,6 +130,7 @@ class System():
         self.age = roll_xdy(3, 6) - 3
         self.name = namegenerator.astralNGrams.generate_name()
         self.distanceFromAlienHomeSystem = {}
+        self.alienNearbyColony = {}
         self.fuelAvailable = False
 
         if roll_xdy(3, 6) == 18:
@@ -205,6 +206,7 @@ class System():
                             alienSurvivalPercent=alienSurvivalPercent,
                             maxTechLevel=maxTechLevel)
 
+
     def create_surrounding_systems(
             self,
             alienSurvivalPercent,
@@ -222,3 +224,9 @@ class System():
                         verticalCoord=self.coordinates[1] + y,
                         alienSurvivalPercent=alienSurvivalPercent,
                         maxTechLevel=maxTechLevel)
+
+
+    def set_nearby_colony_systems(self, alien):
+        hexRange = alien.currentTechLevel - 9
+        for coords in self.systemsAtRange[hexRange]:
+            allCoordinates[(coords[0], coords[1], -coords[0] - coords[1])].alienNearbyColony[alien] = True

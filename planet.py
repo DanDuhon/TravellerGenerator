@@ -270,6 +270,71 @@ def create_jovian_planet(
             orbitType=newPlanet.orbitType,
             alienSurvivalPercent=alienSurvivalPercent)
 
+        
+def create_terra(star):
+    newPlanet = OrbitalBody(
+        star=star,
+        parentObject=star,
+        order=star.epistellarOrbits + star.innerZoneOrbits + 1,
+        orbitType="Inner Zone")
+
+    newPlanet.groupName = "Terrestrial"
+    newPlanet.properName = "Terra"
+    newPlanet.category = "Tectonic"
+    newPlanet.size = 8
+    newPlanet.chemistry = "Water"
+    newPlanet.ageModifier = 0
+    newPlanet.className = "Tectonic"
+    newPlanet.type = "Gaian"
+    newPlanet.atmosphere = 6
+    newPlanet.hydrosphere = 7
+    newPlanet.subsurfaceOceans = False
+    newPlanet.biosphere = 12
+    newPlanet.terrain = [
+        "Beach/Shore",
+        "Clear",
+        "Deep Ocean",
+        "Desert",
+        "Forest",
+        "Hills",
+        "Jungle",
+        "Mountains",
+        "Open Ocean",
+        "Plains",
+        "Rainforest",
+        "Riverbank",
+        "Rough/Broken",
+        "Shallow Ocean",
+        "Swamp Marsh",
+        "Woods"]
+    newPlanet.animals = ["The animals of Earth."]
+    newPlanet.satellites = []
+
+        
+def create_luna(star):
+    newPlanet = OrbitalBody(
+        star=star,
+        parentObject=star.planets[-1],
+        order=star.planets[-1].order,
+        orbitType="Inner Zone")
+
+    newPlanet.groupName = "Dwarf"
+    newPlanet.properName = "Luna"
+    newPlanet.category = "Rockball"
+    newPlanet.size = 2
+    newPlanet.chemistry = None
+    newPlanet.ageModifier = None
+    newPlanet.className = "Geopassive"
+    newPlanet.type = "Lithic"
+    newPlanet.atmosphere = 0
+    newPlanet.hydrosphere = 0
+    newPlanet.subsurfaceOceans = False
+    newPlanet.biosphere = 0
+    newPlanet.terrain = ["Clear", "Hills", "Mountains", "Rough/Broken"]
+    newPlanet.animals = []
+    newPlanet.satellites = []
+    newPlanet.alien = None
+
 
 class OrbitalBody():
     """
@@ -298,6 +363,7 @@ class OrbitalBody():
             orbitType):
         allPlanets.append(self)
         self.systemHex = star.systemHex
+        self.systemHex.planets.append(self)
         self.star = star
         self.parentObject = parentObject
         self.order = order
@@ -323,6 +389,9 @@ class OrbitalBody():
         self.ruins = set()
         self.settlement = 0
         self.terraformingAlien = None
+        self.terraformingPoints = 0
+        self.terraformingPointsUsed = 0
+        self.terraformingDone = False
 
         if self.parentObject == self.star:
             self.name = self.parentObject.name + " " + str(self.order)
@@ -1167,10 +1236,12 @@ class OrbitalBody():
 
         return desirability
 
-    def calculate_desirability_asteroid_belt(self, alien, nearbyColony):
+    def calculate_desirability_jovian_asteroid_belt(self, alien, nearbyColony):
         """
         Returns the planet's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
+        This applies only to Jovians and Asteroid Belts as you don't live
+        "on" them, but in stations.
 
         Parameters:
             alien: Alien class instance
@@ -1191,12 +1262,12 @@ class OrbitalBody():
         if not self.systemHex.fuelAvailable:
             desirability -= 1
 
-        coloniesInSystem = sum(1 for p in self.systemHex.planets if p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"])
-        outpostsInSystem = sum(1 for p in self.systemHex.planets if p.groupName != "Asteroid Belt" and alien in p.habitation.keys() and p.habitation[alien] == "Outpost")
+        colonyInSystem = any(p.groupName not in ["Jovian", "Asteroid Belt"] and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] for p in self.systemHex.planets)
+        outpostInSystem = any(p.groupName not in ["Jovian", "Asteroid Belt"] and alien in p.habitation.keys() and p.habitation[alien] == "Outpost" for p in self.systemHex.planets)
 
-        if coloniesInSystem + outpostsInSystem == 0:
+        if not colonyInSystem and not outpostInSystem:
             desirability -= 3
-        elif coloniesInSystem == 0 and outpostsInSystem > 0:
+        elif not colonyInSystem and outpostInSystem:
             desirability -= 1
 
         return desirability
@@ -1207,7 +1278,7 @@ class OrbitalBody():
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier,
-            noOutpost):
+            outpostPossible):
         """
         Sets the type of Habitation an Alien will have on the planet.
         Not applicable for Homeworld because that is set at the time of Alien creation.
@@ -1229,26 +1300,21 @@ class OrbitalBody():
                 if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
                     hab = "Colony"
                     self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
-                elif not noOutpost and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
+                elif outpostPossible and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
                     hab = "Outpost"
                     self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
-                # They won't abandon the planet if it's temporarily worse
-                # because of terraforming
-                elif self.terraformingAlien == alien:
-                    return self.habitation[alien]
                 else:
                     hab = None
         else:
             hab = None
 
-        self.habitation[alien] = hab
-
-        if alien in self.habitation.keys():
-            if self.habitation[alien] == "Colony" and self.habitation in [
-                    None, "Outpost"]:
-                self.ruins.add(alien)
-            elif self.habitation[alien] == "Outpost" and not self.habitation:
-                self.ruins.add(alien)
+        # If an alien is in the process of terraforming and they
+        # have made the planet temporarily worse, they won't
+        # abandon it. Otherwise, a lower level of habitation
+        # causes ruins to be present on the planet.
+        previousHabitation = self.habitation.get(alien)
+        if previousHabitation and not hab and self.terraformingAlien == alien:
+            hab = "Outpost"
 
         return hab
 
@@ -1259,6 +1325,8 @@ class OrbitalBody():
         Parameters:
             alien: Alien class instance
                 The alien doing the terraforming.
+
+        Returns True if something was changed, otherwise returns False.
         """
         
         # If there's no chemistry, nothing has to be changed, it just happens
@@ -1269,47 +1337,47 @@ class OrbitalBody():
         elif self.chemistry != alien.homePlanet.chemistry:
             if self.hydrosphere > 1:
                 self.hydrosphere -= 1
-                return
+                return True
             else:
                 self.chemistry = alien.homePlanet.chemistry
-                return
+                return True
 
         # Remove Dry World penalty
         if self.hydrosphere == 0:
             self.hydrosphere += 1
-            return
+            return True
 
         # Get Atmosphere into the Habitable range.
         # If Hydrosphere 2+ and Atmosphere 12-13, reduce Hydrosphere to 1
         # then reduce the Atmosphere
         if self.atmosphere == 13:
             self.atmosphere -= 1
-            return
+            return True
         elif self.atmosphere == 12:
             if 2 <= self.hydrosphere <= 10:
                 self.hydrosphere -= 1
-                return
+                return True
             elif self.hydrosphere < 2:
                 self.atmosphere -= 1
-                return
+                return True
         elif self.atmosphere > 9:
             self.atmosphere -= 1
-            return
+            return True
         elif self.atmosphere < 2:
             self.atmosphere += 1
-            return
+            return True
 
         # At this point, the planet should have one of the Habitable World bonuses
         # If it's Poor, improve it to Other by raising Hydrosphere
         if self.hydrosphere <= max([(4 if alien.animalClass == "Aquatic" else 3), alien.homePlanet.hydrosphere - 4]):
             self.hydrosphere += 1
-            return
+            return True
 
         # If it's Water World and Hydrosphere 10, reduce Hydrosphere to improve it to Other
         # Does not apply to Aquatics
         if self.hydrosphere == 10 and alien.animalClass != "Aquatic":
             self.hydrosphere -= 1
-            return
+            return True
 
         # If the planet's size would allow it to be a Garden world, work
         # towards that
@@ -1317,11 +1385,11 @@ class OrbitalBody():
             # Lower Hydrosphere if it's too high
             if self.hydrosphere > min([(11 if alien.animalClass == "Aquatic" else 8), alien.homePlanet.hydrosphere + 3]):
                 self.hydrosphere -= 1
-                return
+                return True
             # Raise Hydrosphere if it's too low
             if self.hydrosphere < max([(5 if alien.animalClass == "Aquatic" else 2), alien.homePlanet.hydrosphere - 3]):
                 self.hydrosphere -= 1
-                return
+                return True
             # Lower Atmosphere if it's too high
             if any([alien.homePlanet.atmosphere == 2 and self.atmosphere > 4,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere > 5,
@@ -1332,7 +1400,7 @@ class OrbitalBody():
                     alien.homePlanet.atmosphere == 8 and self.atmosphere > 9,
                     alien.homePlanet.atmosphere == 9 and self.atmosphere > 9]):
                 self.atmosphere -= 1
-                return
+                return True
             # Raise Atmosphere if it's too low
             if any([alien.homePlanet.atmosphere == 2 and self.atmosphere < 2,
                     alien.homePlanet.atmosphere == 3 and self.atmosphere < 3,
@@ -1341,7 +1409,7 @@ class OrbitalBody():
                     alien.homePlanet.atmosphere == 6 and self.atmosphere < 5,
                     alien.homePlanet.atmosphere == 7 and self.atmosphere < 4]):
                 self.atmosphere += 1
-                return
+                return True
 
         # Get the Atmosphere to match the homeworld's
         if self.atmosphere > alien.homePlanet.atmosphere:
@@ -1349,9 +1417,14 @@ class OrbitalBody():
             return True
         elif self.atmosphere < alien.homePlanet.atmosphere:
             self.atmosphere += 1
-            return
+            return True
 
-        return
+        # If nothing was done, the planet has been
+        # terraformed as much as it can, set a flag
+        # so we don't run this method for this instance
+        # anymore.
+        self.terraformingDone = True
+        return False
         
 
     def planet_terrain_animals(self):
