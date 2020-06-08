@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "-x",
     dest='survival',
-    default=0,
+    default=10,
     type=int,
     help="alien survival percent (default=10)")
 parser.add_argument(
@@ -34,4 +34,4 @@ sectorgenerator.sectorgen(
 if args.validation:
     validation.validation(args.techlevel)
     
-#tkhex.SystemDisplay()
+tkhex.SystemDisplay()
