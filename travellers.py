@@ -6,8 +6,6 @@ import tkhex
 
 parser = argparse.ArgumentParser(
     description="Generates a sector of space for use in Traveller")
-parser.add_argument("-s", dest='size', default=10, type=int,
-                    help="initial sector size (default=50)")
 parser.add_argument(
     "-x",
     dest='survival',
@@ -17,7 +15,7 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=12,
+    default=15,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(
@@ -30,11 +28,10 @@ parser.add_argument(
 args = parser.parse_args()
 
 sectorgenerator.sectorgen(
-    args.size,
     args.survival,
     args.techlevel)
 
 if args.validation:
     validation.validation(args.techlevel)
-
+    
 tkhex.SystemDisplay()

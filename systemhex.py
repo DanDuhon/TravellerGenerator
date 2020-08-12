@@ -13,6 +13,80 @@ allCoordinates = {}
 numberOfStarsTable = LookupTable((10, 1), (15, 2), (21, 3))
 
 
+def create_normal_system(
+        horizontalCoord,
+        verticalCoord,
+        alienSurvivalPercent,
+        maxTechLevel):
+    """
+    Creates a system in a hex that is not in an Open Cluster.
+
+    Parameters:
+        horizontalCoord: Integer
+            The horizontal or x-axis coordinate of the new system.
+        verticalCoord: Integer
+            The vertical or y-axis coordinate of the new system.
+        alienSurvivalPercent: Integer
+            An integer that represents the percent chance that
+            an intelligent species will survive to Tech Level 10.
+        maxTechLevel: Integer
+            An integer representing the maximum achievable Tech Level
+            by an intelligence species.
+    """
+    System(
+        horizontalCoord=horizontalCoord,
+        verticalCoord=verticalCoord,
+        openCluster=False,
+        alienSurvivalPercent=alienSurvivalPercent,
+        maxTechLevel=maxTechLevel)
+
+
+def create_cluster_system(
+        horizontalCoord,
+        verticalCoord,
+        alienSurvivalPercent,
+        maxTechLevel):
+    """
+    Creates a system in a hex that is in an Open Cluster, meaning
+    there will be more stars per system on average.
+
+    Parameters:
+        horizontalCoord: Integer
+            The horizontal or x-axis coordinate of the new system.
+        verticalCoord: Integer
+            The vertical or y-axis coordinate of the new system.
+        alienSurvivalPercent: Integer
+            An integer that represents the percent chance that
+            an intelligent species will survive to Tech Level 10.
+        maxTechLevel: Integer
+            An integer representing the maximum achievable Tech Level
+            by an intelligence species.
+    """
+    System(
+        horizontalCoord=horizontalCoord,
+        verticalCoord=verticalCoord,
+        openCluster=True,
+        alienSurvivalPercent=alienSurvivalPercent,
+        maxTechLevel=maxTechLevel)
+
+
+def distance_between_systems(system1, system2):
+    """
+    Calculates the distance between two Systems.  This is the absolute
+    shortest route, not necessarily the route that is traversable by
+    spaceships.
+
+    Parameters:
+        system1: System class instance
+            One system to get the distance between.
+        system2: System class instance
+            The other system to get the distance between.
+    """
+    return int((abs(system1.coordinates[0] - system2.coordinates[0])
+                + abs(system1.coordinates[1] - system2.coordinates[1])
+                + abs(system1.coordinates[2] - system2.coordinates[2])) / 2)
+
+
 class System():
     """
     Defines a system hex. Each hex has a horizontal and vertical coordinate
@@ -28,10 +102,9 @@ class System():
             The horizontal coordinate in the hex grid.
         verticalCoord: Integer
             The vertical coordinate in the hex grid.
-        openClusterBonus: Integer
-            A 0 or +3 bonus to the number of stars calculation. Open Clusters
-            are vast areas with large amount of gasses that results in more
-            stars.
+        openCluster: Boolean
+            Indicates a bonus to the number of stars calculation. Open Clusters
+            contain a large amount of gasses that results in more stars.
         alienSurvivalPercent: Integer
             Represents a percentage. This gets passed along through to the
             planets and then aliens to determine how likely it is that the
@@ -46,26 +119,29 @@ class System():
             self,
             horizontalCoord,
             verticalCoord,
-            openClusterBonus,
+            openCluster,
             alienSurvivalPercent,
             maxTechLevel):
         allSystems.append(self)
-        self.horizontalCoord = horizontalCoord
-        self.verticalCoord = verticalCoord
-        self.cubeCoord = (self.horizontalCoord * -1) - self.verticalCoord
-        self.coordinates = (self.horizontalCoord,
-                            self.verticalCoord,
-                            self.cubeCoord)
-        allCoordinates[(self.horizontalCoord,
-                        self.verticalCoord,
-                        self.cubeCoord)] = self
+        self.coordinates = (horizontalCoord,
+                            verticalCoord,
+                            -horizontalCoord - verticalCoord)
+        allCoordinates[self.coordinates] = self
         self.age = roll_xdy(3, 6) - 3
         self.name = namegenerator.astralNGrams.generate_name()
         self.distanceFromAlienHomeSystem = {}
+        self.alienNearbyColony = {}
         self.fuelAvailable = False
 
-        if roll_xdy(1, 2) == 1:
-            self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + openClusterBonus]
+        if roll_xdy(3, 6) == 18:
+            openCluster = True
+            createOpenClusterSystems = True
+        else:
+            openCluster = False
+            createOpenClusterSystems = False
+
+        if roll_xdy(1, 6) + (2 if openCluster else 0) > 3:
+            self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + (3 if openCluster else 0)]
         else:
             self.numberOfStars = 0
 
@@ -75,52 +151,37 @@ class System():
             self.brownDwarf = False
 
         self.stars = []
+        self.planets = []
+        
         # Only the primary star and automatic brown dwarf are created at this level.
         # Companion stars to the primary star will be created from within the
         # Star class.
         if self.numberOfStars > 0:
-            self.stars.append(star.Star(
+            star.create_primary_star(
                 systemHex=self,
-                systemName=self.name,
-                systemAge=self.age,
-                starNumber=1,
                 alienSurvivalPercent=alienSurvivalPercent,
-                maxTechLevel=maxTechLevel,
-                primary=True,
-                numberOfStars=self.numberOfStars))
-            self.stars.extend(self.stars[0].companions)
+                maxTechLevel=maxTechLevel)
+
+        if self.numberOfStars > 1:
+            for x in range(self.numberOfStars - 1):
+                star.create_companion_star(
+                    systemHex=self,
+                    alienSurvivalPercent=alienSurvivalPercent,
+                    maxTechLevel=maxTechLevel,
+                    primaryOrbit=self.stars[0].companionOrbits[x],
+                    primarySpectralTypeRoll=self.stars[0].spectralTypeRoll)
+                
         if self.brownDwarf:
             self.numberOfStars += 1
-            self.stars.append(star.Star(
+            star.create_brown_dwarf_star(
                 systemHex=self,
-                systemName=self.name,
-                systemAge=self.age,
-                starNumber=self.numberOfStars,
                 alienSurvivalPercent=alienSurvivalPercent,
-                maxTechLevel=maxTechLevel,
-                autoBrownDwarf=self.brownDwarf,
-                primaryOrbit="Distant"))
-
+                maxTechLevel=maxTechLevel)
+                
         self.flareStarDesirabilityPenalty = 0
         for s in self.stars:
             if s.luminosityClass == "M-Ve":
                 self.flareStarDesirabilityPenalty = roll_xdy(1, 3)
-                break
-
-        self.planets = []
-        self.animals = []
-        self.homeSystemOfAliens = []
-        for starInstance in self.stars:
-            self.planets.extend(starInstance.planets)
-
-            for planetInstance in starInstance.planets:
-                self.animals.extend(planetInstance.animals)
-                if planetInstance.alien is not None:
-                    self.homeSystemOfAliens.append(planetInstance.alien)
-
-        for p in self.planets:
-            if isinstance(p, planet.JovianPlanet) or p.chemistry == "Water":
-                self.fuelAvailable = True
                 break
 
         for a in alien.allAliens:
@@ -129,45 +190,43 @@ class System():
         for k in self.systemsAtRange:
             for x in range(-k, k + 1):
                 for y in range(max(-k, -x - k), min(k, -x + k) + 1):
-                    self.systemsAtRange[k].append((self.horizontalCoord + x, self.verticalCoord + y))
+                    self.systemsAtRange[k].append((self.coordinates[0] + x, self.coordinates[1] + y))
+
+        if createOpenClusterSystems:
+            hexRange = roll_xdy(2, 6)
+            for x in range(-hexRange, hexRange + 1):
+                for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
+                    h = self.coordinates[0] + x
+                    v = self.coordinates[1] + y
+                    c = -h - v
+                    if (h, v, c) not in allCoordinates:
+                        create_cluster_system(
+                            horizontalCoord=self.coordinates[0] + x,
+                            verticalCoord=self.coordinates[1] + y,
+                            alienSurvivalPercent=alienSurvivalPercent,
+                            maxTechLevel=maxTechLevel)
+
 
     def create_surrounding_systems(
             self,
-            openClusterTuple,
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier):
         hexRange = (3 + maxReactionModifier) * (maxTechLevel - 9)
         for x in range(-hexRange, hexRange + 1):
             for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
-                if (self.horizontalCoord + x, self.verticalCoord + y, ((self.horizontalCoord + x) * -1) - (self.verticalCoord + y)) not in allCoordinates:
-                    h = self.horizontalCoord + x
-                    v = self.verticalCoord + y
-                    openClusterBonus = 0
-                    if openClusterTuple[0] and h >= openClusterTuple[2] and openClusterTuple[1] and v >= openClusterTuple[2]:
-                        openClusterBonus = 3
-                    elif not openClusterTuple[0] and h <= openClusterTuple[2] and not openClusterTuple[1] and v <= openClusterTuple[2]:
-                        openClusterBonus = 3
-                    System(
-                        self.horizontalCoord + x,
-                        self.verticalCoord + y,
-                        openClusterBonus,
-                        alienSurvivalPercent,
-                        maxTechLevel)
+                h = self.coordinates[0] + x
+                v = self.coordinates[1] + y
+                c = -h - v
+                if (h, v, c) not in allCoordinates:
+                    create_normal_system(
+                        horizontalCoord=self.coordinates[0] + x,
+                        verticalCoord=self.coordinates[1] + y,
+                        alienSurvivalPercent=alienSurvivalPercent,
+                        maxTechLevel=maxTechLevel)
 
 
-def distance_between_systems(system1, system2):
-    """
-    Calculates the distance between two Systems.  This is the absolute
-    shortest route, not necessarily the route that is traversable by
-    spaceships.
-
-    Parameters:
-        system1: System class instance
-            One system to get the distance between.
-        system2: System class instance
-            The other system to get the distance between.
-    """
-    return int((abs(system1.horizontalCoord - system2.horizontalCoord)
-                + abs(system1.verticalCoord - system2.verticalCoord)
-                + abs(system1.cubeCoord - system2.cubeCoord)) / 2)
+    def set_nearby_colony_systems(self, alien):
+        hexRange = alien.currentTechLevel - 9
+        for coords in self.systemsAtRange[hexRange]:
+            allCoordinates[(coords[0], coords[1], -coords[0] - coords[1])].alienNearbyColony[alien] = True

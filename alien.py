@@ -131,96 +131,22 @@ class Alien():
 
 def create_terra_luna_humans(star, maxTechLevel):
     """
-    This will return "Earth", the origin of humans.
+    This will create "Earth", the origin of humans.
     It will also create the moon and humans.
 
     Parameters:
         star: Star class instance
             The star that Terra orbits.
-            the star it is orbiting.
-        spectralType: String
-            The spectral type of the star this planet is orbiting.
         maxTechLevel: Integer
             The user-provided maximum tech level for any species.
     """
     # Terra
-    terra = planet.TerrestrialPlanet(
-        star=star,
-        parentObject=star,
-        order=star.epistellarOrbits + star.innerZoneOrbits + 1,
-        orbitType="Inner Zone",
-        luminosityClass=star.luminosityClass,
-        expansionAffectedOrbits=0,
-        systemAge=0,
-        alienSurvivalPercent=0,
-        maxTechLevel=maxTechLevel)
+    planet.create_terra(star=star)
 
-    terra.properName = "Terra"
-    terra.category = "Tectonic"
-    terra.size = 8
-    terra.chemistry = "Water"
-    terra.ageModifier = 0
-    terra.className = "Tectonic"
-    terra.type = "Gaian"
-    terra.atmosphere = 6
-    terra.hydrosphere = 7
-    terra.subsurfaceOceans = False
-    terra.biosphere = 12
-    terra.terrain = [
-        "Beach/Shore",
-        "Clear",
-        "Deep Ocean",
-        "Desert",
-        "Forest",
-        "Hills",
-        "Jungle",
-        "Mountains",
-        "Open Ocean",
-        "Plains",
-        "Rainforest",
-        "Riverbank",
-        "Rough/Broken",
-        "Shallow Ocean",
-        "Swamp Marsh",
-        "Woods"]
-    terra.animals = []
-    # Remove any satellites that were created.
-    for s in terra.satellites:
-        for s2 in s.satellites:
-            if s2 in planet.allPlanets:
-                planet.allPlanets.remove(s2)
-        if s in planet.allPlanets:
-            planet.allPlanets.remove(s)
+    terra = star.planets[-1]
 
     # Luna
-    luna = planet.DwarfPlanet(
-        star=star,
-        parentObject=terra,
-        order=terra.order,
-        orbitType="Inner Zone",
-        luminosityClass=star.luminosityClass,
-        expansionAffectedOrbits=0,
-        systemAge=0,
-        alienSurvivalPercent=0,
-        maxTechLevel=maxTechLevel)
-
-    luna.properName = "Luna"
-    luna.category = "Rockball"
-    luna.size = 2
-    luna.chemistry = None
-    luna.ageModifier = None
-    luna.className = "Geopassive"
-    luna.type = "Lithic"
-    luna.atmosphere = 0
-    luna.hydrosphere = 0
-    luna.subsurfaceOceans = False
-    luna.biosphere = 0
-    luna.terrain = ["Clear", "Hills", "Mountains", "Rough/Broken"]
-    luna.animals = []
-    luna.satellites = []
-    luna.alien = None
-
-    terra.satellites = [luna]
+    planet.create_luna(star=star)
 
     # Humans
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:
@@ -243,8 +169,6 @@ def create_terra_luna_humans(star, maxTechLevel):
                                   "desirability": 8,
                                   "habitation": "Homeworld"}
     terra.settlement = 100
-
-    return terra
 
 
 def create_alien(alienPlanet, alienSurvivalPercent):
@@ -351,6 +275,8 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         aggressionModifier=aggressionModifier,
         techLevelScore=techLevelScore)
     alienPlanet.habitation[alienPlanet.alien] = "Homeworld"
+    alienPlanet.terraformingAlien = alienPlanet.alien
+    alienPlanet.terraformingDone = True
     alienPlanet.alien.planets[alienPlanet] = {"outpostRoll": None,
         "colonyRoll": None,
         "desirability": 8,
