@@ -28,6 +28,8 @@ class Alien():
             Dexterity stat value from animal generation.
         endurance: Integer
             Endurance stat value from animal generation.
+        pack: Integer
+            Pack stat value from animal generation.
         size: String
             Weight value from animal generation.
         athletics: Integer
@@ -75,6 +77,7 @@ class Alien():
             strength,
             dexterity,
             endurance,
+            pack,
             size,
             athletics,
             deception,
@@ -101,6 +104,7 @@ class Alien():
         self.strength = strength
         self.dexterity = dexterity
         self.endurance = endurance
+        self.pack = pack
         self.intellect = 7
         self.size = size
         self.athletics = athletics
@@ -120,6 +124,8 @@ class Alien():
         self.reactionModifier = reactionModifier
         self.aggressionModifier = aggressionModifier
         self.techLevelScore = techLevelScore
+        self.relativePopulation = None
+        self.populationModifier = None
         self.maxTechLevel = 0
         self.currentTechLevel = 0
         self.exploredSystems = set()
@@ -127,6 +133,27 @@ class Alien():
 
         for s in systemhex.allSystems:
             s.distanceFromAlienHomeSystem[self] = systemhex.distance_between_systems(s, self.homePlanet.systemHex)
+
+        if pack == 0:
+            self.relativePopulation = 1
+        elif pack <= 2:
+            self.relativePopulation = 3
+        elif pack <= 5:
+            self.relativePopulation = 6
+        elif pack <= 8:
+            self.relativePopulation = 12
+        elif pack <= 11:
+            self.relativePopulation = 18
+        elif pack <= 15:
+            self.relativePopulation = 24
+        else:
+            self.relativePopulation = 30
+
+        if animalClass == "Insect" and pack > 2 and "Acutely self-aware" not in quirks:
+            if "These insects form veritable swarms." in quirks:
+                self.relativePopulation *= 4
+            else:
+                self.relativePopulation *= 3
 
 
 def create_terra_luna_humans(star, maxTechLevel):
@@ -153,12 +180,12 @@ def create_terra_luna_humans(star, maxTechLevel):
         avgTechLevelScore = round(statistics.mean(
             [alien.techLevelScore for alien in allAliens if not alien.extinct]), 0)
         terra.alien = Alien(terra, None, "Mammal",
-                7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
+                7, 7, 7, 11, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
                 set(), False, 0, 0, avgTechLevelScore + roll_xdy(1, 6))
     else:
         terra.alien = Alien(terra, None, "Mammal",
-                7, 7, 7, 6, 0, 0, 0, 0, 0, 0, 0,
+                7, 7, 7, 11, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
                 set(), False, 0, 0, 10)
 
@@ -169,6 +196,7 @@ def create_terra_luna_humans(star, maxTechLevel):
                                   "desirability": 8,
                                   "habitation": "Homeworld"}
     terra.settlement = 100
+    terra.terraformingAlien = terra.alien
 
 
 def create_alien(alienPlanet, alienSurvivalPercent):
@@ -256,6 +284,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         strength=strength,
         dexterity=dexterity,
         endurance=animalToConvert.endurance,
+        pack=animalToConvert.pack,
         size=animalToConvert.size,
         athletics=animalToConvert.athletics,
         deception=animalToConvert.deception,
@@ -283,7 +312,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         "habitation": "Homeworld"}
 
     if extinct:
-        alienPlanet.ruins.add(planet.alien)
+        alienPlanet.ruins.add(alienPlanet.alien)
     else:
         alienPlanet.settlement = 100
 

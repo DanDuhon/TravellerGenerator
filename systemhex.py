@@ -212,6 +212,20 @@ class System():
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier):
+        """
+        Creates nearby systems, based on how far aliens
+        will explore.
+
+        Parameters:
+            alienSurvivalPercent: Integer
+                An integer that represents the percent chance
+                of an alien species surviving to TL10.
+            maxTechLevel: Integer
+                The maximum Tech Level any alien will achieve.
+            maxReactionModifier: Integer
+                The maximum reaction modifier value across all
+                aliens.
+        """
         hexRange = (3 + maxReactionModifier) * (maxTechLevel - 9)
         for x in range(-hexRange, hexRange + 1):
             for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
@@ -227,6 +241,14 @@ class System():
 
 
     def set_nearby_colony_systems(self, alien):
+        """
+        Sets a flag for nearby systems that indicates
+        that this alien has a colony nearby.
+
+        Parameters:
+            alien: Alien class instance
+                The alien that has a nearby colony.
+        """
         hexRange = alien.currentTechLevel - 9
         for coords in self.systemsAtRange[hexRange]:
             allCoordinates[(coords[0], coords[1], -coords[0] - coords[1])].alienNearbyColony[alien] = True
