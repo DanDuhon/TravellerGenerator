@@ -158,6 +158,9 @@ def validation(maxTechLevel):
             raise ValueError("Wrong number of outer zone planets.")
 
     # Planets
+    # These validations cannot currently deal with terraforming, so planets that have been
+    # terraformed may look invalid here. I think it was thoroughly tested prior to
+    # implementing terraforming so we're probably ok.
     for p in planet.allPlanets:
         # if [pl.name for pl in planet.allPlanets].count(p.name) > 1:
         #     get_info(p.systemHex)

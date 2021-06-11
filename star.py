@@ -226,7 +226,6 @@ class Star():
                 if roll <= 1:
                     planet.create_asteroid_belt(
                         star=self,
-                        parentObject=self,
                         order=orbit + 1,
                         orbitType=orbitType,
                         alienSurvivalPercent=alienSurvivalPercent)
@@ -254,7 +253,6 @@ class Star():
                 else:
                     planet.create_jovian_planet(
                         star=self,
-                        parentObject=self,
                         order=orbit + 1,
                         orbitType=orbitType,
                         alienSurvivalPercent=alienSurvivalPercent)

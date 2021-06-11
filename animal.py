@@ -34,6 +34,9 @@ class Animal():
 
     def __init__(self, planet, terrain):
         allAnimals.append(self)
+        # Animal naming disabled for now to increase testing speed.
+        # Animal names should probably be done on demand anyway so you don't waste time
+        # naming things that may never be seen.
         self.name = None#namegenerator.animalNGrams.generate_name()
         self.planet = planet
         self.terrain = terrain

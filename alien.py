@@ -344,7 +344,17 @@ def set_tech_level(maxTechLevel):
             tl = roll_xdy(1, 9)
             alien.maxTechLevel = tl
             alien.currentTechLevel = tl
-        else:
+        # Terrans and half the aliens get a balanced tech level.
+        # The rest get a random tech level from 1 to 9 because the
+        # equation will always result in at least a 10.
+        # This way there are intelligent species out there that are
+        # not extinct but have also not developed the technology
+        # to colonize other planets (aside from generational colony ships).
+        if alien.name == "Terran" or roll_xdy(1, 2) == 2:
             alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + (
                 (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
             alien.currentTechLevel = alien.maxTechLevel - (maxTechLevel - 9)
+        else:
+            tl = roll_xdy(1, 9)
+            alien.maxTechLevel = tl
+            alien.currentTechLevel = tl
