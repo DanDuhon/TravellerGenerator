@@ -1,3 +1,4 @@
 __pycache__/
 *.py[cod]
 Traveller performance testing.ipynb
+.vscode/settings.json

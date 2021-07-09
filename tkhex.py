@@ -286,6 +286,16 @@ class SystemDisplay:
                 outline=Colors.luminosity[star.luminosityClass[0]][1],
                 width = 10)
 
+        numberOfOrbits = max([p.order for p in star.planets]) + 2
+        for x in range(2, numberOfOrbits):
+            self.star.create_oval(
+                overhang * x - size, 100 - size / 2,
+                overhang * x, 100 + size / 2,
+                fill=None,
+                outline="black",
+                width=1
+            )
+
         def clickstar_create(planet):
             def clickstar(event):
                 self.selectplanet(planet)

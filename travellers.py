@@ -15,7 +15,7 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=15,
+    default=10,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(
