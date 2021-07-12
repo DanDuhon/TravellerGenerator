@@ -3,6 +3,8 @@ import itertools
 import tkinter
 
 import systemhex
+import star
+import planet
 
 # TODO: Max/Min Zoom
 # TODO: Zoom from mouse
@@ -91,7 +93,7 @@ class SystemDisplay:
         # System Screen
         self.system = tkinter.Canvas(tk,
                 background=Colors.systembackground,
-                width=300, height=200)
+                width=400, height=200)
         self.system.grid(row=1, column=1, sticky='n')
 
         # Star Label
@@ -101,7 +103,7 @@ class SystemDisplay:
         # Star Screen
         self.star = tkinter.Canvas(tk,
                 background='green',
-                width=300, height=200)
+                width=400, height=200)
         self.star.grid(row=3, column=1, sticky='n')
 
         # Planet Label
@@ -115,11 +117,58 @@ class SystemDisplay:
         tk.mainloop()
 
     def set_info(self, object):
+        if isinstance(object, systemhex.System):
+            displayInfo = ["coordinates", "name", "fuelAvailable"]
+        elif isinstance(object, star.Star):
+            displayInfo = ["name", "spectralType", "luminosityClass"]
+        elif isinstance(object, planet.OrbitalBody):
+            displayInfo = [
+                "name",
+                "orbitType",
+                "groupName",
+                "className",
+                "typeName",
+                "atmosphere",
+                "biosphere",
+                "hydrosphere",
+                "subsurfaceOceans",
+                "terrain",
+                "animals",
+                "ringSystem",
+                "satellites",
+                "alien",
+                "properName",
+                "habitation",
+                "populationNumber",
+                "government",
+                "lawLevel",
+                "industry",
+                "pollution",
+                "tradeCodes",
+                "starport",
+                "governorsEstate",
+                "embassy",
+                "hospital",
+                "libraryArchive",
+                "megacorpHeadquarters",
+                "navalBase",
+                "pirateBase",
+                "psionicsInstitute",
+                "researchInstallation",
+                "sacredSite",
+                "scoutBase",
+                "specialEnclave",
+                "travellersAidSocietyHostel",
+                "ruins"
+                ]
+                
         infotext = []
         for x in inspect.getmembers(object):
             if x[0].startswith('_'):
                 continue
             if inspect.ismethod(x[1]):
+                continue
+            if x[0] not in displayInfo:
                 continue
             infotext.append(": ".join(str(i)[:200] for i in x))
         self.info.config(text="\n".join(infotext))
@@ -286,7 +335,7 @@ class SystemDisplay:
                 outline=Colors.luminosity[star.luminosityClass[0]][1],
                 width = 10)
 
-        numberOfOrbits = max([p.order for p in star.planets]) + 2
+        numberOfOrbits = max([-2] + [p.order for p in star.planets]) + 2
         for x in range(2, numberOfOrbits):
             self.star.create_oval(
                 overhang * x - size, 100 - size / 2,
@@ -301,8 +350,17 @@ class SystemDisplay:
                 self.selectplanet(planet)
             return clickstar
 
-        size = 15
         for planet in star.planets:
+            if planet.groupName == "Asteroid Belt":
+                continue
+            elif planet.groupName == "Jovian":
+                size = 25
+            elif planet.groupName == "Helian":
+                size = 20
+            elif planet.groupName == "Terrestrial":
+                size = 15
+            elif planet.groupName == "Dwarf":
+                size = 10
             row, column = divmod(planet.order, 10)
             #print(row, column)
             x_center = 30 + (30 * column)#(20 * column) + (40 if planet.order == 1 else 50) + (10 * row)
@@ -322,8 +380,8 @@ class SystemDisplay:
         self.planet_selectmarks = []
 
         row, column = divmod(planet.order, 10)
-        x_center = 20 * column + 50 + 10 * row
-        y_center = 30 * row + 20
+        x_center = 31 + (30 * column)#20 * column + 50 + 10 * row
+        y_center = 30 * row + 99
         outer = 11
         inner = 8
 

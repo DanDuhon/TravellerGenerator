@@ -356,7 +356,7 @@ def create_helian_planet(
         if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
             create_terrestrial_planet(
                 star=newPlanet.star,
-                parentObject=newPlanet.parentObject,
+                parentObject=newPlanet,
                 order=newPlanet.order,
                 orbitType=newPlanet.orbitType,
                 alienSurvivalPercent=alienSurvivalPercent)
@@ -413,19 +413,19 @@ def create_jovian_planet(
     satelliteRoll1 = roll_xdy(1, 6)
     satelliteRoll2 = roll_xdy(1, 6)
     satelliteRoll3 = roll_xdy(1, 6)
-    
-    if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
-        create_terrestrial_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet.parentObject,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
 
     if satelliteRoll2 == 6 and satelliteRoll3 == 6:
         create_helian_planet(
             star=newPlanet.star,
-            parentObject=newPlanet.parentObject,
+            parentObject=newPlanet,
+            order=newPlanet.order,
+            orbitType=newPlanet.orbitType,
+            alienSurvivalPercent=alienSurvivalPercent)
+    
+    if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
+        create_terrestrial_planet(
+            star=newPlanet.star,
+            parentObject=newPlanet,
             order=newPlanet.order,
             orbitType=newPlanet.orbitType,
             alienSurvivalPercent=alienSurvivalPercent)
@@ -554,7 +554,6 @@ class OrbitalBody():
         self.orbitType = orbitType
         self.category = None
         self.size = None
-        self.category = None
         self.groupName = None
         self.className = None
         self.typeName = None
