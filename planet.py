@@ -241,7 +241,7 @@ def create_dwarf_planet(
 
     newPlanet.satellites = []
 
-    if (newPlanet.parentObject == newPlanet.star or newPlanet.parentObject.groupName != "Dwarf") and roll_xdy(1, 6) == 6:
+    if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) == 6:
         create_dwarf_planet(
             star=newPlanet.star,
             parentObject=newPlanet.parentObject,
@@ -295,7 +295,7 @@ def create_terrestrial_planet(
 
     newPlanet.satellites = []
 
-    if roll_xdy(1, 6) >= 1:
+    if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) >= 1:
         create_dwarf_planet(
             star=newPlanet.star,
             parentObject=newPlanet,
@@ -349,23 +349,25 @@ def create_helian_planet(
 
     newPlanet.satellites = []
 
-    satelliteRoll1 = roll_xdy(1, 6)
-    satelliteRoll2 = roll_xdy(1, 6)
+    if newPlanet.parentObject == newPlanet.star:
+        satelliteRoll1 = roll_xdy(1, 6)
+        satelliteRoll2 = roll_xdy(1, 6)
 
-    for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
-            create_dwarf_planet(
+        if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
+            create_terrestrial_planet(
                 star=newPlanet.star,
-                parentObject=newPlanet,
+                parentObject=newPlanet.parentObject,
                 order=newPlanet.order,
                 orbitType=newPlanet.orbitType,
                 alienSurvivalPercent=alienSurvivalPercent)
-    if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
-        create_terrestrial_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet.parentObject,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
+
+        for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
+                create_dwarf_planet(
+                    star=newPlanet.star,
+                    parentObject=newPlanet,
+                    order=newPlanet.order,
+                    orbitType=newPlanet.orbitType,
+                    alienSurvivalPercent=alienSurvivalPercent)
 
         
 def create_jovian_planet(
@@ -412,13 +414,6 @@ def create_jovian_planet(
     satelliteRoll2 = roll_xdy(1, 6)
     satelliteRoll3 = roll_xdy(1, 6)
     
-    for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
-            create_dwarf_planet(
-                star=newPlanet.star,
-                parentObject=newPlanet,
-                order=newPlanet.order,
-                orbitType=newPlanet.orbitType,
-                alienSurvivalPercent=alienSurvivalPercent)
     if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
         create_terrestrial_planet(
             star=newPlanet.star,
@@ -426,6 +421,7 @@ def create_jovian_planet(
             order=newPlanet.order,
             orbitType=newPlanet.orbitType,
             alienSurvivalPercent=alienSurvivalPercent)
+
     if satelliteRoll2 == 6 and satelliteRoll3 == 6:
         create_helian_planet(
             star=newPlanet.star,
@@ -433,6 +429,14 @@ def create_jovian_planet(
             order=newPlanet.order,
             orbitType=newPlanet.orbitType,
             alienSurvivalPercent=alienSurvivalPercent)
+    
+    for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
+            create_dwarf_planet(
+                star=newPlanet.star,
+                parentObject=newPlanet,
+                order=newPlanet.order,
+                orbitType=newPlanet.orbitType,
+                alienSurvivalPercent=alienSurvivalPercent)
 
         
 def create_terra(star):

@@ -304,8 +304,10 @@ class SystemDisplay:
         size = 15
         for planet in star.planets:
             row, column = divmod(planet.order, 10)
-            x_center = 20 * column + 50 + 10 * row
-            y_center = 30 * row + 20
+            #print(row, column)
+            x_center = 30 + (30 * column)#(20 * column) + (40 if planet.order == 1 else 50) + (10 * row)
+            #print(x_center)
+            y_center = (30 * row) + 99
             planet_id = self.star.create_oval(
                     x_center + size / 2, y_center + size / 2,
                     x_center - size / 2, y_center - size / 2,
