@@ -254,7 +254,7 @@ def sectorgen(
                             for x in range(-k, k + 1):
                                 for y in range(max(-k, -x - k), min(k, -x + k) + 1):
                                     newSystem = systemhex.allCoordinates[(sys.coordinates[0] + x, sys.coordinates[1] + y, ((sys.coordinates[0] + x) * -1) - (sys.coordinates[1] + y))]
-                                    if newSystem.fuelAvailable:
+                                    if any([newSystem.fuelUnrefinedAvailable, newSystem.fuelRefinedAvailable]):
                                         newSystemsToCheck.append(newSystem)
                                     if newSystem not in a.exploredSystems:
                                         for p in newSystem.planets:
@@ -351,3 +351,12 @@ def sectorgen(
             alienSurvivalPercent,
             maxTechLevel,
             maxReactionModifier)
+
+    for s in systemhex.allSystems:
+        if any([s.fuelUnrefinedAvailable, s.fuelRefinedAvailable]):
+            continue
+
+        for p in s.planets:
+            if p.chemistry == "Water":
+                s.fuelUnrefinedAvailable = True
+                break

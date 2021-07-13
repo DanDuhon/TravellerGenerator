@@ -131,7 +131,8 @@ class System():
         self.name = namegenerator.astralNGrams.generate_name()
         self.distanceFromAlienHomeSystem = {}
         self.alienNearbyColony = {}
-        self.fuelAvailable = False
+        self.fuelUnrefinedAvailable = False
+        self.fuelRefinedAvailable = False
 
         if roll_xdy(3, 6) == 18:
             openCluster = True

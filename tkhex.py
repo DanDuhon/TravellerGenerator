@@ -118,7 +118,7 @@ class SystemDisplay:
 
     def set_info(self, object):
         if isinstance(object, systemhex.System):
-            displayInfo = ["coordinates", "name", "fuelAvailable"]
+            displayInfo = ["coordinates", "name", "fuelUnrefinedAvailable", "fuelRefinedAvailable"]
         elif isinstance(object, star.Star):
             displayInfo = ["name", "spectralType", "luminosityClass"]
         elif isinstance(object, planet.OrbitalBody):
@@ -132,10 +132,10 @@ class SystemDisplay:
                 "biosphere",
                 "hydrosphere",
                 "subsurfaceOceans",
+                "chemistry",
                 "terrain",
                 "animals",
                 "ringSystem",
-                "satellites",
                 "alien",
                 "properName",
                 "habitation",
@@ -161,7 +161,7 @@ class SystemDisplay:
                 "travellersAidSocietyHostel",
                 "ruins"
                 ]
-                
+
         infotext = []
         for x in inspect.getmembers(object):
             if x[0].startswith('_'):
@@ -171,6 +171,10 @@ class SystemDisplay:
             if x[0] not in displayInfo:
                 continue
             infotext.append(": ".join(str(i)[:200] for i in x))
+
+        if isinstance(object, planet.OrbitalBody):
+            infotext.append("Satellites: " + ",".join([(p.properName if p.properName else p.name) for p in object.satellites]))
+
         self.info.config(text="\n".join(infotext))
 
     def create_hexagon(self, system):
