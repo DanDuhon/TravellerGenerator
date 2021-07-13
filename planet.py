@@ -438,6 +438,8 @@ def create_jovian_planet(
                 orbitType=newPlanet.orbitType,
                 alienSurvivalPercent=alienSurvivalPercent)
 
+    newPlanet.star.systemHex.fuelUnrefinedAvailable = True
+
         
 def create_terra(star):
     """
@@ -1506,7 +1508,7 @@ class OrbitalBody():
             desirability -= (modifiedDistance - 3 + alien.reactionModifier)
 
         # Penalty for not having an easy source of fuel in the system
-        if not self.systemHex.fuelAvailable:
+        if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
         # Penalty for having a flare star in the system
@@ -1601,7 +1603,7 @@ class OrbitalBody():
             desirability -= modifiedDistance
 
         # Penalty for not having an easy source of fuel in the system
-        if not self.systemHex.fuelAvailable:
+        if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
         colonyInSystem = any(p.groupName not in ["Jovian", "Asteroid Belt"] and alien in p.habitation.keys() and p.habitation[alien] in ["Colony", "Homeworld"] for p in self.systemHex.planets)
@@ -2363,3 +2365,9 @@ class OrbitalBody():
             score = 3
 
         self.starport = starportTable[score]
+
+        if self.starport in ["D", "C"]:
+            self.star.systemHex.fuelUnrefinedAvailable = True
+
+        if self.starport in ["B", "A"]:
+            self.star.systemHex.fuelRefinedAvailable = True
