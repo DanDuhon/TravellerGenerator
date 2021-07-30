@@ -103,7 +103,7 @@ class SystemDisplay:
         # Star Screen
         self.star = tkinter.Canvas(tk,
                 background='green',
-                width=400, height=200)
+                width=550, height=300)
         self.star.grid(row=3, column=1, sticky='n')
 
         # Planet Label
@@ -313,10 +313,10 @@ class SystemDisplay:
 
         self.set_info(system)
 
-    def selectstar(self, star):
+    def selectstar(self, selectedStar):
         self.clearstar()
-        self.starlabel.config(text=star.name)
-        starNumber = star.systemHex.stars.index(star) + 1
+        self.starlabel.config(text=selectedStar.name)
+        starNumber = selectedStar.systemHex.stars.index(selectedStar) + 1
         x_center = 60 * starNumber
         y_center = 100 + 50 * (-1)**starNumber
         outer = 30
@@ -334,16 +334,16 @@ class SystemDisplay:
         overhang = 30
         self.star.create_oval(
                 overhang - size, 100 - size / 2,
-                overhang, 100 + size / 2,
-                fill=Colors.luminosity[star.luminosityClass[0]][0],
-                outline=Colors.luminosity[star.luminosityClass[0]][1],
+                overhang, 150 + size / 2,
+                fill=Colors.luminosity[selectedStar.luminosityClass[0]][0],
+                outline=Colors.luminosity[selectedStar.luminosityClass[0]][1],
                 width = 10)
 
-        numberOfOrbits = max([-2] + [p.order for p in star.planets]) + 2
+        numberOfOrbits = max([-2] + [p.order for p in selectedStar.planets]) + 2
         for x in range(2, numberOfOrbits):
             self.star.create_oval(
-                overhang * x - size, 100 - size / 2,
-                overhang * x, 100 + size / 2,
+                overhang * (x * 1.3) - size, 100 - size / 2,
+                overhang * (x * 1.3), 150 + size / 2,
                 fill=None,
                 outline="black",
                 width=1
@@ -353,10 +353,10 @@ class SystemDisplay:
             def clickstar(event):
                 self.selectplanet(planet)
             return clickstar
-
-        for planet in star.planets:
+            
+        for planet in selectedStar.planets:
             if planet.groupName == "Asteroid Belt":
-                continue
+                size = 5
             elif planet.groupName == "Jovian":
                 size = 25
             elif planet.groupName == "Helian":
@@ -365,27 +365,66 @@ class SystemDisplay:
                 size = 15
             elif planet.groupName == "Dwarf":
                 size = 10
-            row, column = divmod(planet.order, 10)
-            #print(row, column)
-            x_center = 30 + (30 * column)#(20 * column) + (40 if planet.order == 1 else 50) + (10 * row)
-            #print(x_center)
-            y_center = (30 * row) + 99
+
+            if isinstance(planet.parentObject, star.Star):
+                satelliteNum = 0
+            else:
+                satelliteNum = int(planet.name[-1])
+
+            if satelliteNum == 0:
+                x_center_mod = 38.5 + (planet.order / 2)
+            elif satelliteNum == 1:
+                x_center_mod = 38.5 + (planet.order / 2)
+            elif satelliteNum == 2:
+                x_center_mod = 35.5 + (planet.order / 2)
+            elif satelliteNum == 3:
+                x_center_mod = 31.5 + (planet.order / 2)
+            elif satelliteNum == 4:
+                x_center_mod = 23.5 + (planet.order / 2)
+            elif satelliteNum == 5:
+                x_center_mod = 14.5 + (planet.order / 2)
+            elif satelliteNum == 6:
+                x_center_mod = 2.5 + (planet.order / 2)
+
+            row, column = satelliteNum, planet.order
+            x_center = (38.5 * column) + x_center_mod
+            y_center = (11 * row) + 124 + (15 * satelliteNum)
             planet_id = self.star.create_oval(
                     x_center + size / 2, y_center + size / 2,
                     x_center - size / 2, y_center - size / 2,
                     fill=Colors.planet)
             self.star.tag_bind(planet_id, '<Button-1>', clickstar_create(planet))
 
-        self.set_info(star)
+        self.set_info(selectedStar)
 
     def selectplanet(self, planet):
         for id in self.planet_selectmarks:
             self.star.delete(id)
         self.planet_selectmarks = []
 
-        row, column = divmod(planet.order, 10)
-        x_center = 31 + (30 * column)#20 * column + 50 + 10 * row
-        y_center = 30 * row + 99
+        if isinstance(planet.parentObject, star.Star):
+            satelliteNum = 0
+        else:
+            satelliteNum = int(planet.name[-1])
+
+        if satelliteNum == 0:
+            x_center_mod = 38 + (planet.order / 2)
+        elif satelliteNum == 1:
+            x_center_mod = 38 + (planet.order / 2)
+        elif satelliteNum == 2:
+            x_center_mod = 35 + (planet.order / 2)
+        elif satelliteNum == 3:
+            x_center_mod = 31 + (planet.order / 2)
+        elif satelliteNum == 4:
+            x_center_mod = 23 + (planet.order / 2)
+        elif satelliteNum == 5:
+            x_center_mod = 14 + (planet.order / 2)
+        elif satelliteNum == 6:
+            x_center_mod = 2 + (planet.order / 2)
+
+        row, column = satelliteNum, planet.order
+        x_center = (38.5 * column) + x_center_mod
+        y_center = (11 * row) + 124 + (15 * satelliteNum)
         outer = 11
         inner = 8
 

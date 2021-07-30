@@ -609,10 +609,11 @@ class OrbitalBody():
 
         if self.parentObject == self.star:
             self.name = self.parentObject.name + " " + str(self.order)
-            self.star.planets.append(self)
         else:
             self.name = self.parentObject.name + "-" + str(len(self.parentObject.satellites) + 1)
             self.parentObject.satellites.append(self)
+            
+        self.star.planets.append(self)
 
 
     def dwarf_category(self):
