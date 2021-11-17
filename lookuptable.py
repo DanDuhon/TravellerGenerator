@@ -3,7 +3,8 @@ from collections.abc import Mapping
 
 
 class LookupTable(Mapping):
-    """A lookup table with contiguous ranges of small integers as
+    """
+    A lookup table with contiguous ranges of small integers as
     keys. Initialize a table by passing pairs (max, value) as
     arguments. The first range starts at -10, and second and subsequent
     ranges start at the end of the previous range.
@@ -17,7 +18,6 @@ class LookupTable(Mapping):
     KeyError: 0
     >>> next(iter(t.items()))
     (1, '-10 - 10')
-
     """
 
     def __init__(self, *table):

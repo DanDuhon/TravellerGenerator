@@ -378,7 +378,7 @@ class SystemDisplay:
             elif satelliteNum == 2:
                 x_center_mod = 35.5 + (planet.order / 2)
             elif satelliteNum == 3:
-                x_center_mod = 31.5 + (planet.order / 2)
+                x_center_mod = 30.5 + (planet.order / 2)
             elif satelliteNum == 4:
                 x_center_mod = 23.5 + (planet.order / 2)
             elif satelliteNum == 5:
