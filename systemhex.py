@@ -1,10 +1,5 @@
-import logging
-import inspect
-import os
-
 import star
 import namegenerator
-import alien
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -17,8 +12,7 @@ numberOfStarsTable = LookupTable((10, 1), (15, 2), (21, 3))
 def create_normal_system(
         horizontalCoord,
         verticalCoord,
-        alienSurvivalPercent,
-        maxTechLevel):
+        alienSurvivalPercent):
     """
     Creates a system in a hex that is not in an Open Cluster.
 
@@ -30,9 +24,6 @@ def create_normal_system(
         alienSurvivalPercent: Integer
             An integer that represents the percent chance that
             an intelligent species will survive to Tech Level 10.
-        maxTechLevel: Integer
-            An integer representing the maximum achievable Tech Level
-            by an intelligence species.
     """
 
     system = System(
@@ -40,19 +31,18 @@ def create_normal_system(
         verticalCoord=verticalCoord,
         openCluster=False)
 
-    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent, maxTechLevel=maxTechLevel)
+    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
     system.numberOfStars = system.set_number_of_stars()
-    system.create_primary_star_in_system(alienSurvivalPercent, maxTechLevel)
-    system.create_companion_stars_in_system(alienSurvivalPercent, maxTechLevel)
-    system.create_automatic_brown_dwarf(alienSurvivalPercent, maxTechLevel)
+    system.create_primary_star_in_system(alienSurvivalPercent)
+    system.create_companion_stars_in_system(alienSurvivalPercent)
+    system.create_automatic_brown_dwarf(alienSurvivalPercent)
     system.flareStarDesirabilityPenalty = system.flare_star_desirability_penalty()
 
 
 def create_cluster_system(
         horizontalCoord,
         verticalCoord,
-        alienSurvivalPercent,
-        maxTechLevel):
+        alienSurvivalPercent):
     """
     Creates a system in a hex that is in an Open Cluster, meaning
     there will be more stars per system on average.
@@ -65,9 +55,6 @@ def create_cluster_system(
         alienSurvivalPercent: Integer
             An integer that represents the percent chance that
             an intelligent species will survive to Tech Level 10.
-        maxTechLevel: Integer
-            An integer representing the maximum achievable Tech Level
-            by an intelligence species.
     """
 
     system = System(
@@ -75,11 +62,11 @@ def create_cluster_system(
         verticalCoord=verticalCoord,
         openCluster=True)
 
-    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent, maxTechLevel=maxTechLevel)
+    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
     system.numberOfStars = system.set_number_of_stars()
-    system.create_primary_star_in_system(alienSurvivalPercent, maxTechLevel)
-    system.create_companion_stars_in_system(alienSurvivalPercent, maxTechLevel)
-    system.create_automatic_brown_dwarf(alienSurvivalPercent, maxTechLevel)
+    system.create_primary_star_in_system(alienSurvivalPercent)
+    system.create_companion_stars_in_system(alienSurvivalPercent)
+    system.create_automatic_brown_dwarf(alienSurvivalPercent)
     system.flareStarDesirabilityPenalty = system.flare_star_desirability_penalty()
 
 
@@ -237,7 +224,7 @@ class System():
         return distance_between_systems(self, alien.homePlanet.systemHex)
 
 
-    def create_primary_star_in_system(self, alienSurvivalPercent, maxTechLevel):
+    def create_primary_star_in_system(self, alienSurvivalPercent):
         """
         Creates the primary star in this system, if there is one.
 
@@ -245,19 +232,15 @@ class System():
             alienSurvivalPercent: Integer
                 An integer that represents the percent chance that
                 an intelligent species will survive to Tech Level 10.
-            maxTechLevel: Integer
-                An integer representing the maximum achievable Tech Level
-                by an intelligence species.
         """
         
         if self.numberOfStars > 0 - (1 if self.brownDwarf else 0):
             star.create_primary_star(
                 systemHex=self,
-                alienSurvivalPercent=alienSurvivalPercent,
-                maxTechLevel=maxTechLevel)
+                alienSurvivalPercent=alienSurvivalPercent)
 
 
-    def create_companion_stars_in_system(self, alienSurvivalPercent, maxTechLevel):
+    def create_companion_stars_in_system(self, alienSurvivalPercent):
         """
         Creates the companion stars in this system, if there are any.
 
@@ -265,21 +248,16 @@ class System():
             alienSurvivalPercent: Integer
                 An integer that represents the percent chance that
                 an intelligent species will survive to Tech Level 10.
-            maxTechLevel: Integer
-                An integer representing the maximum achievable Tech Level
-                by an intelligence species.
         """
         
         for x in range(self.numberOfStars - 1 - (1 if self.brownDwarf else 0)):
             star.create_companion_star(
                 systemHex=self,
                 primaryOrbit=self.stars[0].companionOrbits[x],
-                primarySpectralTypeRoll=self.stars[0].spectralTypeRoll,
-                alienSurvivalPercent=alienSurvivalPercent,
-                maxTechLevel=maxTechLevel)
+                alienSurvivalPercent=alienSurvivalPercent)
 
 
-    def create_automatic_brown_dwarf(self, alienSurvivalPercent, maxTechLevel):
+    def create_automatic_brown_dwarf(self, alienSurvivalPercent):
         """
         Create an automatic brown dwarf.
         This is not considered a companion star, but is "somewhere"
@@ -289,16 +267,12 @@ class System():
             alienSurvivalPercent: Integer
                 An integer that represents the percent chance that
                 an intelligent species will survive to Tech Level 10.
-            maxTechLevel: Integer
-                An integer representing the maximum achievable Tech Level
-                by an intelligence species.
         """
         
         if self.brownDwarf:
             star.create_brown_dwarf_star(
                     systemHex=self,
-                    alienSurvivalPercent=alienSurvivalPercent,
-                    maxTechLevel=maxTechLevel)
+                    alienSurvivalPercent=alienSurvivalPercent)
 
 
     def flare_star_desirability_penalty(self):
