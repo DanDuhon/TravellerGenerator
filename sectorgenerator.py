@@ -110,16 +110,22 @@ def sectorgen(
                 "habitation": None,
                 "population": None}
             if p.category in ["Jovian", "Asteroid Belt"]:
-                p.calculate_desirability_jovian_asteroid_belt(a, True)
+                d = p.calculate_desirability_jovian_asteroid_belt(a, True)
             else:
-                p.calculate_desirability(a, True)
+                d = p.calculate_desirability(a, True)
+
+            p.desirability[a] = d
+            a.planets[p]["desirability"] = d
                 
-            p.calculate_habitation(
+            h = p.calculate_habitation(
                 a,
                 alienSurvivalPercent,
                 maxTechLevel,
                 maxReactionModifier,
                 True)
+                
+            p.habitation[a] = h
+            a.planets[p]["habitation"] = h
 
     # Turn all inhabited planets of extinct aliens to None and add ruins.
     for a in [a for a in alien.allAliens if a.extinct]:
@@ -186,13 +192,17 @@ def sectorgen(
                                 continue
 
                             previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
-                            p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
-                            p.calculate_habitation(
+                            d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                            p.desirability[a] = d
+                            a.planets[p]["desirability"] = d
+                            h = p.calculate_habitation(
                                 a,
                                 alienSurvivalPercent,
                                 maxTechLevel,
                                 maxReactionModifier,
                                 p.systemHex.alienNearbyColony.get(a))
+                            p.habitation[a] = h
+                            a.planets[p]["habitation"] = h
 
                             # If an alien is in the process of terraforming and they
                             # have made the planet temporarily worse, they won't
@@ -264,16 +274,21 @@ def sectorgen(
                                                             "habitation": None,
                                                             "population": 0}
                                             if p.category in ["Jovian", "Asteroid Belt"]:
-                                                p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                                                d = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                                             else:
-                                                p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                                                d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+            
+                                            p.desirability[a] = d
+                                            a.planets[p]["desirability"] = d
 
-                                            p.calculate_habitation(
+                                            h = p.calculate_habitation(
                                                 a,
                                                 alienSurvivalPercent,
                                                 maxTechLevel,
                                                 maxReactionModifier,
                                                 p.systemHex.alienNearbyColony.get(a))
+                                            p.habitation[a] = h
+                                            a.planets[p]["habitation"] = h
                                             
                                             if not p.terraformingAlien and p.habitation[a] and not p.alien:
                                                 p.terraformingAlien = a
@@ -302,16 +317,21 @@ def sectorgen(
             for p in a.planets:
                 previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
                 if p.category in ["Jovian", "Asteroid Belt"]:
-                    p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
+                    d = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                 else:
-                    p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                    d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                    
+                p.desirability[a] = d
+                a.planets[p]["desirability"] = d
 
-                p.calculate_habitation(
+                h = p.calculate_habitation(
                     a,
                     alienSurvivalPercent,
                     maxTechLevel,
                     maxReactionModifier,
                     p.systemHex.alienNearbyColony.get(a))
+                p.habitation[a] = h
+                a.planets[p]["habitation"] = h
                                             
                 if not p.terraformingAlien and p.habitation[a] and not p.alien:
                     p.terraformingAlien = a
