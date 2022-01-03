@@ -20,24 +20,31 @@ spectralTypeTable = LookupTable((2, "A"),
                                 (17, "L"))
 
 luminosityClassDict = {
-    "A": LookupTable((2, "A-V"),
-                     (3, LookupTable((2, "F-IV"),
-                                     (3, "K-III"),
-                                     (6, "D"))),
-                     (15, "D")),
-    "F": LookupTable((5, "F-V"),
-                     (6, LookupTable((4, "G-IV"),
-                                     (6, "M-III"))),
-                     (15, "D")),
-    "G": LookupTable((11, "G-V"),
-                     (13, LookupTable((3, "K-IV"),
-                                      (6, "M-III"))),
-                     (15, "D")),
-    "K": "K-V",
-    "M": LookupTable((9, "M-V"),
-                     (12, "M-Ve"),
-                     (14, "L")),
-    "L": "L"
+    "A": LookupTable(
+        (2, LookupTable((6, "A-V")),
+        (3, LookupTable(
+            (2, "F-IV"),
+            (3, "K-III"),
+            (6, "D"))),
+        (15, LookupTable((6, "D"))))),
+    "F": LookupTable(
+        (5, LookupTable((6, "F-V"))),
+        (6, LookupTable(
+            (4, "G-IV"),
+            (6, "M-III"))),
+        (15, LookupTable((6, "D")))),
+    "G": LookupTable(
+        (6, LookupTable((11, "G-V")),
+        (13, LookupTable(
+            (3, "K-IV"),
+            (6, "M-III"))),
+        (15, LookupTable((6, "D"))))),
+    "K": LookupTable((15, LookupTable((6, "K-V")))),
+    "M": LookupTable(
+        (9, LookupTable((6, "M-V"))),
+        (12, LookupTable((6, "M-Ve"))),
+        (14, LookupTable((6, "L")))),
+    "L": LookupTable((15, LookupTable((6, "L"))))
 }
 
 companionOrbitTable = LookupTable((2, "Tight"),
@@ -55,7 +62,7 @@ def create_primary_star(
 
     star.spectralTypeRoll = star.spectral_type(primary=True)
     star.spectralType = star.spectral_type()
-    star.luminosityClass = star.luminosity_class()
+    star.luminosityClass = luminosityClassDict[star.spectralType][star.systemHex.age][roll_xdy(1, 6)]
     star.expansionAffectedOrbits = star.expansion_affected_orbits()
     star.companionOrbits = star.companion_orbits()
     star.epistellarOrbits = star.epistellar_orbits()

@@ -32,11 +32,11 @@ def create_normal_system(
         openCluster=False)
 
     system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
-    system.numberOfStars = system.set_number_of_stars()
+    system.set_number_of_stars()
     system.create_primary_star_in_system(alienSurvivalPercent)
     system.create_companion_stars_in_system(alienSurvivalPercent)
     system.create_automatic_brown_dwarf(alienSurvivalPercent)
-    system.flareStarDesirabilityPenalty = system.flare_star_desirability_penalty()
+    system.flare_star_desirability_penalty()
 
 
 def create_cluster_system(
@@ -63,11 +63,11 @@ def create_cluster_system(
         openCluster=True)
 
     system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
-    system.numberOfStars = system.set_number_of_stars()
+    system.set_number_of_stars()
     system.create_primary_star_in_system(alienSurvivalPercent)
     system.create_companion_stars_in_system(alienSurvivalPercent)
     system.create_automatic_brown_dwarf(alienSurvivalPercent)
-    system.flareStarDesirabilityPenalty = system.flare_star_desirability_penalty()
+    system.flare_star_desirability_penalty()
 
 
 def distance_between_systems(system1, system2):
@@ -149,9 +149,10 @@ class System():
         autoBrownDwarf = (1 if self.brownDwarf else 0)
 
         if roll_xdy(1, 6) + (2 if self.openCluster else 0) < 4:
-            return 0 + autoBrownDwarf
+            self.numberOfStars = 0 + autoBrownDwarf
+            return
 
-        return numberOfStarsTable[roll_xdy(3, 6) + (3 if self.openCluster else 0)] + autoBrownDwarf
+        self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + (3 if self.openCluster else 0)] + autoBrownDwarf
 
 
     def create_new_open_cluster(self, alienSurvivalPercent, maxTechLevel):
@@ -277,11 +278,11 @@ class System():
 
     def flare_star_desirability_penalty(self):
         """
-        Returns the desirability penalty of having a flare
+        Sets the desirability penalty of having a flare
         star in the system if there is one.
         """
         
-        return max([0] + [roll_xdy(1, 3) for s in self.stars if s.luminosityClass == "M-Ve"])
+        self.flareStarDesirabilityPenalty = max([0] + [roll_xdy(1, 3) for s in self.stars if s.luminosityClass == "M-Ve"])
 
 
     def create_surrounding_systems(

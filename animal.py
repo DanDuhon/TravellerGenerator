@@ -20,6 +20,38 @@ behaviorDescriptions = {"Carrion-Eater": "Scavengers that eat the prey and leavi
                         "Trapper": "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"}
 
 
+sizeModDict = {
+    "Desert": -3,
+    "Forest": -4,
+    "Woods": -1,
+    "Jungle": -3,
+    "Rainforest": -2,
+    "Rough/Broken": -3,
+    "Swamp/Marsh": 4,
+    "Beach/Shore": 2,
+    "Riverbank": 1,
+    "Shallow Ocean": 1,
+    "Open Ocean": -4,
+    "Deep Ocean": 2
+}
+
+
+def create_amphibian(
+        planet,
+        terrain):
+    """
+    Creates an asteroid belt.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    newAnimal = Amphibian(planet=planet, terrain=terrain)
+
+
 class Animal():
     """
     Defines an animal.
@@ -73,30 +105,7 @@ class Animal():
 
         # The type of terrain the animal lives in helps determine how
         # large the animal is.
-        if terrain == "Desert":
-            self.sizeRollModifier -= 3
-        elif terrain == "Forest":
-            self.sizeRollModifier -= 4
-        elif terrain == "Woods":
-            self.sizeRollModifier -= 1
-        elif terrain == "Jungle":
-            self.sizeRollModifier -= 3
-        elif terrain == "Rainforest":
-            self.sizeRollModifier -= 2
-        elif terrain == "Rough/Broken":
-            self.sizeRollModifier -= 3
-        elif terrain == "Swamp/Marsh":
-            self.sizeRollModifier += 4
-        elif terrain == "Beach/Shore":
-            self.sizeRollModifier += 2
-        elif terrain == "Riverbank":
-            self.sizeRollModifier += 1
-        elif terrain == "Shallow Ocean":
-            self.sizeRollModifier += 1
-        elif terrain == "Open Ocean":
-            self.sizeRollModifier -= 4
-        elif terrain == "Deep Ocean":
-            self.sizeRollModifier += 2
+        self.sizeRollModifier = sizeModDict[terrain]
 
         # The type of terrain also helps determine the type of movement
         # favored by the animal. This may be overridden by the child class.

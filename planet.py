@@ -8,23 +8,23 @@ allPlanets = []
 
 dwarfCategoryDict = {
     "Epistellar": LookupTable(
-        (3, "Rockball"),
-        (5, "Meltball"),
+        (3, LookupTable(6, "Rockball")),
+        (5, LookupTable(6, "Meltball")),
         (6, LookupTable(
             (4, "Hebean"),
             (6, "Promethean")))),
     "Inner Zone": LookupTable(
-        (4, "Rockball"),
-        (6, "Arean"),
-        (7, "Meltball"),
+        (4, LookupTable(6, "Rockball")),
+        (6, LookupTable(6, "Arean")),
+        (7, LookupTable(6, "Meltball")),
         (8, LookupTable(
             (4, "Hebean"),
             (6, "Promethean")))),
     "Outer Zone": LookupTable(
-        (0, "Rockball"),
-        (4, "Snowball"),
-        (6, "Rockball"),
-        (7, "Meltball"),
+        (0, LookupTable(6, "Rockball")),
+        (4, LookupTable(6, "Snowball")),
+        (6, LookupTable(6, "Rockball")),
+        (7, LookupTable(6, "Meltball")),
         (8, LookupTable(
             (3, "Hebean"),
             (5, "Arean"),
@@ -75,28 +75,28 @@ categoryDescriptionDict = {
 
 
 chemistryDict = {
-    "Acheronian": (None, None, "Telluric", "Acheronian"),
+    "Acheronian": LookupTable(100, LookupTable(100, (None, None, "Telluric", "Acheronian"))),
     "Arean": LookupTable(
-                    (4, ("Water", 0, "Geocyclic", "Arean")),
-                    (6, ("Ammonia", 1, "Geocyclic", "Utgardian")),
-                    (100, ("Methane", 3, "Geocyclic", "Titanian"))),
+                    (4, LookupTable(100, ("Water", 0, "Geocyclic", "Arean"))),
+                    (6, LookupTable(100, ("Ammonia", 1, "Geocyclic", "Utgardian"))),
+                    (100, LookupTable(100, ("Methane", 3, "Geocyclic", "Titanian")))),
     "Arid": LookupTable(
-                    (6, ("Water", 0, "Arid", "Darwinian")),
-                    (8, ("Ammonia", 1, "Arid", "Saganian")),
-                    (100, ("Methane", 3, "Arid", "Asimovian"))),
-    "Asphodelian": (None, None, "Geo-Helian", "Asphodelian"),
-    "Asteroid Belt": (None, None, "Asteroid Belt", "Asteroid Belt"),
-    "Chthonian": (None, None, "Chthonian", None),
+                    (6, LookupTable(100, ("Water", 0, "Arid", "Darwinian"))),
+                    (8, LookupTable(100, ("Ammonia", 1, "Arid", "Saganian"))),
+                    (100, LookupTable(100, ("Methane", 3, "Arid", "Asimovian")))),
+    "Asphodelian": LookupTable(100, LookupTable(100, (None, None, "Geo-Helian", "Asphodelian"))),
+    "Asteroid Belt": LookupTable(100, LookupTable(100, (None, None, "Asteroid Belt", "Asteroid Belt"))),
+    "Chthonian": LookupTable(100, LookupTable(100, (None, None, "Chthonian", None))),
     "Hebean": LookupTable(
-                    (3, (None, None, "Geotidal", "Hebean")),
-                    (100, (None, None, "Geotidal", "Idunnian"))),
+                    (3, LookupTable(100, (None, None, "Geotidal", "Hebean"))),
+                    (100, LookupTable(100, (None, None, "Geotidal", "Idunnian")))),
     "Helian": LookupTable(
-                    (3, (None, None, "Geo-Helian", None)),
-                    (100, (None, None, "Nebulous", None))),
-    "Jani-Lithic": (None, None, "Epistellar", "Jani-Lithic"),
+                    (3, LookupTable(100, (None, None, "Geo-Helian", None))),
+                    (100, LookupTable(100, (None, None, "Nebulous", None)))),
+    "Jani-Lithic": LookupTable(100, LookupTable(100, (None, None, "Epistellar", "Jani-Lithic"))),
     "Jovian": LookupTable(
-                    (3, ("Water", None, "Dwarf Jovian", "Brammian")),
-                    (100, ("Ammonia", None, "Dwarf Jovian", "Khonsonian"))),
+                    (3, LookupTable(100, ("Water", None, "Dwarf Jovian", "Brammian"))),
+                    (100, LookupTable(100, ("Ammonia", None, "Dwarf Jovian", "Khonsonian")))),
     "Meltball": LookupTable(
                     (3, LookupTable(
                         (2, (None, None, "Geothermic", "Phaethonic")),
@@ -120,34 +120,34 @@ chemistryDict = {
                         (8, ("Water", 0, "Panthalassic", None)),
                         (11, ("Sulfur", 0, "Panthalassic", None)),
                         (100, ("Chlorine", 0, "Panthalassic", None)))),
-                    (8, ("Methane", 1, "Panthalassic", None)),
-                    (100, ("Methane", 3, "Panthalassic", None))),
+                    (8, LookupTable(100, ("Methane", 1, "Panthalassic", None))),
+                    (100, LookupTable(100, ("Methane", 3, "Panthalassic", None)))),
     "Promethean": LookupTable(
-                    (4, ("Water", 0, "Geotidal", "Promethean")),
-                    (6, ("Ammonia", 1, "Geotidal", "Burian")),
-                    (100, ("Methane", 3, "Geotidal", "Atlan"))),
+                    (4, LookupTable(100, ("Water", 0, "Geotidal", "Promethean"))),
+                    (6, LookupTable(100, ("Ammonia", 1, "Geotidal", "Burian"))),
+                    (100, LookupTable(100, ("Methane", 3, "Geotidal", "Atlan")))),
     "Rockball": LookupTable(
-                    (2, (None, None, "Geopassive", "Ferrinian")),
-                    (4, (None, None, "Geopassive", "Lithic")),
-                    (100, (None, None, "Geopassive", "Carbonian"))),
+                    (2, LookupTable(100, (None, None, "Geopassive", "Ferrinian"))),
+                    (4, LookupTable(100, (None, None, "Geopassive", "Lithic"))),
+                    (100, LookupTable(100, (None, None, "Geopassive", "Carbonian")))),
     "Snowball": LookupTable(
-                    (4, ("Water", 0, "Geopassive", "Gelidian")),
-                    (6, ("Ammonia", 1, "Geothermic", "Erisian")),
-                    (100, ("Methane", 3, "Geotidal", "Plutonian"))),
-    "Stygian": (None, None, "Geopassive", "Stygian"),
+                    (4, LookupTable(100, ("Water", 0, "Geopassive", "Gelidian"))),
+                    (6, LookupTable(100, ("Ammonia", 1, "Geothermic", "Erisian"))),
+                    (100, LookupTable(100, ("Methane", 3, "Geotidal", "Plutonian")))),
+    "Stygian": LookupTable(100, LookupTable(100, (None, None, "Geopassive", "Stygian"))),
     "Tectonic": LookupTable(
                     (8, LookupTable(
                         (8, ("Water", 0, "Tectonic", "Gaian")),
                         (11, ("Sulfur", 0, "Tectonic", "Thio-Gaian")),
                         (100, ("Chlorine", 0, "Tectonic", "Chloritic-Gaian")))),
-                    (11, ("Ammonia", 1, "Tectonic", "Amunian")),
-                    (100, ("Methane", 3, "Tectonic", "Tartarian"))),
+                    (11, LookupTable(100, ("Ammonia", 1, "Tectonic", "Amunian"))),
+                    (100, LookupTable(100, ("Methane", 3, "Tectonic", "Tartarian")))),
     "Telluric": LookupTable(
-                    (3, (None, None, "Telluric", "Phosphorian")),
-                    (100, (None, None, "Telluric", "Cytherean"))),
+                    (3, LookupTable(100, (None, None, "Telluric", "Phosphorian"))),
+                    (100, LookupTable(100, (None, None, "Telluric", "Cytherean")))),
     "Vesperian": LookupTable(
-                    (11, ("Water", None, "Epistellar", "Vesperian")),
-                    (100, ("Chlorine", None, "Epistellar", "Vesperian")))
+                    (11, LookupTable(100, ("Water", None, "Epistellar", "Vesperian"))),
+                    (100, LookupTable(100, ("Chlorine", None, "Epistellar", "Vesperian"))))
 }
 
 
@@ -258,7 +258,7 @@ def create_asteroid_belt(
     newPlanet.atmosphere = 0
     newPlanet.hydrosphere = 0
     newPlanet.biosphere = 0
-    newPlanet.planet_terrain()
+    newPlanet.terrain = newPlanet.planet_terrain()
     newPlanet.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
     newPlanet.satellites = []
 
@@ -304,13 +304,13 @@ def create_dwarf_planet(
         orbitType=orbitType)
 
     newPlanet.groupName = "Dwarf"
-    newPlanet.dwarf_category()
-    newPlanet.planet_size()
+    newPlanet.category = newPlanet.dwarf_category()
+    newPlanet.size = newPlanet.planet_size()
     newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
+    newPlanet.terrain = newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
-        newPlanet.planet_animals()
+        newPlanet.animals = newPlanet.planet_animals()
 
     if newPlanet.biosphere >= 12:
         alien.create_alien(newPlanet, alienSurvivalPercent)
@@ -362,7 +362,7 @@ def create_terrestrial_planet(
     newPlanet.terrestrial_category()
     newPlanet.planet_size()
     newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
+    newPlanet.terrain = newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
         newPlanet.planet_animals()
@@ -417,7 +417,7 @@ def create_helian_planet(
     newPlanet.helian_category()
     newPlanet.planet_size()
     newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
+    newPlanet.terrain = newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
         newPlanet.planet_animals()
@@ -703,16 +703,14 @@ class OrbitalBody():
         Returns the category of a planet based on dwarfCategoryDict.
         """
 
-        roll = roll_xdy(1, 6)
-
         if self.order <= self.star.expansionAffectedOrbits:
             return "Stygian"
-        elif self.orbitType == "Epistellar":
+
+        roll = roll_xdy(1, 6)
+
+        if self.orbitType == "Epistellar":
             if self.parentObject != self.star and self.parentObject.groupName == "Asteroid Belt":
                 roll -= 2
-
-            if roll == 6:
-                return dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
         elif self.orbitType == "Inner Zone":
             if self.parentObject != self.star and self.parentObject.groupName == "Asteroid Belt":
                 roll -= 2
@@ -720,9 +718,6 @@ class OrbitalBody():
                 roll += 1
             elif self.parentObject != self.star and self.parentObject.groupName == "Jovian":
                 roll += 2
-
-            if roll == 8:
-                return dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
         else:  # Outer Zone
             if self.parentObject != self.star and self.parentObject.groupName == "Asteroid Belt":
                 roll -= 1
@@ -731,10 +726,7 @@ class OrbitalBody():
             elif self.parentObject != self.star and self.parentObject.groupName == "Jovian":
                 roll += 2
 
-            if roll == 8:
-                return dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
-
-        return dwarfCategoryDict[self.orbitType][roll]
+        return dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
 
 
     def terrestrial_category(self):
@@ -869,32 +861,26 @@ class OrbitalBody():
         if self.category == "Jovian" and biosphere == 0:
             return None, None, "Jovian", None
 
-        if isinstance(chemistryDict[self.category], tuple):
-            r = chemistryDict[self.category]
-        else:
-            roll = roll_xdy(1, 6)
-            
-            if self.star.luminosityClass == "L":
-                if self.category == "Jovian":
-                    roll += 1
-                elif self.category in ["Arean", "Promethean", "Snowball"]:
-                    roll += 2
-                elif self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
-                    roll += 5
-            elif self.star.luminosityClass == "K-V" and self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
+        roll = roll_xdy(1, 6)
+        
+        if self.star.luminosityClass == "L":
+            if self.category == "Jovian":
+                roll += 1
+            elif self.category in ["Arean", "Promethean", "Snowball"]:
                 roll += 2
-            elif self.star.luminosityClass == "M-V" and self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
-                roll += 4
+            elif self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
+                roll += 5
+        elif self.star.luminosityClass == "K-V" and self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
+            roll += 2
+        elif self.star.luminosityClass == "M-V" and self.category in ["Arid", "Oceanic", "Panthalassic", "Tectonic"]:
+            roll += 4
 
-            if self.orbitType == "Epistellar" and self.category in ["Jovian", "Epistellar"]:
-                roll -= 2
-            elif self.orbitType == "Outer Zone" and self.category in ["Arean", "Arid", "Jovian", "Oceanic", "Promethean", "Snowball", "Tectonic"]:
-                roll += 2
+        if self.orbitType == "Epistellar" and self.category in ["Jovian", "Epistellar"]:
+            roll -= 2
+        elif self.orbitType == "Outer Zone" and self.category in ["Arean", "Arid", "Jovian", "Oceanic", "Promethean", "Snowball", "Tectonic"]:
+            roll += 2
 
-            if self.category in ["Meltball", "Oceanic"] or (self.category == "Panthalassic" and roll <= 6) or ("Tectonic" and roll <= 8):
-                r = chemistryDict[self.category][roll][roll_xdy(1, 6)]
-            else:
-                r = chemistryDict[self.category][roll]
+        r = chemistryDict[self.category][roll][roll_xdy(1, 6)]
                 
         return r[0], r[1], r[2], r[3]
 
@@ -1480,82 +1466,57 @@ class OrbitalBody():
 
     def planet_terrain(self):
         """
-        Adds terrain to the planet.
+        Returns a list of terrains found on the planet.
         """
 
+        terrain = []
+
         if self.hydrosphere <= 8:
-            self.terrain.add("Mountains")
-            self.terrain.add("Rough/Broken")
-            self.terrain.add("Hills")
-            self.terrain.add("Clear")
-        else:
-            self.terrain.discard("Mountains")
-            self.terrain.discard("Rough/Broken")
-            self.terrain.discard("Hills")
-            self.terrain.discard("Clear")
+            terrain.append("Mountains")
+            terrain.append("Rough/Broken")
+            terrain.append("Hills")
+            terrain.append("Clear")
 
         if self.atmosphere >= 2 and (2 <= self.hydrosphere <= 8):
-            self.terrain.add("Beach/Shore")
-        else:
-            self.terrain.discard("Beach/Shore")
+            terrain.append("Beach/Shore")
 
         if (self.atmosphere >= 2 and 5 <=
                 self.hydrosphere <= 11) or self.subsurfaceOceans:
-            self.terrain.add("Deep Ocean")
-        else:
-            self.terrain.discard("Deep Ocean")
+            terrain.append("Deep Ocean")
 
         if self.biosphere >= 9 and self.hydrosphere <= 4 and 2 <= self.atmosphere <= 7:
-            self.terrain.add("Desert")
-        else:
-            self.terrain.discard("Desert")
+            terrain.append("Desert")
 
         if self.biosphere >= 9 and self.atmosphere >= 4 and 3 <= self.hydrosphere <= 8:
-            self.terrain.add("Forest")
-        else:
-            self.terrain.discard("Forest")
+            terrain.append("Forest")
 
         if self.biosphere >= 9 and self.atmosphere >= 4 and 4 <= self.hydrosphere <= 8:
-            self.terrain.add("Jungle")
-        else:
-            self.terrain.discard("Jungle")
+            terrain.append("Jungle")
 
         if (self.atmosphere >= 2 and 3 <=
                 self.hydrosphere <= 11) or self.subsurfaceOceans:
-            self.terrain.add("Open Ocean")
-        else:
-            self.terrain.discard("Open Ocean")
+            terrain.append("Open Ocean")
 
         if self.biosphere >= 9 and self.atmosphere >= 2 and 2 <= self.hydrosphere <= 7:
-            self.terrain.add("Plains")
-        else:
-            self.terrain.discard("Plains")
+            terrain.append("Plains")
 
         if self.biosphere >= 9 and self.atmosphere >= 4 and 5 <= self.hydrosphere <= 8:
-            self.terrain.add("Rainforest")
-        else:
-            self.terrain.discard("Rainforest")
+            terrain.append("Rainforest")
 
         if self.atmosphere >= 2 and 3 <= self.hydrosphere <= 8:
-            self.terrain.add("Riverbank")
-        else:
-            self.terrain.discard("Riverbank")
+            terrain.append("Riverbank")
 
         if (self.atmosphere >= 2 and 2 <= self.hydrosphere <= 10) or (
                 self.subsurfaceOceans and self.hydrosphere <= 10):
-            self.terrain.add("Shallow Ocean")
-        else:
-            self.terrain.discard("Shallow Ocean")
+            terrain.append("Shallow Ocean")
 
         if self.biosphere >= 9 and self.atmosphere >= 4 and 5 <= self.hydrosphere <= 8:
-            self.terrain.add("Swamp/Marsh")
-        else:
-            self.terrain.discard("Swamp/Marsh")
+            terrain.append("Swamp/Marsh")
 
         if self.biosphere >= 9 and self.atmosphere >= 2 and 2 <= self.hydrosphere <= 8:
-            self.terrain.add("Woods")
-        else:
-            self.terrain.discard("Woods")
+            terrain.append("Woods")
+
+        return terrain
         
 
     def planet_animals(self):
@@ -1563,99 +1524,101 @@ class OrbitalBody():
         Adds animals for each terrain.
         """
 
-        animalsToCreate = []
+        animals = []
         for terrain in self.terrain:
             if terrain == "Beach/Shore":
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(planet=self, terrain="Beach/Shore"))
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Beach/Shore"))
-                    self.animals.append(animal.Avian(planet=self, terrain="Beach/Shore"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Beach/Shore"))
+                    animals.append(animal.Amphibian(planet=self, terrain=terrain))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
             elif terrain == "Clear":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Clear"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Clear"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Clear"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
             elif terrain == "Deep Ocean":
                 for _ in range(3):
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Deep Ocean"))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
             elif terrain == "Desert":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Desert"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Desert"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Desert"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Forest":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Forest"))
-                    self.animals.append(animal.Fungal(planet=self, terrain="Forest"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Forest"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Forest"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Fungal(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
             elif terrain == "Hills":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Hills"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Hills"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Hills"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Hills"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Jungle":
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(planet=self, terrain="Jungle"))
-                    self.animals.append(animal.Avian(planet=self, terrain="Jungle"))
-                    self.animals.append(animal.Fungal(planet=self, terrain="Jungle"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Jungle"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Jungle"))
+                    animals.append(animal.Amphibian(planet=self, terrain=terrain))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Fungal(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Mountains":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Mountains"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Mountains"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
             elif terrain == "Open Ocean":
                 for _ in range(3):
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Open Ocean"))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
             elif terrain == "Plains":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Plains"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Plains"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Plains"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Plains"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Rainforest":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Rainforest"))
-                    self.animals.append(animal.Fungal(planet=self, terrain="Rainforest"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Rainforest"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Rainforest"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Fungal(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Riverbank":
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(planet=self, terrain="Riverbank"))
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Riverbank"))
-                    self.animals.append(animal.Avian(planet=self, terrain="Riverbank"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Riverbank"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Riverbank"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Riverbank"))
+                    animals.append(animal.Amphibian(planet=self, terrain=terrain))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Rough/Broken":
                 for _ in range(3):
-                    self.animals.append(animal.Avian(planet=self, terrain="Rough/Broken"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Rough/Broken"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Rough/Broken"))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Shallow Ocean":
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(planet=self, terrain="Shallow Ocean"))
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Shallow Ocean"))
-                    self.animals.append(animal.Avian(planet=self, terrain="Shallow Ocean"))
+                    animals.append(animal.Amphibian(planet=self, terrain=terrain))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
             elif terrain == "Swamp/Marsh":
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(planet=self, terrain="Swamp/Marsh"))
-                    self.animals.append(animal.Aquatic(planet=self, terrain="Swamp/Marsh"))
-                    self.animals.append(animal.Avian(planet=self, terrain="Swamp/Marsh"))
-                    self.animals.append(animal.Fungal(planet=self, terrain="Swamp/Marsh"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Swamp/Marsh"))
-                    self.animals.append(animal.Reptile(planet=self, terrain="Swamp/Marsh"))
+                    animals.append(animal.Amphibian(planet=self, terrain=terrain))
+                    animals.append(animal.Aquatic(planet=self, terrain=terrain))
+                    animals.append(animal.Avian(planet=self, terrain=terrain))
+                    animals.append(animal.Fungal(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Reptile(planet=self, terrain=terrain))
             elif terrain == "Woods":
                 for _ in range(3):
-                    self.animals.append(animal.Fungal(planet=self, terrain="Woods"))
-                    self.animals.append(animal.Insect(planet=self, terrain="Woods"))
-                    self.animals.append(animal.Mammal(planet=self, terrain="Woods"))
+                    animals.append(animal.Fungal(planet=self, terrain=terrain))
+                    animals.append(animal.Insect(planet=self, terrain=terrain))
+                    animals.append(animal.Mammal(planet=self, terrain=terrain))
+
+        return animals
 
 
-    def planet_population(self):
+    def planet_population(self, alien):
         """
         Sets the alien populations for the planet.
         This sets both the relative and actual population.
@@ -1668,53 +1631,56 @@ class OrbitalBody():
 
         previousPopulation = self.population
         popNum = 0
-        for a in self.habitation:
-            if not self.habitation[a]:
-                continue
+        if not self.habitation[alien]:
+            return
 
-            if a not in self.alienPopulation:
-                self.alienPopulation[a] = {"homeworldRoll": roll_xdy(2, 6),
-                                           "colonyRoll": roll_xdy(1, 3) - roll_xdy(1, 3),
-                                           "outpostRoll": roll_xdy(1, 3),
-                                           "relative": None,
-                                           "actual": None}
-            
-            if a.extinct:
-                self.alienPopulation[a]["relative"] = 0
-                self.alienPopulation[a]["actual"] = 0
-                continue
-            elif not self.habitation[a] and (len(self.alienPopulation[a]["relative"]) > 1 and self.alienPopulation[a]["relative"][-1] != 0):
-                self.alienPopulation[a]["relative"] = 0
-                self.alienPopulation[a]["actual"] = 0
-                continue
-            elif self.habitation[a] == "Homeworld":
-                # This ensures the homeworld population changes a little over time.
-                homeworldPopRoll = roll_xdy(1, 3) - roll_xdy(1, 3)
-                if a.planets[self]["desirability"] + homeworldPopRoll > self.alienPopulation[a]["homeworldRoll"]:
-                    basePop = min(12, a.planets[self]["desirability"] + homeworldPopRoll)
-                else:
-                    basePop = self.alienPopulation[a]["homeworldRoll"]
-            elif self.habitation[a] == "Colony":
-                if a.currentTechLevel + self.settlement - 9 > a.planets[self]["desirability"] + self.alienPopulation[a]["colonyRoll"]:
-                    basePop = max(4, min(12, a.planets[self]["desirability"] + self.alienPopulation[a]["colonyRoll"]))
-                else:
-                    basePop = max(4, a.currentTechLevel + self.settlement - 9)
-            elif self.habitation[a] == "Outpost":
-                basePop = max(1, min(4, a.planets[self]["desirability"] + self.alienPopulation[a]["outpostRoll"]))
+        if alien not in self.alienPopulation:
+            return {"homeworldRoll": roll_xdy(2, 6),
+                "colonyRoll": roll_xdy(1, 3) - roll_xdy(1, 3),
+                "outpostRoll": roll_xdy(1, 3),
+                "relative": None,
+                "actual": None}
+        
+        if alien.extinct:
+            return {"homeworldRoll": None,
+                "colonyRoll": None,
+                "outpostRoll": None,
+                "relative": 0,
+                "actual": 0}
+        # If the alien has abandonded this planet but previously had a population
+        # there, remove the population.
+        elif not self.habitation[alien] and (len(self.alienPopulation[alien]["relative"]) > 1 and self.alienPopulation[alien]["relative"][-1] != 0):
+            return {"homeworldRoll": self.alienPopulation[alien]["homeworldRoll"],
+                "colonyRoll": self.alienPopulation[alien]["colonyRoll"],
+                "outpostRoll": self.alienPopulation[alien]["outpostRoll"],
+                "relative": 0,
+                "actual": 0}
+        elif self.habitation[alien] == "Homeworld":
+            # This ensures the homeworld population changes a little over time.
+            homeworldPopRoll = roll_xdy(1, 3) - roll_xdy(1, 3)
+            if alien.planets[self]["desirability"] + homeworldPopRoll > self.alienPopulation[alien]["homeworldRoll"]:
+                basePop = min(12, alien.planets[self]["desirability"] + homeworldPopRoll)
             else:
-                continue
+                basePop = self.alienPopulation[alien]["homeworldRoll"]
+        elif self.habitation[alien] == "Colony":
+            if alien.currentTechLevel + self.settlement - 9 > alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]:
+                basePop = max(4, min(12, alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]))
+            else:
+                basePop = max(4, alien.currentTechLevel + self.settlement - 9)
+        elif self.habitation[alien] == "Outpost":
+            basePop = max(1, min(4, alien.planets[self]["desirability"] + self.alienPopulation[alien]["outpostRoll"]))
 
-            # This is the first digit of the population number.
-            popString = str(roll_xdy(1, 9))
+        # This is the first digit of the population number.
+        popString = str(roll_xdy(1, 9))
 
-            # This generates the rest of the population numbers (can use 0 here).
-            # Industry can affect population, see planet_industry_effects.
-            for _ in range(basePop + self.industryPopulationEffect + 1):
-                popString += str(roll_xdy(1, 10) - 1)
+        # This generates the rest of the population numbers (can use 0 here).
+        # Industry can affect population, see planet_industry_effects.
+        for _ in range(basePop + self.industryPopulationEffect + 1):
+            popString += str(roll_xdy(1, 10) - 1)
 
-            self.alienPopulation[a]["relative"] = int(popString)
-            self.alienPopulation[a]["actual"] = int(int(popString) * a.populationModifier)
-            a.planets[self]["population"] = self.alienPopulation[a]["actual"]
+        self.alienPopulation[alien]["relative"] = int(popString)
+        self.alienPopulation[alien]["actual"] = int(int(popString) * alien.populationModifier)
+        alien.planets[self]["population"] = self.alienPopulation[alien]["actual"]
 
         # Sum up the population numbers so we can get a score and actual
         # population number for the planet as a whole.
