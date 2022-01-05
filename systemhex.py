@@ -6,7 +6,10 @@ from lookuptable import LookupTable
 
 allSystems = []
 allCoordinates = {}
-numberOfStarsTable = LookupTable((10, 1), (15, 2), (21, 3))
+numberOfStarsTable = LookupTable(
+    (10, 1),
+    (15, 2),
+    (100, 3))
 
 
 def create_normal_system(
@@ -130,7 +133,7 @@ class System():
         self.planets = []
         self.flareStarDesirabilityPenalty = 0
         self.systemsAtRange = {
-            0: [self],
+            0: [(self.coordinates[0], self.coordinates[1])],
             1: self.set_systems_at_range(1),
             2: self.set_systems_at_range(2),
             3: self.set_systems_at_range(3),
@@ -155,7 +158,7 @@ class System():
         self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + (3 if self.openCluster else 0)] + autoBrownDwarf
 
 
-    def create_new_open_cluster(self, alienSurvivalPercent, maxTechLevel):
+    def create_new_open_cluster(self, alienSurvivalPercent):
         """
         Determine whether this is a new open cluster or not. If yes,
         create surrounding systems as cluster systems rather than normal
@@ -165,9 +168,6 @@ class System():
             alienSurvivalPercent: Integer
                 An integer that represents the percent chance that
                 an intelligent species will survive to Tech Level 10.
-            maxTechLevel: Integer
-                An integer representing the maximum achievable Tech Level
-                by an intelligence species.
         """
         
         if roll_xdy(3, 6) < 18:
@@ -185,8 +185,7 @@ class System():
                     create_cluster_system(
                         horizontalCoord=self.coordinates[0] + x,
                         verticalCoord=self.coordinates[1] + y,
-                        alienSurvivalPercent=alienSurvivalPercent,
-                        maxTechLevel=maxTechLevel)
+                        alienSurvivalPercent=alienSurvivalPercent)
 
 
     def set_systems_at_range(self, spacesAway):
@@ -222,7 +221,7 @@ class System():
                 The alien to calculate distance for.
         """
         
-        return distance_between_systems(self, alien.homePlanet.systemHex)
+        self.distanceFromAlienHomeSystem[alien] = distance_between_systems(self, alien.homePlanet.systemHex)
 
 
     def create_primary_star_in_system(self, alienSurvivalPercent):
@@ -288,7 +287,8 @@ class System():
     def create_surrounding_systems(
             self,
             maxTechLevel,
-            maxReactionModifier):
+            maxReactionModifier,
+            alienSurvivalPercent):
         """
         Creates nearby systems, based on how far aliens
         will explore.
@@ -299,9 +299,13 @@ class System():
             maxReactionModifier: Integer
                 The maximum reaction modifier value across all
                 aliens.
+            alienSurvivalPercent: Integer
+                An integer that represents the percent chance that
+                an intelligent species will survive to Tech Level 10.
         """
 
-        hexRange = (3 + maxReactionModifier) * (maxTechLevel - 9)
+        hexRange = (4 + maxReactionModifier) * (maxTechLevel - 9)
+        
         for x in range(-hexRange, hexRange + 1):
             for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
                 h = self.coordinates[0] + x
@@ -310,7 +314,8 @@ class System():
                 if (h, v, c) not in allCoordinates:
                     create_normal_system(
                         horizontalCoord=self.coordinates[0] + x,
-                        verticalCoord=self.coordinates[1] + y)
+                        verticalCoord=self.coordinates[1] + y,
+                        alienSurvivalPercent=alienSurvivalPercent)
 
 
     def set_nearby_colony_systems(self, alien):

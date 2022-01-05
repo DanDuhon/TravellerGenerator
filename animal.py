@@ -105,7 +105,7 @@ class Animal():
 
         # The type of terrain the animal lives in helps determine how
         # large the animal is.
-        self.sizeRollModifier = sizeModDict[terrain]
+        self.sizeRollModifier = sizeModDict.get(terrain, 0)
 
         # The type of terrain also helps determine the type of movement
         # favored by the animal. This may be overridden by the child class.

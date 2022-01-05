@@ -17,34 +17,36 @@ spectralTypeTable = LookupTable((2, "A"),
                                 (4, "G"),
                                 (5, "K"),
                                 (13, "M"),
-                                (17, "L"))
+                                (100, "L"))
 
+# There are unnecessary LookupTables here (anything with one value),
+# but it simplifies the code that uses this from several elifs to one statement.
 luminosityClassDict = {
     "A": LookupTable(
-        (2, LookupTable((6, "A-V")),
+        (2, LookupTable((100, "A-V"))),
         (3, LookupTable(
             (2, "F-IV"),
             (3, "K-III"),
-            (6, "D"))),
-        (15, LookupTable((6, "D"))))),
+            (100, "D"))),
+        (15, LookupTable((100, "D")))),
     "F": LookupTable(
-        (5, LookupTable((6, "F-V"))),
+        (5, LookupTable((100, "F-V"))),
         (6, LookupTable(
             (4, "G-IV"),
-            (6, "M-III"))),
-        (15, LookupTable((6, "D")))),
+            (100, "M-III"))),
+        (100, LookupTable((100, "D")))),
     "G": LookupTable(
-        (6, LookupTable((11, "G-V")),
+        (6, LookupTable((100, "G-V"))),
         (13, LookupTable(
             (3, "K-IV"),
-            (6, "M-III"))),
-        (15, LookupTable((6, "D"))))),
-    "K": LookupTable((15, LookupTable((6, "K-V")))),
+            (100, "M-III"))),
+        (100, LookupTable((100, "D")))),
+    "K": LookupTable((100, LookupTable((100, "K-V")))),
     "M": LookupTable(
-        (9, LookupTable((6, "M-V"))),
-        (12, LookupTable((6, "M-Ve"))),
-        (14, LookupTable((6, "L")))),
-    "L": LookupTable((15, LookupTable((6, "L"))))
+        (9, LookupTable((100, "M-V"))),
+        (12, LookupTable((100, "M-Ve"))),
+        (100, LookupTable((100, "L")))),
+    "L": LookupTable((100, LookupTable((100, "L"))))
 }
 
 companionOrbitTable = LookupTable((2, "Tight"),
@@ -56,18 +58,29 @@ companionOrbitTable = LookupTable((2, "Tight"),
 def create_primary_star(
         systemHex,
         alienSurvivalPercent):
+    """
+    Creates a primary star.
+
+    Required Parameters:
+        systemHex: System class instance
+            The system in which the star is located.
+        alienSurvivalPercent: Integer
+            An integer that represents the percent chance that
+            an intelligent species will survive to Tech Level 10.
+    """
+
     star = Star(
         systemHex=systemHex,
         primary=True)
 
-    star.spectralTypeRoll = star.spectral_type(primary=True)
-    star.spectralType = star.spectral_type()
-    star.luminosityClass = luminosityClassDict[star.spectralType][star.systemHex.age][roll_xdy(1, 6)]
-    star.expansionAffectedOrbits = star.expansion_affected_orbits()
-    star.companionOrbits = star.companion_orbits()
-    star.epistellarOrbits = star.epistellar_orbits()
-    star.innerZoneOrbits = star.inner_zone_orbits()
-    star.outerZoneOrbits = star.outer_zone_orbits()
+    star.spectral_type_roll(primary=True)
+    star.spectral_type()
+    star.luminosity_class()
+    star.expansion_affected_orbits()
+    star.companion_orbits()
+    star.epistellar_orbits()
+    star.inner_zone_orbits()
+    star.outer_zone_orbits()
     star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
 
 
@@ -75,33 +88,53 @@ def create_companion_star(
         systemHex,
         alienSurvivalPercent,
         primaryOrbit):
+    """
+    Creates a companion star.
+
+    Required Parameters:
+        systemHex: System class instance
+            The system in which the star is located.
+        alienSurvivalPercent: Integer
+            An integer that represents the percent chance that
+            an intelligent species will survive to Tech Level 10.
+    """
+
     star = Star(
         systemHex=systemHex,
         primaryOrbit=primaryOrbit)
 
-    star.spectralTypeRoll = star.spectral_type_roll(primarySpectralTypeRoll=star.systemHex.stars[0].spectralTypeRoll)
-    star.spectralType = star.spectral_type()
-    star.luminosityClass = star.luminosity_class()
-    star.expansionAffectedOrbits = star.expansion_affected_orbits()
-    star.epistellarOrbits = star.epistellar_orbits()
-    star.innerZoneOrbits = star.inner_zone_orbits()
-    star.outerZoneOrbits = star.outer_zone_orbits()
+    star.spectral_type_roll(primarySpectralTypeRoll=star.systemHex.stars[0].spectralTypeRoll)
+    star.spectral_type()
+    star.luminosity_class()
+    star.expansion_affected_orbits()
+    star.epistellar_orbits()
+    star.inner_zone_orbits()
+    star.outer_zone_orbits()
     star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
 
 
 def create_brown_dwarf_star(
         systemHex,
         alienSurvivalPercent):
-    star = Star(
-        systemHex=systemHex,
-        autoBrownDwarf=True)
+    """
+    Creates an "automatic" brown dwarf star.
 
-    star.spectralType = star.spectral_type(autoBrownDwarf=True)
-    star.spectralType = star.spectral_type()
-    star.luminosityClass = star.luminosity_class()
-    star.epistellarOrbits = star.epistellar_orbits()
-    star.innerZoneOrbits = star.inner_zone_orbits()
-    star.outerZoneOrbits = star.outer_zone_orbits()
+    Required Parameters:
+        systemHex: System class instance
+            The system in which the star is located.
+        alienSurvivalPercent: Integer
+            An integer that represents the percent chance that
+            an intelligent species will survive to Tech Level 10.
+    """
+
+    star = Star(
+        systemHex=systemHex)
+
+    star.spectralType = "L"
+    star.luminosityClass = "L"
+    star.epistellar_orbits()
+    star.inner_zone_orbits()
+    star.outer_zone_orbits()
     star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
 
 
@@ -152,14 +185,12 @@ class Star():
         self.planets = []
 
 
-    def spectral_type_roll(self, autoBrownDwarf=False, primary=False, primarySpectralTypeRoll=None):
+    def spectral_type_roll(self, primary=False, primarySpectralTypeRoll=None):
         """
-        Returns the roll for the star's spectral type.
+        Sets the roll value for the star's spectral type.
+        The primary star's roll is used to modify each companion star's roll.
 
         Optional Parameters:
-            autoBrownDwarf: Boolean
-                Indicates whether this star is an "automatic" brown dwarf.
-                Default value: False
             primary: Boolean
                 Indicates whether this star is the primary star in the system.
                 Default value: False
@@ -168,115 +199,98 @@ class Star():
                 Default value: None
         """
 
-        if autoBrownDwarf:
-            return
-
-        return (roll_xdy(2, 6) if primary else primarySpectralTypeRoll + roll_xdy(1, 6) - 1)
+        self.spectralTypeRoll = (roll_xdy(2, 6) if primary else primarySpectralTypeRoll + roll_xdy(1, 6) - 1)
 
 
-    def spectral_type(self, autoBrownDwarf=False):
+    def spectral_type(self):
         """
-        Returns the star's spectral type.
-
-        Optional Parameters:
-            autoBrownDwarf: Boolean
-                Indicates whether this star is an "automatic" brown dwarf.
-                Default value: False
+        Sets the star's spectral type.
         """
-
-        if autoBrownDwarf:
-            return "L"
         
-        return spectralTypeTable[self.spectralTypeRoll]
+        self.spectralType = spectralTypeTable[self.spectralTypeRoll]
 
 
     def luminosity_class(self):
         """
-        Returns the star's luminosity class.
+        Sets the star's luminosity class.
         """
-
-        if self.spectralType in ["A", "F", "G"]:
-            if ((self.spectralType == "A" and self.systemHex.age == 3)
-                or (self.spectralType == "F" and self.systemHex.age == 6)
-                or (self.spectralType == "G" and 12 <= self.systemHex.age <= 13)):
-                return luminosityClassDict[self.spectralType][self.systemHex.age][roll_xdy(1, 6)]
-            else:
-                return luminosityClassDict[self.spectralType][self.systemHex.age]
-        elif self.spectralType == "M":
-            return luminosityClassDict[self.spectralType][roll_xdy(2, 6)]
-        else:
-            return luminosityClassDict[self.spectralType]
+        
+        self.luminosityClass = luminosityClassDict[self.spectralType][self.systemHex.age][roll_xdy(1, 6)]
 
 
     def expansion_affected_orbits(self):
         """
         Stars of these luminosity classes expanded or are expanding into
         supergiants. This has a detrimental effect on some of the planets
-        that orbit it. Returns the number of planets affected.
+        that orbit it. Sets the number of planets affected.
         """
 
         if self.luminosityClass in ["D", "K-III", "M-III"]:
-            return roll_xdy(1, 6)
+            self.expansionAffectedOrbits = roll_xdy(1, 6)
+            return
         
-        return 0
+        self.expansionAffectedOrbits = 0
 
 
     def companion_orbits(self):
         """
-        Returns the distance of each companion star.
+        Sets the distance of each companion star.
         """
 
-        return [companionOrbitTable[roll_xdy(1, 6)] for _ in range(self.numberOfStars - 1 - (1 if self.brownDwarf else 0))]
+        self.companionOrbits = [companionOrbitTable[roll_xdy(1, 6)] for _ in range(self.systemHex.numberOfStars - 1 - (1 if self.systemHex.brownDwarf else 0))]
 
 
     def epistellar_orbits(self):
         """
-        Returns the number of objects closely orbiting the star
+        Sets the number of objects closely orbiting the star
         based on the star's luminosity class. Planets orbiting
         a primary star with Close or Moderate companions orbit all
         such stars but are only listed under the primary star
         for simplicity.
 
-        Returns integer 0-2
+        Value range is 0-2.
         """
 
         if self.luminosityClass in ["L", "D", "K-III", "M-III"] or self.primaryOrbit in ["Close", "Moderate"]:
-            return 0
+            self.epistellarOrbits = 0
+            return
             
-        return min([2, max([0, roll_xdy(1, 6) - 3 - (1 if self.luminosityClass == "M-V" else 0)])])
+        self.epistellarOrbits = min([2, max([0, roll_xdy(1, 6) - 3 - (1 if self.luminosityClass == "M-V" else 0)])])
 
 
     def inner_zone_orbits(self):
         """
-        Returns the number of objects orbiting a star in the "inner zone",
+        Sets the number of objects orbiting a star in the "inner zone",
         or "Goldilock's zone", based on the star's luminosity class.
         Planets orbiting a primary star with Close or Moderate companions
         orbit all such stars but are only listed under the primary star
         for simplicity.
 
-        Returns integer 0-5
+        Value range is 0-5.
         """
 
         if self.primary and "Close" in self.companionOrbits or self.primaryOrbit in ["Close", "Moderate"]:
-            return 0
+            self.innerZoneOrbits = 0
+            return
 
-        return max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == "M-V" else 0)])
+        self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == "M-V" else 0)])
 
 
     def outer_zone_orbits(self):
         """
-        Returns the number of objects orbiting a star in the outer zone
+        Sets the number of objects orbiting a star in the outer zone
         based on the star's luminosity class. Planets orbiting a primary
         star with Close or Moderate companions orbit all such stars but
         are only listed under the primary star for simplicity.
 
-        Returns integer 0-5
+        Value range is 0-5.
         """
 
         if self.primary and "Moderate" in self.companionOrbits or self.primaryOrbit in ["Close", "Moderate"]:
-            return 0
+            self.outerZoneOrbits = 0
+            return
 
-        return max([0, roll_xdy(1, 6) - 1 - (1 if self.luminosityClass in ["L", "M-V"] else 0)])
+        self.outerZoneOrbits = max([0, roll_xdy(1, 6) - 1 - (1 if self.luminosityClass in ["L", "M-V"] else 0)])
 
 
     def create_planets(self, alienSurvivalPercent):

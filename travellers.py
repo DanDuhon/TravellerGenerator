@@ -9,13 +9,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "-x",
     dest='survival',
-    default=10,
+    default=0,
     type=int,
     help="alien survival percent (default=10)")
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=10,
+    default=12,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(

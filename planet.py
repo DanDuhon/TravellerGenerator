@@ -6,29 +6,31 @@ from lookuptable import LookupTable
 allPlanets = []
 
 
+# There are unnecessary LookupTables here (anything with one value),
+# but it simplifies the code that uses this from several elifs to one statement.
 dwarfCategoryDict = {
     "Epistellar": LookupTable(
-        (3, LookupTable(6, "Rockball")),
-        (5, LookupTable(6, "Meltball")),
-        (6, LookupTable(
+        (3, LookupTable((100, "Rockball"))),
+        (5, LookupTable((100, "Meltball"))),
+        (100, LookupTable(
             (4, "Hebean"),
-            (6, "Promethean")))),
+            (100, "Promethean")))),
     "Inner Zone": LookupTable(
-        (4, LookupTable(6, "Rockball")),
-        (6, LookupTable(6, "Arean")),
-        (7, LookupTable(6, "Meltball")),
-        (8, LookupTable(
+        (4, LookupTable((100, "Rockball"))),
+        (6, LookupTable((100, "Arean"))),
+        (7, LookupTable((100, "Meltball"))),
+        (100, LookupTable(
             (4, "Hebean"),
-            (6, "Promethean")))),
+            (100, "Promethean")))),
     "Outer Zone": LookupTable(
-        (0, LookupTable(6, "Rockball")),
-        (4, LookupTable(6, "Snowball")),
-        (6, LookupTable(6, "Rockball")),
-        (7, LookupTable(6, "Meltball")),
-        (8, LookupTable(
+        (0, LookupTable((100, "Rockball"))),
+        (4, LookupTable((100, "Snowball"))),
+        (6, LookupTable((100, "Rockball"))),
+        (7, LookupTable((100, "Meltball"))),
+        (100, LookupTable(
             (3, "Hebean"),
             (5, "Arean"),
-            (6, "Promethean"))))
+            (100, "Promethean"))))
 }
 
 
@@ -36,18 +38,18 @@ terrestrialCategoryDict = {
     "Epistellar": LookupTable(
         (4, "Jani-Lithic"),
         (5, "Vesperian"),
-        (6, "Telluric")),
+        (100, "Telluric")),
     "Inner Zone": LookupTable(
         (4, "Telluric"),
         (6, "Arid"),
         (7, "Tectonic"),
         (9, "Oceanic"),
         (10, "Tectonic"),
-        (12, "Telluric")),
+        (100, "Telluric")),
     "Outer Zone": LookupTable(
         (4, "Arid"),
         (6, "Tectonic"),
-        (8, "Oceanic"))
+        (100, "Oceanic"))
 }
 
 
@@ -58,7 +60,7 @@ categoryDescriptionDict = {
     "Asphodelian": "These are worlds that were directly affected by a star's transition from the main sequence; their atmosphere has been boiled away, leaving the surface exposed.",
     "Chthonian": "These are worlds that were directly affected by a star's transition from the main sequence, or that have simply spent too long in a tight epistellar orbit; their atmospheres have been stripped away.",
     "Hebean": "These are highly active worlds, due to tidal flexing, but with some regions of stability; the larger ones may be able to maintain some atmosphere and surface liquid.",
-    "Helian": "These are typical helian or \"subgiant\" worlds – large enough to retain helium atmospheres.",
+    "Helian": "These are typical helian or \"subgiant\" worlds - large enough to retain helium atmospheres.",
     "Jani-Lithic": "These worlds, tide-locked to the primary, are rocky, dry, and geologically active.",
     "Jovian": "These are huge worlds with helium-hydrogen envelopes and compressed cores; the largest emit more heat than they absorb.",
     "Meltball": "These are dwarfs with molten or semi-molten surfaces, either from extreme tidal flexing, or extreme approach to a star.",
@@ -74,29 +76,31 @@ categoryDescriptionDict = {
 }
 
 
+# There are unnecessary LookupTables here (anything with one value),
+# but it simplifies the code that uses this from several elifs to one statement.
 chemistryDict = {
-    "Acheronian": LookupTable(100, LookupTable(100, (None, None, "Telluric", "Acheronian"))),
+    "Acheronian": LookupTable((100, LookupTable((100, (None, None, "Telluric", "Acheronian"))))),
     "Arean": LookupTable(
-                    (4, LookupTable(100, ("Water", 0, "Geocyclic", "Arean"))),
-                    (6, LookupTable(100, ("Ammonia", 1, "Geocyclic", "Utgardian"))),
-                    (100, LookupTable(100, ("Methane", 3, "Geocyclic", "Titanian")))),
+                    (4, LookupTable((100, ("Water", 0, "Geocyclic", "Arean")))),
+                    (6, LookupTable((100, ("Ammonia", 1, "Geocyclic", "Utgardian")))),
+                    (100, LookupTable((100, ("Methane", 3, "Geocyclic", "Titanian"))))),
     "Arid": LookupTable(
-                    (6, LookupTable(100, ("Water", 0, "Arid", "Darwinian"))),
-                    (8, LookupTable(100, ("Ammonia", 1, "Arid", "Saganian"))),
-                    (100, LookupTable(100, ("Methane", 3, "Arid", "Asimovian")))),
-    "Asphodelian": LookupTable(100, LookupTable(100, (None, None, "Geo-Helian", "Asphodelian"))),
-    "Asteroid Belt": LookupTable(100, LookupTable(100, (None, None, "Asteroid Belt", "Asteroid Belt"))),
-    "Chthonian": LookupTable(100, LookupTable(100, (None, None, "Chthonian", None))),
+                    (6, LookupTable((100, ("Water", 0, "Arid", "Darwinian")))),
+                    (8, LookupTable((100, ("Ammonia", 1, "Arid", "Saganian")))),
+                    (100, LookupTable((100, ("Methane", 3, "Arid", "Asimovian"))))),
+    "Asphodelian": LookupTable((100, LookupTable((100, (None, None, "Geo-Helian", "Asphodelian"))))),
+    "Asteroid Belt": LookupTable((100, LookupTable((100, (None, None, "Asteroid Belt", "Asteroid Belt"))))),
+    "Chthonian": LookupTable((100, LookupTable((100, (None, None, "Chthonian", None))))),
     "Hebean": LookupTable(
-                    (3, LookupTable(100, (None, None, "Geotidal", "Hebean"))),
-                    (100, LookupTable(100, (None, None, "Geotidal", "Idunnian")))),
+                    (3, LookupTable((100, (None, None, "Geotidal", "Hebean")))),
+                    (100, LookupTable((100, (None, None, "Geotidal", "Idunnian"))))),
     "Helian": LookupTable(
-                    (3, LookupTable(100, (None, None, "Geo-Helian", None))),
-                    (100, LookupTable(100, (None, None, "Nebulous", None)))),
-    "Jani-Lithic": LookupTable(100, LookupTable(100, (None, None, "Epistellar", "Jani-Lithic"))),
+                    (3, LookupTable((100, (None, None, "Geo-Helian", None)))),
+                    (100, LookupTable((100, (None, None, "Nebulous", None))))),
+    "Jani-Lithic": LookupTable((100, LookupTable((100, (None, None, "Epistellar", "Jani-Lithic"))))),
     "Jovian": LookupTable(
-                    (3, LookupTable(100, ("Water", None, "Dwarf Jovian", "Brammian"))),
-                    (100, LookupTable(100, ("Ammonia", None, "Dwarf Jovian", "Khonsonian")))),
+                    (3, LookupTable((100, ("Water", None, "Dwarf Jovian", "Brammian")))),
+                    (100, LookupTable((100, ("Ammonia", None, "Dwarf Jovian", "Khonsonian"))))),
     "Meltball": LookupTable(
                     (3, LookupTable(
                         (2, (None, None, "Geothermic", "Phaethonic")),
@@ -120,34 +124,34 @@ chemistryDict = {
                         (8, ("Water", 0, "Panthalassic", None)),
                         (11, ("Sulfur", 0, "Panthalassic", None)),
                         (100, ("Chlorine", 0, "Panthalassic", None)))),
-                    (8, LookupTable(100, ("Methane", 1, "Panthalassic", None))),
-                    (100, LookupTable(100, ("Methane", 3, "Panthalassic", None)))),
+                    (8, LookupTable((100, ("Methane", 1, "Panthalassic", None)))),
+                    (100, LookupTable((100, ("Methane", 3, "Panthalassic", None))))),
     "Promethean": LookupTable(
-                    (4, LookupTable(100, ("Water", 0, "Geotidal", "Promethean"))),
-                    (6, LookupTable(100, ("Ammonia", 1, "Geotidal", "Burian"))),
-                    (100, LookupTable(100, ("Methane", 3, "Geotidal", "Atlan")))),
+                    (4, LookupTable((100, ("Water", 0, "Geotidal", "Promethean")))),
+                    (6, LookupTable((100, ("Ammonia", 1, "Geotidal", "Burian")))),
+                    (100, LookupTable((100, ("Methane", 3, "Geotidal", "Atlan"))))),
     "Rockball": LookupTable(
-                    (2, LookupTable(100, (None, None, "Geopassive", "Ferrinian"))),
-                    (4, LookupTable(100, (None, None, "Geopassive", "Lithic"))),
-                    (100, LookupTable(100, (None, None, "Geopassive", "Carbonian")))),
+                    (2, LookupTable((100, (None, None, "Geopassive", "Ferrinian")))),
+                    (4, LookupTable((100, (None, None, "Geopassive", "Lithic")))),
+                    (100, LookupTable((100, (None, None, "Geopassive", "Carbonian"))))),
     "Snowball": LookupTable(
-                    (4, LookupTable(100, ("Water", 0, "Geopassive", "Gelidian"))),
-                    (6, LookupTable(100, ("Ammonia", 1, "Geothermic", "Erisian"))),
-                    (100, LookupTable(100, ("Methane", 3, "Geotidal", "Plutonian")))),
-    "Stygian": LookupTable(100, LookupTable(100, (None, None, "Geopassive", "Stygian"))),
+                    (4, LookupTable((100, ("Water", 0, "Geopassive", "Gelidian")))),
+                    (6, LookupTable((100, ("Ammonia", 1, "Geothermic", "Erisian")))),
+                    (100, LookupTable((100, ("Methane", 3, "Geotidal", "Plutonian"))))),
+    "Stygian": LookupTable((100, LookupTable((100, (None, None, "Geopassive", "Stygian"))))),
     "Tectonic": LookupTable(
                     (8, LookupTable(
                         (8, ("Water", 0, "Tectonic", "Gaian")),
                         (11, ("Sulfur", 0, "Tectonic", "Thio-Gaian")),
                         (100, ("Chlorine", 0, "Tectonic", "Chloritic-Gaian")))),
-                    (11, LookupTable(100, ("Ammonia", 1, "Tectonic", "Amunian"))),
-                    (100, LookupTable(100, ("Methane", 3, "Tectonic", "Tartarian")))),
+                    (11, LookupTable((100, ("Ammonia", 1, "Tectonic", "Amunian")))),
+                    (100, LookupTable((100, ("Methane", 3, "Tectonic", "Tartarian"))))),
     "Telluric": LookupTable(
-                    (3, LookupTable(100, (None, None, "Telluric", "Phosphorian"))),
-                    (100, LookupTable(100, (None, None, "Telluric", "Cytherean")))),
+                    (3, LookupTable((100, (None, None, "Telluric", "Phosphorian")))),
+                    (100, LookupTable((100, (None, None, "Telluric", "Cytherean"))))),
     "Vesperian": LookupTable(
-                    (11, LookupTable(100, ("Water", None, "Epistellar", "Vesperian"))),
-                    (100, LookupTable(100, ("Chlorine", None, "Epistellar", "Vesperian"))))
+                    (11, LookupTable((100, ("Water", None, "Epistellar", "Vesperian")))),
+                    (100, LookupTable((100, ("Chlorine", None, "Epistellar", "Vesperian")))))
 }
 
 
@@ -258,7 +262,7 @@ def create_asteroid_belt(
     newPlanet.atmosphere = 0
     newPlanet.hydrosphere = 0
     newPlanet.biosphere = 0
-    newPlanet.terrain = newPlanet.planet_terrain()
+    newPlanet.planet_terrain()
     newPlanet.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
     newPlanet.satellites = []
 
@@ -304,13 +308,13 @@ def create_dwarf_planet(
         orbitType=orbitType)
 
     newPlanet.groupName = "Dwarf"
-    newPlanet.category = newPlanet.dwarf_category()
-    newPlanet.size = newPlanet.planet_size()
-    newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.terrain = newPlanet.planet_terrain()
+    newPlanet.dwarf_category()
+    newPlanet.planet_size()
+    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+    newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
-        newPlanet.animals = newPlanet.planet_animals()
+        newPlanet.planet_animals()
 
     if newPlanet.biosphere >= 12:
         alien.create_alien(newPlanet, alienSurvivalPercent)
@@ -361,8 +365,8 @@ def create_terrestrial_planet(
     newPlanet.groupName = "Terrestrial"
     newPlanet.terrestrial_category()
     newPlanet.planet_size()
-    newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.terrain = newPlanet.planet_terrain()
+    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+    newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
         newPlanet.planet_animals()
@@ -416,8 +420,8 @@ def create_helian_planet(
     newPlanet.groupName = "Helian"
     newPlanet.helian_category()
     newPlanet.planet_size()
-    newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.terrain = newPlanet.planet_terrain()
+    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+    newPlanet.planet_terrain()
 
     if newPlanet.biosphere >= 9:
         newPlanet.planet_animals()
@@ -479,7 +483,7 @@ def create_jovian_planet(
     newPlanet.groupName = "Jovian"
     newPlanet.jovian_category()
     newPlanet.size = 16
-    newPlanet.className, newPlanet.chemistry, newPlanet.ageModifier, newPlanet.type, newPlanet.atmosphere, newPlanet.biosphere, newPlanet.hydrosphere, newPlanet.subsurfaceOceans = newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
 
     if roll_xdy(1, 6) <= 4:
         newPlanet.ringSystem = "Minor"
@@ -630,8 +634,8 @@ class OrbitalBody():
         allPlanets.append(self)
         self.systemHex = star.systemHex
         self.systemHex.planets.append(self)
-        self.star.planets.append(self)
         self.star = star
+        self.star.planets.append(self)
         self.parentObject = parentObject
         self.order = order
         self.orbitType = orbitType
@@ -700,11 +704,12 @@ class OrbitalBody():
 
     def dwarf_category(self):
         """
-        Returns the category of a planet based on dwarfCategoryDict.
+        Sets the category of a planet based on dwarfCategoryDict.
         """
 
         if self.order <= self.star.expansionAffectedOrbits:
-            return "Stygian"
+            self.category = "Stygian"
+            return
 
         roll = roll_xdy(1, 6)
 
@@ -726,104 +731,94 @@ class OrbitalBody():
             elif self.parentObject != self.star and self.parentObject.groupName == "Jovian":
                 roll += 2
 
-        return dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
+        self.category = dwarfCategoryDict[self.orbitType][roll][roll_xdy(1, 6)]
 
 
     def terrestrial_category(self):
         """
-        Returns the category of a planet based on terrestrialCategoryDict.
+        Sets the category of a planet based on terrestrialCategoryDict.
         """
 
         roll = roll_xdy(1, 6)
 
         if self.order <= self.star.expansionAffectedOrbits:
-            return "Acheronian"
+            self.category = "Acheronian"
+            return
         elif self.orbitType == "Inner Zone":
             roll += roll_xdy(1, 6)
         elif self.orbitType == "Outer Zone":
             if self.parentObject != self.star:
                 roll += 2
 
-        return terrestrialCategoryDict[self.orbitType][roll]
+        self.category = terrestrialCategoryDict[self.orbitType][roll]
 
 
     def helian_category(self):
         """
-        Returns the category of a Helian planet.
+        Sets the category of a Helian planet.
         """
 
         if self.order <= self.star.expansionAffectedOrbits:
-            return "Asphodelian"
+            self.category = "Asphodelian"
         elif self.orbitType == "Epistellar" and roll_xdy(1, 6) == 6:
-            return "Asphodelian"
+            self.category = "Asphodelian"
         elif self.orbitType == "Inner Zone" and roll_xdy(1, 6) >= 5:
-            return "Panthalassic"
+            self.category = "Panthalassic"
         else:  # Outer Zone and other rolls
-            return "Helian"
+            self.category = "Helian"
 
 
     def jovian_category(self):
         """
-        Returns the category of a Jovian planet.
+        Sets the category of a Jovian planet.
         """
 
         if self.order <= self.star.expansionAffectedOrbits:
-            return "Chthonian"
+            self.category = "Chthonian"
         elif self.orbitType == "Epistellar" and roll_xdy(1, 6) == 6:
-            return "Chthonian"
+            self.category = "Chthonian"
         else:  # Inner Zone, Outer Zone, and other rolls
-            return "Jovian"
+            self.category = "Jovian"
 
 
     def planet_size(self):
         """
-        Returns the size value of a planet based on group.
+        Sets the size value of a planet based on group.
         """
 
         if self.groupName == "Dwarf":
-            return roll_xdy(1, 6) - 1
+            self.size = roll_xdy(1, 6) - 1
         elif self.groupName == "Terrestrial":
-            return roll_xdy(1, 6) + 4
+            self.size = roll_xdy(1, 6) + 4
         elif self.groupName == "Helian":
-            return min(14, roll_xdy(1, 6) + 9)
-        else:
-            raise ValueError("Unrecognized group: " + str(self.groupName))
+            self.size = min(14, roll_xdy(1, 6) + 9)
 
 
     def class_chemistry_atmosphere_hydrosphere_biosphere(self):
         """
-        Returns the planet's chemistry, atmosphere, hydrosphere, and biosphere
+        Sets the planet's chemistry, atmosphere, hydrosphere, and biosphere
         values. Not all planet categories have the same order of operations,
         so it is in a loop to accommodate the planets that determine these
         things in a different order so I can have just one of these functions.
         """
 
-        className = self.className
-        chemistry = self.chemistry
-        ageModifier = self.ageModifier
-        planetType = self.type
-        atmosphere = self.atmosphere
-        biosphere = self.biosphere
-        hydrosphere = self.hydrosphere
-        subsurfaceOceans = self.subsurfaceOceans
+        while not isinstance(self.className, str) or not isinstance(self.atmosphere, int) or not isinstance(self.biosphere, int) or not isinstance(self.hydrosphere, int):
+            if not isinstance(self.className, str):
+                self.planet_chemistry_age_modifier_class_type()
 
-        while not isinstance(className, str) or not isinstance(atmosphere, int) or not isinstance(biosphere, int) or not isinstance(hydrosphere, int):
-            if not isinstance(className, str):
-                chemistry, ageModifier, className, planetType = self.planet_chemistry_age_modifier_class_type(biosphere=biosphere)
+            if not isinstance(self.atmosphere, int):
+                self.planet_atmosphere()
 
-            if not isinstance(atmosphere, int):
-                atmosphere = self.planet_atmosphere(biosphere=biosphere, chemistry=chemistry)
+            if not isinstance(self.biosphere, int):
+                self.planet_biosphere()
 
-            if not isinstance(biosphere, int):
-                biosphere = self.planet_biosphere()
-
-            if not isinstance(hydrosphere, int):
-                hydrosphere, subsurfaceOceans = self.planet_hydrosphere_subsurface_oceans()
-
-            if biosphere > 0 and ((isinstance(atmosphere, int) and atmosphere <= 1 and self.subsurfaceOceans == False)
-                                    or hydrosphere == 0
+            if not isinstance(self.hydrosphere, int):
+                self.planet_hydrosphere_subsurface_oceans()
+                
+            if self.biosphere > 0 and ((isinstance(self.atmosphere, int) and self.atmosphere <= 1 and self.subsurfaceOceans == False)
+                                    or self.hydrosphere == 0
                                     or self.star.luminosityClass == "M-Ve"):
-                biosphere = 0
+                self.biosphere = 0
                 
                 # The atmosphere of these categories is dependent on the biosphere.
                 # If the biosphere was forced to 0, recalculate the value for
@@ -833,14 +828,12 @@ class OrbitalBody():
                     "Promethean",
                     "Tectonic",
                     "Vesperian"]:
-                    atmosphere = self.planet_atmosphere()
-
-        return className, chemistry, ageModifier, planetType, atmosphere, biosphere, hydrosphere, subsurfaceOceans
+                    self.planet_atmosphere()
 
 
-    def planet_chemistry_age_modifier_class_type(self, biosphere):
+    def planet_chemistry_age_modifier_class_type(self):
         """
-        Returns chemistry, ageModifier, className, and type:
+        Sets chemistry, ageModifier, className, and type:
             chemistry: String
                 The prominent chemical substance on the planet.
             ageModifier: Integer
@@ -849,17 +842,19 @@ class OrbitalBody():
                 The class name of the planet.
             type: String
                 The type name of the planet.
-
-        Required Parameters:
-            biosphere: Integer
-                The current calculated biosphere value.
         """
 
-        if self.category == "Jovian" and biosphere is None:
-            return None, None, None, None
+        if self.category == "Jovian" and self.biosphere is None:
+            self.chemistry = None
+            self.ageModifier = None
+            self.className = None
+            self.type = None
 
-        if self.category == "Jovian" and biosphere == 0:
-            return None, None, "Jovian", None
+        if self.category == "Jovian" and self.biosphere == 0:
+            self.chemistry = None
+            self.ageModifier = None
+            self.className = "Jovian"
+            self.type = None
 
         roll = roll_xdy(1, 6)
         
@@ -882,52 +877,49 @@ class OrbitalBody():
 
         r = chemistryDict[self.category][roll][roll_xdy(1, 6)]
                 
-        return r[0], r[1], r[2], r[3]
+        self.chemistry = r[0]
+        self.ageModifier = r[1]
+        self.className = r[2]
+        self.type = r[3]
 
 
-    def planet_atmosphere(self, biosphere, chemistry):
+    def planet_atmosphere(self):
         """
-        Returns the planet's atmosphere value.
-
-        Required Parameters:
-            biosphere: Integer
-                The current biosphere value of the planet.
-            chemistry: String
-                The current chemistry type of the planet.
+        Sets the planet's atmosphere value.
         """
 
         if self.category in ["Rockball", "Asteroid Belt", "Stygian"]:
-            return 0
+            self.atmosphere = 0
         
         elif self.category in ["Acheronian", "Asphodelian", "Chthonian", "Meltball"]:
-            return 1
+            self.atmosphere = 1
         
         elif self.category == "Arean":
             roll = roll_xdy(1, 6) - (2 if self.star.luminosityClass == "D" else 0)
-            return (1 if roll <= 3 else 10)
+            self.atmosphere = (1 if roll <= 3 else 10)
         
-        elif isinstance(biosphere, int) and self.category == "Arid":
-            if biosphere >= 3 and self.chemistry == "Water":
+        elif isinstance(self.biosphere, int) and self.category == "Arid":
+            if self.biosphere >= 3 and self.chemistry == "Water":
                 roll = roll_xdy(2, 6) - 7 + self.size
-                return min([9, max([2, roll])])
+                self.atmosphere = min([9, max([2, roll])])
             else:
-                return 10
+                self.atmosphere = 10
         
         elif self.category == "Hebean":
             roll = max(0, roll_xdy(1, 6) + self.size - 6)
-            return (10 if roll >= 2 else roll)
+            self.atmosphere = (10 if roll >= 2 else roll)
         
         elif self.category == "Helian":
-            return 13
+            self.atmosphere = 13
         
         elif self.category == "Jani-Lithic":
-            return (1 if roll_xdy(1, 6) <= 3 else 10)
+            self.atmosphere = (1 if roll_xdy(1, 6) <= 3 else 10)
         
         elif self.category == "Jovian":
-            return 16
+            self.atmosphere = 16
         
         elif self.category == "Meltball":
-            return 1
+            self.atmosphere = 1
         
         elif self.category == "Oceanic":
             if self.chemistry == "Water":
@@ -938,184 +930,179 @@ class OrbitalBody():
                     roll -= 2
                 elif self.star.luminosityClass == "L":
                     roll -= 3
-                return min([12, max([1, roll])])
+                self.atmosphere = min([12, max([1, roll])])
             else:
                 roll = roll_xdy(1, 6)
-                return (1 if roll == 1 else 10 if roll <= 4 else 12)
+                self.atmosphere = (1 if roll == 1 else 10 if roll <= 4 else 12)
         
         elif self.category == "Panthalassic":
-            return min([13, roll_xdy(1, 6) + 8])
+            self.atmosphere = min([13, roll_xdy(1, 6) + 8])
         
-        elif isinstance(biosphere, int) and self.category == "Promethean":
-            if self.chemistry == "Water" and biosphere >= 3:
-                return min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
+        elif isinstance(self.biosphere, int) and self.category == "Promethean":
+            if self.chemistry == "Water" and self.biosphere >= 3:
+                self.atmosphere = min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
             else:
-                return 10
+                self.atmosphere = 10
         
         elif self.category == "Snowball":
-            return (0 if roll_xdy(1, 6) <= 4 else 1)
+            self.atmosphere = (0 if roll_xdy(1, 6) <= 4 else 1)
 
-        elif isinstance(biosphere, int) and self.category == "Tectonic":
-            if biosphere >= 3 and chemistry == "Water":
-                return min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
-            elif biosphere >= 3 and chemistry in ["Sulfur", "Chlorine"]:
-                return 11
+        elif isinstance(self.biosphere, int) and self.category == "Tectonic":
+            if self.biosphere >= 3 and self.chemistry == "Water":
+                self.atmosphere = min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
+            elif self.biosphere >= 3 and self.chemistry in ["Sulfur", "Chlorine"]:
+                self.atmosphere = 11
             else:
-                return 10
+                self.atmosphere = 10
 
         elif self.category == "Telluric":
-            return 12
+            self.atmosphere = 12
 
-        elif isinstance(biosphere, int) and self.category == "Vesperian":
-            if biosphere >= 3 and chemistry == "Water":
-                return min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
-            elif biosphere >= 3 and chemistry == "Chlorine":
-                return 11
+        elif isinstance(self.biosphere, int) and self.category == "Vesperian":
+            if self.biosphere >= 3 and self.chemistry == "Water":
+                self.atmosphere = min([9, max([2, roll_xdy(2, 6) + self.size - 7])])
+            elif self.biosphere >= 3 and self.chemistry == "Chlorine":
+                self.atmosphere = 11
             else:
-                return 10
+                self.atmosphere = 10
 
 
-    def planet_biosphere(self, atmosphere, subsurfaceOceans, hydrosphere, ageModifier):
+    def planet_biosphere(self):
         """
-        Returns the planet's biosphere value.
-
-        Required Parameters:
-            atmosphere: Integer
-                The current value of the atmosphere.
-            subsurfaceOceans: Boolean
-                Whether this planet currently has subsurface oceans.
-            hydrosphere: Integer
-                The current value of the hydrosphere.
-            ageModifier: Integer
-                The current chemistry age modifier of the planet.
+        Sets the planet's biosphere value.
         """
-
-        if ((atmosphere == 0
-                and not subsurfaceOceans)
-            or hydrosphere == 0
+        
+        if ((self.atmosphere == 0
+                and not self.subsurfaceOceans)
+            or self.hydrosphere == 0
             or "M-Ve" in [s.luminosityClass for s in self.systemHex.stars]):
-            return 0
+            self.biosphere = 0
 
         elif self.category == "Arean":
-            if self.star.systemHex.age >= 4 + ageModifier and atmosphere == 10:
-                return max([0, roll_xdy(1, 6) + self.size - 2])
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return ([max(0, roll_xdy(1, 6) - 4) if atmosphere == 1 else roll_xdy(1, 3)])
+            if self.star.systemHex.age >= 4 + self.ageModifier and self.atmosphere == 10:
+                self.biosphere = max([0, roll_xdy(1, 6) + self.size - 2])
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = max(0, roll_xdy(1, 6) - 4) if self.atmosphere == 1 else roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Arid":
-            if self.star.systemHex.age >= 4 + ageModifier:
-                return max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return roll_xdy(1, 3)
+            if self.star.systemHex.age >= 4 + self.ageModifier:
+                self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Jovian":
             roll = roll_xdy(1, 6) + (2 if self.orbitType == "Inner Zone" else 0)
 
             if roll >= 6:
                 if self.star.systemHex.age >= roll_xdy(1, 6):
-                    return roll_xdy(1, 3)
+                    self.biosphere = roll_xdy(1, 3)
                 elif self.star.systemHex.age >= 7:
-                    return max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
+                    self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
                 else:
-                    return 0
+                    self.biosphere = 0
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Oceanic":
-            if self.star.systemHex.age >= 4 + ageModifier:
-                return max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return roll_xdy(1, 3)
+            if self.star.systemHex.age >= 4 + self.ageModifier:
+                self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Panthalassic":
-            if self.star.systemHex.age >= 4 + ageModifier:
-                return roll_xdy(2, 6)
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return roll_xdy(1, 3)
+            if self.star.systemHex.age >= 4 + self.ageModifier:
+                self.biosphere = roll_xdy(2, 6)
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Promethean":
-            if self.star.systemHex.age >= 4 + ageModifier:
-                return max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return roll_xdy(1, 3)
+            if self.star.systemHex.age >= 4 + self.ageModifier:
+                self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Snowball":
-            if self.subsurfaceOceans and self.star.systemHex.age >= 6 + ageModifier:
-                return max(0, roll_xdy(1, 6) + self.size - 2)
+            if self.subsurfaceOceans and self.star.systemHex.age >= 6 + self.ageModifier:
+                self.biosphere = max(0, roll_xdy(1, 6) + self.size - 2)
             elif self.subsurfaceOceans and self.star.systemHex.age >= roll_xdy(1, 6):
-                return max(0, roll_xdy(1, 6) - 3)
+                self.biosphere = max(0, roll_xdy(1, 6) - 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Tectonic":
-            if self.star.systemHex.age >= 4 + ageModifier:
-                return max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
-            elif self.star.systemHex.age >= roll_xdy(1, 3) + ageModifier:
-                return roll_xdy(1, 3)
+            if self.star.systemHex.age >= 4 + self.ageModifier:
+                self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == "D" else 0)])
+            elif self.star.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
 
         elif self.category == "Vesperian":
             if self.star.systemHex.age >= 4:
-                return roll_xdy(2, 6)
+                self.biosphere = roll_xdy(2, 6)
             elif self.star.systemHex.age >= roll_xdy(1, 3):
-                return roll_xdy(1, 3)
+                self.biosphere = roll_xdy(1, 3)
             else:
-                return 0
+                self.biosphere = 0
         else:
-            return 0
+            self.biosphere = 0
 
 
-    def planet_hydrosphere_subsurface_oceans(self, atmosphere):
+    def planet_hydrosphere_subsurface_oceans(self):
         """
-        Returns hydrosphere, subsurfaceOceans.
+        Sets hydrosphere, subsurfaceOceans.
             hydrosphere: Integer
                 The hydrosphere value of the planet.
             subsurfaceOceans: Boolean
                 Flag indicating whether liquid oceans exist beneath a frozen surface.
-
-        Required Parameters:
-            atmosphere: Integer
-                The current value of the planet's atmosphere.
         """
 
         if self.category == "Arean":
-            return max(0, roll_xdy(2, 3) + self.size - 7 - (4 if atmosphere == 1 else 0)), False
+            self.hydrosphere = max(0, roll_xdy(2, 3) + self.size - 7 - (4 if self.atmosphere == 1 else 0))
+            self.subsurfaceOceans = False
 
         elif self.category == "Arid":
-            return roll_xdy(1, 3), False
+            self.hydrosphere = roll_xdy(1, 3)
+            self.subsurfaceOceans = False
 
         elif self.category == "Hebean":
-            return min(11, max(0, roll_xdy(2, 6) + self.size - 11)), False
+            self.hydrosphere = min(11, max(0, roll_xdy(2, 6) + self.size - 11))
+            self.subsurfaceOceans = False
 
         elif self.category == "Helian":
             roll = roll_xdy(1, 6)
-            return (0, False if roll <= 2 else roll_xdy(2, 6) - 2, False if roll <= 4 else 15, False)
+            self.hydrosphere = (0 if roll <= 2 else roll_xdy(2, 6) - 2 if roll <= 4 else 15)
+            self.subsurfaceOceans = False
 
         elif self.category == "Jovian":
-            return 16, False
+            self.hydrosphere = 16
+            self.subsurfaceOceans = False
 
         elif self.category == "Meltball":
-            return 15, False
+            self.hydrosphere = 15
+            self.subsurfaceOceans = False
 
         elif self.category == "Oceanic":
-            return (11, True if atmosphere == 1 else 11, False)
+            self.hydrosphere = 11
+            self.subsurfaceOceans = (True if self.atmosphere == 1 else False)
 
         elif self.category == "Panthalassic":
-            return 11, False
+            self.hydrosphere = 11
+            self.subsurfaceOceans = False
 
         elif self.category == "Promethean":
-            return roll_xdy(2, 6) - 2, False
+            self.hydrosphere = roll_xdy(2, 6) - 2
+            self.subsurfaceOceans = False
 
         elif self.category == "Rockball":
             roll = roll_xdy(2, 6) + self.size - 11
@@ -1128,21 +1115,27 @@ class OrbitalBody():
             elif self.orbitType == "Outer Zone":
                 roll += 2
 
-            return min(11, max(0, roll)), False
+            self.hydrosphere = min(11, max(0, roll))
+            self.subsurfaceOceans = False
 
         elif self.category == "Snowball":
-            return (10, False if roll_xdy(1, 6) <= 3 else roll_xdy(2, 6) - 2, True)
+            self.hydrosphere = (10 if roll_xdy(1, 6) <= 3 else roll_xdy(2, 6) - 2)
+            self.subsurfaceOceans = (False if roll_xdy(1, 6) <= 3 else True)
 
         elif self.category == "Tectonic":
-            return roll_xdy(2, 6) - 2, False
+            self.hydrosphere = roll_xdy(2, 6) - 2
+            self.subsurfaceOceans = False
 
         elif self.category == "Telluric":
-            return (0, False if roll_xdy(1, 6) <= 4 else 15, False)
+            self.hydrosphere = (0 if roll_xdy(1, 6) <= 4 else 15)
+            self.subsurfaceOceans = False
 
         elif self.category == "Vesperian":
-            return roll_xdy(2, 6) - 2, False
+            self.hydrosphere = roll_xdy(2, 6) - 2
+            self.subsurfaceOceans = False
         else:
-            return 0, False
+            self.hydrosphere = 0
+            self.subsurfaceOceans = False
 
 
     def dwarf_satellites(self, roll1, roll2):
@@ -1154,9 +1147,10 @@ class OrbitalBody():
 
         return (max([0, roll1 - (3 if self.groupName == "Helian" else 0) - (1 if roll2 == 6 else 0)]))
 
+
     def calculate_desirability(self, alien, nearbyColony):
         """
-        Returns the planet's desirability score, which is used to determine
+        Sets the planet's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
 
         Required Parameters:
@@ -1167,12 +1161,18 @@ class OrbitalBody():
                 of this planet's system.
         """
 
-        desirability = 0
-        modifiedDistance = int(round(
+        desirability = self.baseDesirability
+
+        # If the distance from the alien home system hasn't been
+        # calculated yet, calculate it and store it.
+        if alien not in self.systemHex.distanceFromAlienHomeSystem:
+            self.systemHex.set_distance_from_homeworld(alien)
+
+        modifiedDistance = max([0, int(round(
             self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
-            0)) - (1 if nearbyColony else 0)
+            0)) - (1 if nearbyColony else 0)])
 
         # Distance penalty
         if modifiedDistance > 3 + alien.reactionModifier:
@@ -1245,11 +1245,12 @@ class OrbitalBody():
         if self.atmosphere == alien.homePlanet.atmosphere:
             desirability += 1
 
+        self.desirability[alien] = desirability
         return desirability
 
     def calculate_desirability_jovian_asteroid_belt(self, alien, nearbyColony):
         """
-        Returns the planet's desirability score, which is used to determine
+        Sets the planet's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
         This applies only to Jovians and Asteroid Belts as you don't live
         "on" them, but in stations.
@@ -1263,6 +1264,12 @@ class OrbitalBody():
         """
 
         desirability = self.baseDesirability
+
+        # If the distance from the alien home system hasn't been
+        # calculated yet, calculate it and store it.
+        if alien not in self.systemHex.distanceFromAlienHomeSystem:
+            self.systemHex.set_distance_from_homeworld(alien)
+
         modifiedDistance = int(round(
             self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
@@ -1285,6 +1292,7 @@ class OrbitalBody():
         elif not colonyInSystem and outpostInSystem:
             desirability -= 1
 
+        self.desirability[alien] = desirability
         return desirability
 
     def calculate_habitation(
@@ -1315,7 +1323,7 @@ class OrbitalBody():
 
         if self == alien.homePlanet:
             if not alien.extinct:
-                self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
+                self.systemHex.create_surrounding_systems(alienSurvivalPercent=alienSurvivalPercent, maxTechLevel=maxTechLevel, maxReactionModifier=maxReactionModifier)
             self.habitation[alien] = "Homeworld"
             alien.planets[self]["habitation"] = "Homeworld"
             return
@@ -1327,10 +1335,10 @@ class OrbitalBody():
             if alien.currentTechLevel >= 10 or (alien.currentTechLevel == 9 and homeSystem):
                 if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
                     hab = "Colony"
-                    self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
+                    self.systemHex.create_surrounding_systems(alienSurvivalPercent=alienSurvivalPercent, maxTechLevel=maxTechLevel, maxReactionModifier=maxReactionModifier)
                 elif outpostPossible and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
                     hab = "Outpost"
-                    self.systemHex.create_surrounding_systems(alienSurvivalPercent, maxTechLevel, maxReactionModifier)
+                    self.systemHex.create_surrounding_systems(alienSurvivalPercent=alienSurvivalPercent, maxTechLevel=maxTechLevel, maxReactionModifier=maxReactionModifier)
                 else:
                     hab = None
         else:
@@ -1466,7 +1474,7 @@ class OrbitalBody():
 
     def planet_terrain(self):
         """
-        Returns a list of terrains found on the planet.
+        Sets the list of terrains found on the planet.
         """
 
         terrain = []
@@ -1516,7 +1524,7 @@ class OrbitalBody():
         if self.biosphere >= 9 and self.atmosphere >= 2 and 2 <= self.hydrosphere <= 8:
             terrain.append("Woods")
 
-        return terrain
+        self.terrain = terrain
         
 
     def planet_animals(self):
@@ -1615,10 +1623,10 @@ class OrbitalBody():
                     animals.append(animal.Insect(planet=self, terrain=terrain))
                     animals.append(animal.Mammal(planet=self, terrain=terrain))
 
-        return animals
+        self.animals = animals
 
 
-    def planet_population(self, alien):
+    def planet_population(self):
         """
         Sets the alien populations for the planet.
         This sets both the relative and actual population.
@@ -1631,56 +1639,68 @@ class OrbitalBody():
 
         previousPopulation = self.population
         popNum = 0
-        if not self.habitation[alien]:
-            return
 
-        if alien not in self.alienPopulation:
-            return {"homeworldRoll": roll_xdy(2, 6),
-                "colonyRoll": roll_xdy(1, 3) - roll_xdy(1, 3),
-                "outpostRoll": roll_xdy(1, 3),
-                "relative": None,
-                "actual": None}
+        for alien in self.habitation:
+            if not self.habitation[alien]:
+                self.alienPopulation[alien] = None
+                continue
         
-        if alien.extinct:
-            return {"homeworldRoll": None,
-                "colonyRoll": None,
-                "outpostRoll": None,
-                "relative": 0,
-                "actual": 0}
-        # If the alien has abandonded this planet but previously had a population
-        # there, remove the population.
-        elif not self.habitation[alien] and (len(self.alienPopulation[alien]["relative"]) > 1 and self.alienPopulation[alien]["relative"][-1] != 0):
-            return {"homeworldRoll": self.alienPopulation[alien]["homeworldRoll"],
-                "colonyRoll": self.alienPopulation[alien]["colonyRoll"],
-                "outpostRoll": self.alienPopulation[alien]["outpostRoll"],
-                "relative": 0,
-                "actual": 0}
-        elif self.habitation[alien] == "Homeworld":
-            # This ensures the homeworld population changes a little over time.
-            homeworldPopRoll = roll_xdy(1, 3) - roll_xdy(1, 3)
-            if alien.planets[self]["desirability"] + homeworldPopRoll > self.alienPopulation[alien]["homeworldRoll"]:
-                basePop = min(12, alien.planets[self]["desirability"] + homeworldPopRoll)
-            else:
-                basePop = self.alienPopulation[alien]["homeworldRoll"]
-        elif self.habitation[alien] == "Colony":
-            if alien.currentTechLevel + self.settlement - 9 > alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]:
-                basePop = max(4, min(12, alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]))
-            else:
-                basePop = max(4, alien.currentTechLevel + self.settlement - 9)
-        elif self.habitation[alien] == "Outpost":
-            basePop = max(1, min(4, alien.planets[self]["desirability"] + self.alienPopulation[alien]["outpostRoll"]))
+            if alien.extinct:
+                self.alienPopulation[alien] = {
+                    "homeworldRoll": None,
+                    "colonyRoll": None,
+                    "outpostRoll": None,
+                    "relative": 0,
+                    "actual": 0
+                }
+                self.alienPopulation[alien]["relative"] = 0
+                self.alienPopulation[alien]["actual"] = 0
+                continue
 
-        # This is the first digit of the population number.
-        popString = str(roll_xdy(1, 9))
+            # If the alien has abandonded this planet but previously had a population
+            # there, remove the population.
+            if not self.habitation[alien] and (len(self.alienPopulation[alien]["relative"]) > 1 and self.alienPopulation[alien]["relative"][-1] != 0):
+                self.alienPopulation[alien]["relative"] = 0
+                self.alienPopulation[alien]["actual"] = 0
+                continue
 
-        # This generates the rest of the population numbers (can use 0 here).
-        # Industry can affect population, see planet_industry_effects.
-        for _ in range(basePop + self.industryPopulationEffect + 1):
-            popString += str(roll_xdy(1, 10) - 1)
+            if alien not in self.alienPopulation:
+                self.alienPopulation[alien] = {
+                    "colonyRoll": roll_xdy(1, 3) - roll_xdy(1, 3),
+                    "outpostRoll": roll_xdy(1, 3),
+                    "relative": None,
+                    "actual": None
+                }
 
-        self.alienPopulation[alien]["relative"] = int(popString)
-        self.alienPopulation[alien]["actual"] = int(int(popString) * alien.populationModifier)
-        alien.planets[self]["population"] = self.alienPopulation[alien]["actual"]
+                if self.habitation[alien] == "Homeworld":
+                    self.alienPopulation[alien]["homeworldRoll"] = roll_xdy(2, 6)
+
+            if self.habitation[alien] == "Homeworld":
+                # This ensures the homeworld population changes a little over time.
+                homeworldPopRoll = roll_xdy(1, 3) - roll_xdy(1, 3)
+                if alien.planets[self]["desirability"] + homeworldPopRoll > self.alienPopulation[alien]["homeworldRoll"]:
+                    basePop = min(12, alien.planets[self]["desirability"] + homeworldPopRoll)
+                else:
+                    basePop = self.alienPopulation[alien]["homeworldRoll"]
+            elif self.habitation[alien] == "Colony":
+                if alien.currentTechLevel + self.settlement - 9 > alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]:
+                    basePop = max(4, min(12, alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]))
+                else:
+                    basePop = max(4, alien.currentTechLevel + self.settlement - 9)
+            elif self.habitation[alien] == "Outpost":
+                basePop = max(1, min(4, alien.planets[self]["desirability"] + self.alienPopulation[alien]["outpostRoll"]))
+
+            # This is the first digit of the population number.
+            popString = str(roll_xdy(1, 9))
+
+            # This generates the rest of the population numbers (can use 0 here).
+            # Industry can affect population, see planet_industry_effects.
+            for _ in range(basePop + self.industryPopulationEffect + 1):
+                popString += str(roll_xdy(1, 10) - 1)
+
+            self.alienPopulation[alien]["relative"] = int(popString)
+            self.alienPopulation[alien]["actual"] = int(int(popString) * alien.populationModifier)
+            alien.planets[self]["population"] = self.alienPopulation[alien]["actual"]
 
         # Sum up the population numbers so we can get a score and actual
         # population number for the planet as a whole.
@@ -1688,8 +1708,9 @@ class OrbitalBody():
             populationNumbers = []
             populationRelative = []
             for a in self.alienPopulation:
-                populationNumbers.append(self.alienPopulation[a]["actual"])
-                populationRelative.append(self.alienPopulation[a]["relative"])
+                if self.alienPopulation[a]:
+                    populationNumbers.append(self.alienPopulation[a]["actual"])
+                    populationRelative.append(self.alienPopulation[a]["relative"])
                 
             self.populationNumber = sum(populationNumbers)
             

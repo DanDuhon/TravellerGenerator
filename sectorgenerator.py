@@ -8,7 +8,6 @@ import star
 import planet
 import animal
 import alien
-import tkhex
 from diceroller import roll_xdy
 
 
@@ -53,8 +52,7 @@ def sectorgen(
                     systemhex.create_normal_system(
                         horizontalCoord=h,
                         verticalCoord=v,
-                        alienSurvivalPercent=alienSurvivalPercent,
-                        maxTechLevel=maxTechLevel)
+                        alienSurvivalPercent=alienSurvivalPercent)
 
         validTerraTargets = [targetStar for targetStar in star.allStars
                             if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
@@ -81,9 +79,9 @@ def sectorgen(
         [a.reactionModifier for a in alien.allAliens if not a.extinct])
     for a in [a for a in alien.allAliens if not a.extinct]:
         a.homePlanet.systemHex.create_surrounding_systems(
-            alienSurvivalPercent,
-            maxTechLevel,
-            maxReactionModifier)
+            alienSurvivalPercent=alienSurvivalPercent,
+            maxTechLevel=maxTechLevel,
+            maxReactionModifier=maxReactionModifier)
 
     # Now that the initial area has been created, we don't want any more Aliens to survive
     # otherwise this could literally go on forever. Not to mention it would be really hard
@@ -368,9 +366,9 @@ def sectorgen(
     existingSystems = systemhex.allSystems.copy()
     for s in existingSystems:
         s.create_surrounding_systems(
-            alienSurvivalPercent,
-            maxTechLevel,
-            maxReactionModifier)
+            alienSurvivalPercent=alienSurvivalPercent,
+            maxTechLevel=maxTechLevel,
+            maxReactionModifier=maxReactionModifier)
 
     for s in systemhex.allSystems:
         if any([s.fuelUnrefinedAvailable, s.fuelRefinedAvailable]):

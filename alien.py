@@ -3,7 +3,6 @@ import statistics
 
 import animal
 import planet
-import systemhex
 import namegenerator
 from diceroller import roll_xdy
 
@@ -131,9 +130,6 @@ class Alien():
         self.exploredSystems = set()
         self.planets = dict()
 
-        for s in systemhex.allSystems:
-            s.distanceFromAlienHomeSystem[self] = systemhex.distance_between_systems(s, self.homePlanet.systemHex)
-
         if pack == 0:
             self.relativePopulation = 1
         elif pack <= 2:
@@ -191,12 +187,13 @@ def create_terra_luna_humans(star, maxTechLevel):
 
     terra.alien.name = "Terran"
     terra.habitation[terra.alien] = "Homeworld"
+    terra.terraformingAlien = terra.alien
+    terra.terraformingDone = True
     terra.alien.planets[terra] = {"outpostRoll": None,
                                   "colonyRoll": None,
                                   "desirability": 8,
                                   "habitation": "Homeworld"}
     terra.settlement = 100
-    terra.terraformingAlien = terra.alien
 
 
 def create_alien(alienPlanet, alienSurvivalPercent):
