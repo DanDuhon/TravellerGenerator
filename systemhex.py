@@ -1,5 +1,6 @@
 import star
 import namegenerator
+import globalvariables
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -14,8 +15,7 @@ numberOfStarsTable = LookupTable(
 
 def create_normal_system(
         horizontalCoord,
-        verticalCoord,
-        alienSurvivalPercent):
+        verticalCoord):
     """
     Creates a system in a hex that is not in an Open Cluster.
 
@@ -24,9 +24,6 @@ def create_normal_system(
             The horizontal or x-axis coordinate of the new system.
         verticalCoord: Integer
             The vertical or y-axis coordinate of the new system.
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
     """
 
     system = System(
@@ -34,18 +31,13 @@ def create_normal_system(
         verticalCoord=verticalCoord,
         openCluster=False)
 
-    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
+    system.create_new_open_cluster()
     system.set_number_of_stars()
-    system.create_primary_star_in_system(alienSurvivalPercent)
-    system.create_companion_stars_in_system(alienSurvivalPercent)
-    system.create_automatic_brown_dwarf(alienSurvivalPercent)
-    system.flare_star_desirability_penalty()
 
 
 def create_cluster_system(
         horizontalCoord,
-        verticalCoord,
-        alienSurvivalPercent):
+        verticalCoord):
     """
     Creates a system in a hex that is in an Open Cluster, meaning
     there will be more stars per system on average.
@@ -55,9 +47,6 @@ def create_cluster_system(
             The horizontal or x-axis coordinate of the new system.
         verticalCoord: Integer
             The vertical or y-axis coordinate of the new system.
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
     """
 
     system = System(
@@ -65,12 +54,8 @@ def create_cluster_system(
         verticalCoord=verticalCoord,
         openCluster=True)
 
-    system.create_new_open_cluster(alienSurvivalPercent=alienSurvivalPercent)
+    system.create_new_open_cluster()
     system.set_number_of_stars()
-    system.create_primary_star_in_system(alienSurvivalPercent)
-    system.create_companion_stars_in_system(alienSurvivalPercent)
-    system.create_automatic_brown_dwarf(alienSurvivalPercent)
-    system.flare_star_desirability_penalty()
 
 
 def distance_between_systems(system1, system2):
@@ -133,7 +118,7 @@ class System():
         self.planets = []
         self.flareStarDesirabilityPenalty = 0
         self.systemsAtRange = {
-            0: [(self.coordinates[0], self.coordinates[1])],
+            0: [self.coordinates],
             1: self.set_systems_at_range(1),
             2: self.set_systems_at_range(2),
             3: self.set_systems_at_range(3),
@@ -157,17 +142,23 @@ class System():
 
         self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + (3 if self.openCluster else 0)] + autoBrownDwarf
 
+    def create_stars(self):
+        """
+        Creates the stars in the system and sets the desirability penalty
+        for having a flare star in the system, if there is one.
+        """
+        
+        self.create_primary_star_in_system()
+        self.create_companion_stars_in_system()
+        self.create_automatic_brown_dwarf()
+        self.set_flare_star_desirability_penalty()
 
-    def create_new_open_cluster(self, alienSurvivalPercent):
+
+    def create_new_open_cluster(self):
         """
         Determine whether this is a new open cluster or not. If yes,
         create surrounding systems as cluster systems rather than normal
         ones.
-
-        Required Parameters:
-            alienSurvivalPercent: Integer
-                An integer that represents the percent chance that
-                an intelligent species will survive to Tech Level 10.
         """
         
         if roll_xdy(3, 6) < 18:
@@ -184,8 +175,7 @@ class System():
                 if (h, v, c) not in allCoordinates:
                     create_cluster_system(
                         horizontalCoord=self.coordinates[0] + x,
-                        verticalCoord=self.coordinates[1] + y,
-                        alienSurvivalPercent=alienSurvivalPercent)
+                        verticalCoord=self.coordinates[1] + y)
 
 
     def set_systems_at_range(self, spacesAway):
@@ -206,7 +196,10 @@ class System():
 
         for x in range(-spacesAway, spacesAway + 1):
             for y in range(max(-spacesAway, -x - spacesAway), min(spacesAway, -x + spacesAway) + 1):
-                systemsAtRange.append((self.coordinates[0] + x, self.coordinates[1] + y))
+                h = self.coordinates[0] + x
+                v = self.coordinates[1] + y
+                c = -h - v
+                systemsAtRange.append((h, v, c))
 
         return systemsAtRange
 
@@ -224,58 +217,38 @@ class System():
         self.distanceFromAlienHomeSystem[alien] = distance_between_systems(self, alien.homePlanet.systemHex)
 
 
-    def create_primary_star_in_system(self, alienSurvivalPercent):
+    def create_primary_star_in_system(self):
         """
         Creates the primary star in this system, if there is one.
-
-        Required Parameters:
-            alienSurvivalPercent: Integer
-                An integer that represents the percent chance that
-                an intelligent species will survive to Tech Level 10.
         """
         
         if self.numberOfStars > 0 - (1 if self.brownDwarf else 0):
-            star.create_primary_star(
-                systemHex=self,
-                alienSurvivalPercent=alienSurvivalPercent)
+            star.create_primary_star(systemHex=self)
 
 
-    def create_companion_stars_in_system(self, alienSurvivalPercent):
+    def create_companion_stars_in_system(self):
         """
         Creates the companion stars in this system, if there are any.
-
-        Required Parameters:
-            alienSurvivalPercent: Integer
-                An integer that represents the percent chance that
-                an intelligent species will survive to Tech Level 10.
         """
         
         for x in range(self.numberOfStars - 1 - (1 if self.brownDwarf else 0)):
             star.create_companion_star(
                 systemHex=self,
-                primaryOrbit=self.stars[0].companionOrbits[x],
-                alienSurvivalPercent=alienSurvivalPercent)
+                primaryOrbit=self.stars[0].companionOrbits[x])
 
 
-    def create_automatic_brown_dwarf(self, alienSurvivalPercent):
+    def create_automatic_brown_dwarf(self):
         """
         Create an automatic brown dwarf.
         This is not considered a companion star, but is "somewhere"
         in the system.
-
-        Required Parameters:
-            alienSurvivalPercent: Integer
-                An integer that represents the percent chance that
-                an intelligent species will survive to Tech Level 10.
         """
         
         if self.brownDwarf:
-            star.create_brown_dwarf_star(
-                    systemHex=self,
-                    alienSurvivalPercent=alienSurvivalPercent)
+            star.create_brown_dwarf_star(systemHex=self)
 
 
-    def flare_star_desirability_penalty(self):
+    def set_flare_star_desirability_penalty(self):
         """
         Sets the desirability penalty of having a flare
         star in the system if there is one.
@@ -286,25 +259,18 @@ class System():
 
     def create_surrounding_systems(
             self,
-            maxTechLevel,
-            maxReactionModifier,
-            alienSurvivalPercent):
+            maxReactionModifier):
         """
         Creates nearby systems, based on how far aliens
         will explore.
 
         Required Parameters:
-            maxTechLevel: Integer
-                The maximum Tech Level any alien will achieve.
             maxReactionModifier: Integer
                 The maximum reaction modifier value across all
                 aliens.
-            alienSurvivalPercent: Integer
-                An integer that represents the percent chance that
-                an intelligent species will survive to Tech Level 10.
         """
 
-        hexRange = (4 + maxReactionModifier) * (maxTechLevel - 9)
+        hexRange = (4 + maxReactionModifier) * (globalvariables.maxTechLevel - 9)
         
         for x in range(-hexRange, hexRange + 1):
             for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):
@@ -314,8 +280,7 @@ class System():
                 if (h, v, c) not in allCoordinates:
                     create_normal_system(
                         horizontalCoord=self.coordinates[0] + x,
-                        verticalCoord=self.coordinates[1] + y,
-                        alienSurvivalPercent=alienSurvivalPercent)
+                        verticalCoord=self.coordinates[1] + y)
 
 
     def set_nearby_colony_systems(self, alien):

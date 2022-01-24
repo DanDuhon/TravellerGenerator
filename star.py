@@ -1,8 +1,8 @@
-import planet
+import orbitalbody
+import globalvariables
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
-allStars = []
 
 # Used for star names.
 num = {
@@ -12,81 +12,70 @@ num = {
     4: " Delta"
 }
 
-spectralTypeTable = LookupTable((2, "A"),
-                                (3, "F"),
-                                (4, "G"),
-                                (5, "K"),
-                                (13, "M"),
-                                (100, "L"))
+spectralTypeTable = LookupTable(
+    (2, globalvariables.spectralType.A),
+    (3, globalvariables.spectralType.F),
+    (4, globalvariables.spectralType.G),
+    (5, globalvariables.spectralType.K),
+    (13, globalvariables.spectralType.M),
+    (100, globalvariables.spectralType.L))
 
 # There are unnecessary LookupTables here (anything with one value),
 # but it simplifies the code that uses this from several elifs to one statement.
 luminosityClassDict = {
-    "A": LookupTable(
-        (2, LookupTable((100, "A-V"))),
+    globalvariables.spectralType.A: LookupTable(
+        (2, LookupTable((100, globalvariables.luminosityClass.A_V))),
         (3, LookupTable(
-            (2, "F-IV"),
-            (3, "K-III"),
-            (100, "D"))),
-        (15, LookupTable((100, "D")))),
-    "F": LookupTable(
-        (5, LookupTable((100, "F-V"))),
+            (2, globalvariables.luminosityClass.F_IV),
+            (3, globalvariables.luminosityClass.K_III),
+            (100, globalvariables.luminosityClass.D))),
+        (15, LookupTable((100, globalvariables.luminosityClass.D)))),
+    globalvariables.spectralType.F: LookupTable(
+        (5, LookupTable((100, globalvariables.luminosityClass.F_V))),
         (6, LookupTable(
-            (4, "G-IV"),
-            (100, "M-III"))),
-        (100, LookupTable((100, "D")))),
-    "G": LookupTable(
-        (6, LookupTable((100, "G-V"))),
+            (4, globalvariables.luminosityClass.G_IV),
+            (100, globalvariables.luminosityClass.M_III))),
+        (100, LookupTable((100, globalvariables.luminosityClass.D)))),
+    globalvariables.spectralType.G: LookupTable(
+        (6, LookupTable((100, globalvariables.luminosityClass.G_V))),
         (13, LookupTable(
-            (3, "K-IV"),
-            (100, "M-III"))),
-        (100, LookupTable((100, "D")))),
-    "K": LookupTable((100, LookupTable((100, "K-V")))),
-    "M": LookupTable(
-        (9, LookupTable((100, "M-V"))),
-        (12, LookupTable((100, "M-Ve"))),
-        (100, LookupTable((100, "L")))),
-    "L": LookupTable((100, LookupTable((100, "L"))))
+            (3, globalvariables.luminosityClass.K_IV),
+            (100, globalvariables.luminosityClass.M_III))),
+        (100, LookupTable((100, globalvariables.luminosityClass.D)))),
+    globalvariables.spectralType.K: LookupTable((100, LookupTable((100, globalvariables.luminosityClass.K_V)))),
+    globalvariables.spectralType.M: LookupTable(
+        (9, LookupTable((100, globalvariables.luminosityClass.M_V))),
+        (12, LookupTable((100, globalvariables.luminosityClass.M_Ve))),
+        (100, LookupTable((100, globalvariables.luminosityClass.L)))),
+    globalvariables.spectralType.L: LookupTable((100, LookupTable((100, globalvariables.luminosityClass.L))))
 }
 
-companionOrbitTable = LookupTable((2, "Tight"),
-                                  (4, "Close"),
-                                  (5, "Moderate"),
-                                  (6, "Distant"))
+companionOrbitTable = LookupTable((2, globalvariables.companionOrbit.Tight),
+                                  (4, globalvariables.companionOrbit.Close),
+                                  (5, globalvariables.companionOrbit.Moderate),
+                                  (6, globalvariables.companionOrbit.Distant))
 
 
-def create_primary_star(
-        systemHex,
-        alienSurvivalPercent):
+def create_primary_star(systemHex):
     """
     Creates a primary star.
 
     Required Parameters:
         systemHex: System class instance
             The system in which the star is located.
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
     """
 
     star = Star(
         systemHex=systemHex,
         primary=True)
 
-    star.spectral_type_roll(primary=True)
-    star.spectral_type()
-    star.luminosity_class()
-    star.expansion_affected_orbits()
-    star.companion_orbits()
-    star.epistellar_orbits()
-    star.inner_zone_orbits()
-    star.outer_zone_orbits()
-    star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
+    star.set_spectral_type_roll(primary=True)
+    star.set_spectral_type()
+    star.set_luminosity_class()
 
 
 def create_companion_star(
         systemHex,
-        alienSurvivalPercent,
         primaryOrbit):
     """
     Creates a companion star.
@@ -94,48 +83,32 @@ def create_companion_star(
     Required Parameters:
         systemHex: System class instance
             The system in which the star is located.
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
+        primaryOrbit:
+            The distance from the primary star.
     """
 
     star = Star(
         systemHex=systemHex,
         primaryOrbit=primaryOrbit)
 
-    star.spectral_type_roll(primarySpectralTypeRoll=star.systemHex.stars[0].spectralTypeRoll)
-    star.spectral_type()
-    star.luminosity_class()
-    star.expansion_affected_orbits()
-    star.epistellar_orbits()
-    star.inner_zone_orbits()
-    star.outer_zone_orbits()
-    star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
+    star.set_spectral_type_roll(primarySpectralTypeRoll=star.systemHex.stars[0].spectralTypeRoll)
+    star.set_spectral_type()
+    star.set_luminosity_class()
 
 
-def create_brown_dwarf_star(
-        systemHex,
-        alienSurvivalPercent):
+def create_brown_dwarf_star(systemHex):
     """
     Creates an "automatic" brown dwarf star.
 
     Required Parameters:
         systemHex: System class instance
             The system in which the star is located.
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
     """
 
-    star = Star(
-        systemHex=systemHex)
+    star = Star(systemHex=systemHex)
 
-    star.spectralType = "L"
-    star.luminosityClass = "L"
-    star.epistellar_orbits()
-    star.inner_zone_orbits()
-    star.outer_zone_orbits()
-    star.create_planets(alienSurvivalPercent=alienSurvivalPercent)
+    star.spectralType = globalvariables.spectralType.L
+    star.luminosityClass = globalvariables.luminosityClass.L
 
 
 class Star():
@@ -165,7 +138,6 @@ class Star():
             systemHex,
             primary=False,
             primaryOrbit=None):
-        allStars.append(self)
         self.systemHex = systemHex
         self.systemHex.stars.append(self)
         self.primary = primary
@@ -184,8 +156,15 @@ class Star():
         self.companionOrbits = []
         self.planets = []
 
+        self.set_expansion_affected_orbits()
+        self.set_companion_orbits()
+        self.set_epistellar_orbits()
+        self.set_inner_zone_orbits()
+        self.set_outer_zone_orbits()
 
-    def spectral_type_roll(self, primary=False, primarySpectralTypeRoll=None):
+
+
+    def set_spectral_type_roll(self, primary=False, primarySpectralTypeRoll=None):
         """
         Sets the roll value for the star's spectral type.
         The primary star's roll is used to modify each companion star's roll.
@@ -202,7 +181,7 @@ class Star():
         self.spectralTypeRoll = (roll_xdy(2, 6) if primary else primarySpectralTypeRoll + roll_xdy(1, 6) - 1)
 
 
-    def spectral_type(self):
+    def set_spectral_type(self):
         """
         Sets the star's spectral type.
         """
@@ -210,7 +189,7 @@ class Star():
         self.spectralType = spectralTypeTable[self.spectralTypeRoll]
 
 
-    def luminosity_class(self):
+    def set_luminosity_class(self):
         """
         Sets the star's luminosity class.
         """
@@ -218,7 +197,7 @@ class Star():
         self.luminosityClass = luminosityClassDict[self.spectralType][self.systemHex.age][roll_xdy(1, 6)]
 
 
-    def expansion_affected_orbits(self):
+    def set_expansion_affected_orbits(self):
         """
         Stars of these luminosity classes expanded or are expanding into
         supergiants. This has a detrimental effect on some of the planets
@@ -232,7 +211,7 @@ class Star():
         self.expansionAffectedOrbits = 0
 
 
-    def companion_orbits(self):
+    def set_companion_orbits(self):
         """
         Sets the distance of each companion star.
         """
@@ -240,7 +219,7 @@ class Star():
         self.companionOrbits = [companionOrbitTable[roll_xdy(1, 6)] for _ in range(self.systemHex.numberOfStars - 1 - (1 if self.systemHex.brownDwarf else 0))]
 
 
-    def epistellar_orbits(self):
+    def set_epistellar_orbits(self):
         """
         Sets the number of objects closely orbiting the star
         based on the star's luminosity class. Planets orbiting
@@ -258,7 +237,7 @@ class Star():
         self.epistellarOrbits = min([2, max([0, roll_xdy(1, 6) - 3 - (1 if self.luminosityClass == "M-V" else 0)])])
 
 
-    def inner_zone_orbits(self):
+    def set_inner_zone_orbits(self):
         """
         Sets the number of objects orbiting a star in the "inner zone",
         or "Goldilock's zone", based on the star's luminosity class.
@@ -276,7 +255,7 @@ class Star():
         self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == "M-V" else 0)])
 
 
-    def outer_zone_orbits(self):
+    def set_outer_zone_orbits(self):
         """
         Sets the number of objects orbiting a star in the outer zone
         based on the star's luminosity class. Planets orbiting a primary
@@ -293,60 +272,23 @@ class Star():
         self.outerZoneOrbits = max([0, roll_xdy(1, 6) - 1 - (1 if self.luminosityClass in ["L", "M-V"] else 0)])
 
 
-    def create_planets(self, alienSurvivalPercent):
+    def create_planets(self):
         """
         Creates planets orbiting this star.
-
-        Required Parameters:
-            alienSurvivalPercent: Integer
-                Represents a percentage. This gets passed along through to the
-                planets and then aliens to determine how likely it is that the
-                alien species has gone extinct.
         """
         
         for orbit in range(self.epistellarOrbits +
                 self.innerZoneOrbits +
                 self.outerZoneOrbits):
             if orbit < self.epistellarOrbits:
-                orbitType = "Epistellar"
+                orbitType = globalvariables.orbitType.Epistellar
             elif orbit < self.epistellarOrbits + self.innerZoneOrbits:
-                orbitType = "Inner Zone"
+                orbitType = globalvariables.orbitType.InnerZone
             else:
-                orbitType = "Outer Zone"
+                orbitType = globalvariables.orbitType.OuterZone
 
-            roll = roll_xdy(1, 6) - (1 if self.spectralType == "L" else 0)
-
-            if roll <= 1:
-                planet.create_asteroid_belt(
-                    star=self,
-                    order=orbit + 1,
-                    orbitType=orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
-            elif roll == 2:
-                planet.create_dwarf_planet(
-                    star=self,
-                    parentObject=self,
-                    order=orbit + 1,
-                    orbitType=orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
-            elif roll == 3:
-                planet.create_terrestrial_planet(
-                    star=self,
-                    parentObject=self,
-                    order=orbit + 1,
-                    orbitType=orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
-            elif roll == 4:
-                planet.create_helian_planet(
-                    star=self,
-                    parentObject=self,
-                    order=orbit + 1,
-                    orbitType=orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
-            else:
-                planet.create_jovian_planet(
-                    star=self,
-                    order=orbit + 1,
-                    orbitType=orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
-        
+            orbitalbody.create_orbital_body(
+                self,
+                self,
+                orbit + 1,
+                orbitType)

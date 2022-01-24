@@ -1,9 +1,7 @@
-import animal
 import alien
+from orbitalbody import OrbitalBody
 from diceroller import roll_xdy
 from lookuptable import LookupTable
-
-allPlanets = []
 
 
 # There are unnecessary LookupTables here (anything with one value),
@@ -224,391 +222,391 @@ tradeCodesDict = {
 }
 
 
-def create_asteroid_belt(
-        star,
-        order,
-        orbitType,
-        alienSurvivalPercent):
-    """
-    Creates an asteroid belt.
+# def create_asteroid_belt(
+#         star,
+#         order,
+#         orbitType,
+#         alienSurvivalPercent):
+#     """
+#     Creates an asteroid belt.
 
-    Required Parameters:
-        star: Star class instance
-            The star around which the asteroid belt orbits.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
-    """
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the asteroid belt orbits.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#         alienSurvivalPercent: Integer
+#             An integer that represents the percent chance that
+#             an intelligent species will survive to Tech Level 10.
+#     """
 
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=star,
-        order=order,
-        orbitType=orbitType)
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=star,
+#         order=order,
+#         orbitType=orbitType)
 
-    newPlanet.size = 25
-    newPlanet.category = "Asteroid Belt"
-    newPlanet.groupName = "Asteroid Belt"
-    newPlanet.className = "Asteroid Belt"
-    newPlanet.typeName = "Asteroid Belt"
-    newPlanet.chemistry = None
-    newPlanet.ageModifier = None
-    newPlanet.atmosphere = 0
-    newPlanet.hydrosphere = 0
-    newPlanet.biosphere = 0
-    newPlanet.planet_terrain()
-    newPlanet.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
-    newPlanet.satellites = []
+#     newPlanet.size = 25
+#     newPlanet.category = "Asteroid Belt"
+#     newPlanet.groupName = "Asteroid Belt"
+#     newPlanet.className = "Asteroid Belt"
+#     newPlanet.typeName = "Asteroid Belt"
+#     newPlanet.chemistry = None
+#     newPlanet.ageModifier = None
+#     newPlanet.atmosphere = 0
+#     newPlanet.hydrosphere = 0
+#     newPlanet.biosphere = 0
+#     newPlanet.planet_terrain()
+#     newPlanet.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
+#     newPlanet.satellites = []
 
-    if roll_xdy(1, 6) <= 4:
-        create_dwarf_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
-
-        
-def create_dwarf_planet(
-        star,
-        parentObject,
-        order,
-        orbitType,
-        alienSurvivalPercent):
-    """
-    Creates a dwarf planet.
-
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-        parentObject: Class instance
-            The object that this Orbital Body directly orbits. Valid classes
-            are Star and OrbitalBody.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
-    """
-
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=parentObject,
-        order=order,
-        orbitType=orbitType)
-
-    newPlanet.groupName = "Dwarf"
-    newPlanet.dwarf_category()
-    newPlanet.planet_size()
-    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
-
-    if newPlanet.biosphere >= 9:
-        newPlanet.planet_animals()
-
-    if newPlanet.biosphere >= 12:
-        alien.create_alien(newPlanet, alienSurvivalPercent)
-
-    newPlanet.satellites = []
-
-    if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) == 6:
-        create_dwarf_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet.parentObject,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
+#     if roll_xdy(1, 6) <= 4:
+#         create_dwarf_planet(
+#             star=newPlanet.star,
+#             parentObject=newPlanet,
+#             order=newPlanet.order,
+#             orbitType=newPlanet.orbitType,
+#             alienSurvivalPercent=alienSurvivalPercent)
 
         
-def create_terrestrial_planet(
-        star,
-        parentObject,
-        order,
-        orbitType,
-        alienSurvivalPercent):
-    """
-    Creates a terrestrial planet.
+# def create_dwarf_planet(
+#         star,
+#         parentObject,
+#         order,
+#         orbitType,
+#         alienSurvivalPercent):
+#     """
+#     Creates a dwarf planet.
 
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-        parentObject: Class instance
-            The object that this Orbital Body directly orbits. Valid classes
-            are Star and OrbitalBody.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
-    """
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#         parentObject: Class instance
+#             The object that this Orbital Body directly orbits. Valid classes
+#             are Star and OrbitalBody.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#         alienSurvivalPercent: Integer
+#             An integer that represents the percent chance that
+#             an intelligent species will survive to Tech Level 10.
+#     """
 
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=parentObject,
-        order=order,
-        orbitType=orbitType)
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=parentObject,
+#         order=order,
+#         orbitType=orbitType)
 
-    newPlanet.groupName = "Terrestrial"
-    newPlanet.terrestrial_category()
-    newPlanet.planet_size()
-    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
+#     newPlanet.groupName = "Dwarf"
+#     newPlanet.dwarf_category()
+#     newPlanet.planet_size()
+#     newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+#     newPlanet.planet_terrain()
 
-    if newPlanet.biosphere >= 9:
-        newPlanet.planet_animals()
+#     if newPlanet.biosphere >= 9:
+#         newPlanet.planet_animals()
 
-    if newPlanet.biosphere >= 12:
-        alien.create_alien(newPlanet, alienSurvivalPercent)
+#     if newPlanet.biosphere >= 12:
+#         alien.create_alien(newPlanet, alienSurvivalPercent)
 
-    newPlanet.satellites = []
+#     newPlanet.satellites = []
 
-    if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) >= 1:
-        create_dwarf_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
-
-        
-def create_helian_planet(
-        star,
-        parentObject,
-        order,
-        orbitType,
-        alienSurvivalPercent):
-    """
-    Creates a helian planet.
-
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-        parentObject: Class instance
-            The object that this Orbital Body directly orbits. Valid classes
-            are Star and OrbitalBody.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
-    """
-
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=parentObject,
-        order=order,
-        orbitType=orbitType)
-
-    newPlanet.groupName = "Helian"
-    newPlanet.helian_category()
-    newPlanet.planet_size()
-    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
-    newPlanet.planet_terrain()
-
-    if newPlanet.biosphere >= 9:
-        newPlanet.planet_animals()
-
-    if newPlanet.biosphere >= 12:
-        alien.create_alien(newPlanet, alienSurvivalPercent)
-
-    newPlanet.satellites = []
-
-    if newPlanet.parentObject == newPlanet.star:
-        satelliteRoll1 = roll_xdy(1, 6)
-        satelliteRoll2 = roll_xdy(1, 6)
-
-        if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
-            create_terrestrial_planet(
-                star=newPlanet.star,
-                parentObject=newPlanet,
-                order=newPlanet.order,
-                orbitType=newPlanet.orbitType,
-                alienSurvivalPercent=alienSurvivalPercent)
-
-        for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
-                create_dwarf_planet(
-                    star=newPlanet.star,
-                    parentObject=newPlanet,
-                    order=newPlanet.order,
-                    orbitType=newPlanet.orbitType,
-                    alienSurvivalPercent=alienSurvivalPercent)
+#     if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) == 6:
+#         create_dwarf_planet(
+#             star=newPlanet.star,
+#             parentObject=newPlanet.parentObject,
+#             order=newPlanet.order,
+#             orbitType=newPlanet.orbitType,
+#             alienSurvivalPercent=alienSurvivalPercent)
 
         
-def create_jovian_planet(
-        star,
-        order,
-        orbitType,
-        alienSurvivalPercent):
-    """
-    Creates a jovian planet (gas giant).
+# def create_terrestrial_planet(
+#         star,
+#         parentObject,
+#         order,
+#         orbitType,
+#         alienSurvivalPercent):
+#     """
+#     Creates a terrestrial planet.
 
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-        alienSurvivalPercent: Integer
-            An integer that represents the percent chance that
-            an intelligent species will survive to Tech Level 10.
-    """
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#         parentObject: Class instance
+#             The object that this Orbital Body directly orbits. Valid classes
+#             are Star and OrbitalBody.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#         alienSurvivalPercent: Integer
+#             An integer that represents the percent chance that
+#             an intelligent species will survive to Tech Level 10.
+#     """
 
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=star,
-        order=order,
-        orbitType=orbitType)
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=parentObject,
+#         order=order,
+#         orbitType=orbitType)
 
-    newPlanet.groupName = "Jovian"
-    newPlanet.jovian_category()
-    newPlanet.size = 16
-    newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+#     newPlanet.groupName = "Terrestrial"
+#     newPlanet.terrestrial_category()
+#     newPlanet.planet_size()
+#     newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+#     newPlanet.planet_terrain()
 
-    if roll_xdy(1, 6) <= 4:
-        newPlanet.ringSystem = "Minor"
-    else:
-        newPlanet.ringSystem = "Complex"
+#     if newPlanet.biosphere >= 9:
+#         newPlanet.planet_animals()
 
-    newPlanet.satellites = []
+#     if newPlanet.biosphere >= 12:
+#         alien.create_alien(newPlanet, alienSurvivalPercent)
 
-    satelliteRoll1 = roll_xdy(1, 6)
-    satelliteRoll2 = roll_xdy(1, 6)
-    satelliteRoll3 = roll_xdy(1, 6)
+#     newPlanet.satellites = []
 
-    if satelliteRoll2 == 6 and satelliteRoll3 == 6:
-        create_helian_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
+#     if newPlanet.parentObject == newPlanet.star and roll_xdy(1, 6) >= 1:
+#         create_dwarf_planet(
+#             star=newPlanet.star,
+#             parentObject=newPlanet,
+#             order=newPlanet.order,
+#             orbitType=newPlanet.orbitType,
+#             alienSurvivalPercent=alienSurvivalPercent)
+
+        
+# def create_helian_planet(
+#         star,
+#         parentObject,
+#         order,
+#         orbitType,
+#         alienSurvivalPercent):
+#     """
+#     Creates a helian planet.
+
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#         parentObject: Class instance
+#             The object that this Orbital Body directly orbits. Valid classes
+#             are Star and OrbitalBody.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#         alienSurvivalPercent: Integer
+#             An integer that represents the percent chance that
+#             an intelligent species will survive to Tech Level 10.
+#     """
+
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=parentObject,
+#         order=order,
+#         orbitType=orbitType)
+
+#     newPlanet.groupName = "Helian"
+#     newPlanet.helian_category()
+#     newPlanet.planet_size()
+#     newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+#     newPlanet.planet_terrain()
+
+#     if newPlanet.biosphere >= 9:
+#         newPlanet.planet_animals()
+
+#     if newPlanet.biosphere >= 12:
+#         alien.create_alien(newPlanet, alienSurvivalPercent)
+
+#     newPlanet.satellites = []
+
+#     if newPlanet.parentObject == newPlanet.star:
+#         satelliteRoll1 = roll_xdy(1, 6)
+#         satelliteRoll2 = roll_xdy(1, 6)
+
+#         if satelliteRoll2 == 6 and satelliteRoll1 - 3 > 0:
+#             create_terrestrial_planet(
+#                 star=newPlanet.star,
+#                 parentObject=newPlanet,
+#                 order=newPlanet.order,
+#                 orbitType=newPlanet.orbitType,
+#                 alienSurvivalPercent=alienSurvivalPercent)
+
+#         for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
+#                 create_dwarf_planet(
+#                     star=newPlanet.star,
+#                     parentObject=newPlanet,
+#                     order=newPlanet.order,
+#                     orbitType=newPlanet.orbitType,
+#                     alienSurvivalPercent=alienSurvivalPercent)
+
+        
+# def create_jovian_planet(
+#         star,
+#         order,
+#         orbitType,
+#         alienSurvivalPercent):
+#     """
+#     Creates a jovian planet (gas giant).
+
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#         alienSurvivalPercent: Integer
+#             An integer that represents the percent chance that
+#             an intelligent species will survive to Tech Level 10.
+#     """
+
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=star,
+#         order=order,
+#         orbitType=orbitType)
+
+#     newPlanet.groupName = "Jovian"
+#     newPlanet.jovian_category()
+#     newPlanet.size = 16
+#     newPlanet.class_chemistry_atmosphere_hydrosphere_biosphere()
+
+#     if roll_xdy(1, 6) <= 4:
+#         newPlanet.ringSystem = "Minor"
+#     else:
+#         newPlanet.ringSystem = "Complex"
+
+#     newPlanet.satellites = []
+
+#     satelliteRoll1 = roll_xdy(1, 6)
+#     satelliteRoll2 = roll_xdy(1, 6)
+#     satelliteRoll3 = roll_xdy(1, 6)
+
+#     if satelliteRoll2 == 6 and satelliteRoll3 == 6:
+#         create_helian_planet(
+#             star=newPlanet.star,
+#             parentObject=newPlanet,
+#             order=newPlanet.order,
+#             orbitType=newPlanet.orbitType,
+#             alienSurvivalPercent=alienSurvivalPercent)
     
-    if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
-        create_terrestrial_planet(
-            star=newPlanet.star,
-            parentObject=newPlanet,
-            order=newPlanet.order,
-            orbitType=newPlanet.orbitType,
-            alienSurvivalPercent=alienSurvivalPercent)
+#     if satelliteRoll2 == 6 and satelliteRoll3 <= 5:
+#         create_terrestrial_planet(
+#             star=newPlanet.star,
+#             parentObject=newPlanet,
+#             order=newPlanet.order,
+#             orbitType=newPlanet.orbitType,
+#             alienSurvivalPercent=alienSurvivalPercent)
     
-    for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
-            create_dwarf_planet(
-                star=newPlanet.star,
-                parentObject=newPlanet,
-                order=newPlanet.order,
-                orbitType=newPlanet.orbitType,
-                alienSurvivalPercent=alienSurvivalPercent)
+#     for _ in range(newPlanet.dwarf_satellites(satelliteRoll1, satelliteRoll2)):
+#             create_dwarf_planet(
+#                 star=newPlanet.star,
+#                 parentObject=newPlanet,
+#                 order=newPlanet.order,
+#                 orbitType=newPlanet.orbitType,
+#                 alienSurvivalPercent=alienSurvivalPercent)
 
-    newPlanet.star.systemHex.fuelUnrefinedAvailable = True
-
-        
-def create_terra(star):
-    """
-    Creates the home planet of Terrans (humans).
-
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-    """
-
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=star,
-        order=star.epistellarOrbits + star.innerZoneOrbits + 1,
-        orbitType="Inner Zone")
-
-    newPlanet.groupName = "Terrestrial"
-    newPlanet.properName = "Terra"
-    newPlanet.category = "Tectonic"
-    newPlanet.size = 8
-    newPlanet.chemistry = "Water"
-    newPlanet.ageModifier = 0
-    newPlanet.className = "Tectonic"
-    newPlanet.type = "Gaian"
-    newPlanet.atmosphere = 6
-    newPlanet.hydrosphere = 7
-    newPlanet.subsurfaceOceans = False
-    newPlanet.biosphere = 12
-    newPlanet.terrain = [
-        "Beach/Shore",
-        "Clear",
-        "Deep Ocean",
-        "Desert",
-        "Forest",
-        "Hills",
-        "Jungle",
-        "Mountains",
-        "Open Ocean",
-        "Plains",
-        "Rainforest",
-        "Riverbank",
-        "Rough/Broken",
-        "Shallow Ocean",
-        "Swamp Marsh",
-        "Woods"]
-    newPlanet.animals = ["The animals of Earth."]
-    newPlanet.satellites = []
-    newPlanet.terraformingDone = True
+#     newPlanet.star.systemHex.fuelUnrefinedAvailable = True
 
         
-def create_luna(star):
+# def create_terra(star):
+#     """
+#     Creates the home planet of Terrans (humans).
+
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#     """
+
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=star,
+#         order=star.epistellarOrbits + star.innerZoneOrbits + 1,
+#         orbitType="Inner Zone")
+
+#     newPlanet.groupName = "Terrestrial"
+#     newPlanet.properName = "Terra"
+#     newPlanet.category = "Tectonic"
+#     newPlanet.size = 8
+#     newPlanet.chemistry = "Water"
+#     newPlanet.ageModifier = 0
+#     newPlanet.className = "Tectonic"
+#     newPlanet.type = "Gaian"
+#     newPlanet.atmosphere = 6
+#     newPlanet.hydrosphere = 7
+#     newPlanet.subsurfaceOceans = False
+#     newPlanet.biosphere = 12
+#     newPlanet.terrain = [
+#         "Beach/Shore",
+#         "Clear",
+#         "Deep Ocean",
+#         "Desert",
+#         "Forest",
+#         "Hills",
+#         "Jungle",
+#         "Mountains",
+#         "Open Ocean",
+#         "Plains",
+#         "Rainforest",
+#         "Riverbank",
+#         "Rough/Broken",
+#         "Shallow Ocean",
+#         "Swamp Marsh",
+#         "Woods"]
+#     newPlanet.animals = ["The animals of Earth."]
+#     newPlanet.satellites = []
+#     newPlanet.terraformingDone = True
+
+        
+# def create_luna(star):
+#     """
+#     Creates the Terran moon.
+
+#     Required Parameters:
+#         star: Star class instance
+#             The star around which the planet orbits.
+#     """
+
+#     newPlanet = OrbitalBody(
+#         star=star,
+#         parentObject=star.planets[-1],
+#         order=star.planets[-1].order,
+#         orbitType="Inner Zone")
+
+#     newPlanet.groupName = "Dwarf"
+#     newPlanet.properName = "Luna"
+#     newPlanet.category = "Rockball"
+#     newPlanet.size = 2
+#     newPlanet.chemistry = None
+#     newPlanet.ageModifier = None
+#     newPlanet.className = "Geopassive"
+#     newPlanet.type = "Lithic"
+#     newPlanet.atmosphere = 0
+#     newPlanet.hydrosphere = 0
+#     newPlanet.subsurfaceOceans = False
+#     newPlanet.biosphere = 0
+#     newPlanet.terrain = ["Clear", "Hills", "Mountains", "Rough/Broken"]
+#     newPlanet.animals = []
+#     newPlanet.satellites = []
+#     newPlanet.alien = None
+#     newPlanet.terraformingDone = True
+
+
+class Planet(OrbitalBody):
     """
-    Creates the Terran moon.
-
-    Required Parameters:
-        star: Star class instance
-            The star around which the planet orbits.
-    """
-
-    newPlanet = OrbitalBody(
-        star=star,
-        parentObject=star.planets[-1],
-        order=star.planets[-1].order,
-        orbitType="Inner Zone")
-
-    newPlanet.groupName = "Dwarf"
-    newPlanet.properName = "Luna"
-    newPlanet.category = "Rockball"
-    newPlanet.size = 2
-    newPlanet.chemistry = None
-    newPlanet.ageModifier = None
-    newPlanet.className = "Geopassive"
-    newPlanet.type = "Lithic"
-    newPlanet.atmosphere = 0
-    newPlanet.hydrosphere = 0
-    newPlanet.subsurfaceOceans = False
-    newPlanet.biosphere = 0
-    newPlanet.terrain = ["Clear", "Hills", "Mountains", "Rough/Broken"]
-    newPlanet.animals = []
-    newPlanet.satellites = []
-    newPlanet.alien = None
-    newPlanet.terraformingDone = True
-
-
-class OrbitalBody():
-    """
-    Defines an object that orbits a Star or other OrbitalBody.
+    Defines a planet that orbits a Star or other OrbitalBody.
 
     Required Parameters:
         star: Star class instance
@@ -625,81 +623,12 @@ class OrbitalBody():
             Outer Zone)
     """
 
-    def __init__(
-            self,
-            star,
-            parentObject,
-            order,
-            orbitType):
-        allPlanets.append(self)
-        self.systemHex = star.systemHex
-        self.systemHex.planets.append(self)
-        self.star = star
-        self.star.planets.append(self)
-        self.parentObject = parentObject
-        self.order = order
-        self.orbitType = orbitType
+    def __init__(self, star, parentObject, order, orbitType):
+        super().__init__(star, parentObject, order, orbitType)
         self.category = None
         self.size = None
         self.ageModifier = None
         self.type = None
-        self.groupName = None
-        self.className = None
-        self.typeName = None
-        self.atmosphere = None
-        self.biosphere = None
-        self.hydrosphere = None
-        self.subsurfaceOceans = None
-        self.terrain = set()
-        self.animals = []
-        self.ringSystem = None
-        self.satellites = []
-        self.alien = None
-        self.properName = None
-        self.desirability = {}
-        self.habitation = {}
-        self.population = None
-        self.populationNumber = 0
-        self.alienPopulation = {}
-        self.governmentRoll = None
-        self.government = None
-        self.lawLevelRoll = None
-        self.lawLevel = None
-        self.industryRoll = None
-        self.industry = None
-        self.industryPopulationEffect = 0
-        self.pollution = 0
-        self.tradeCodes = set()
-        self.starportRoll = None
-        self.starport = None
-        self.governorsEstate = None
-        self.embassy = None
-        self.hospital = None
-        self.libraryArchive = None
-        self.megacorpHeadquarters = None
-        self.navalBase = None
-        self.pirateBase = None
-        self.psionicsInstitute = None
-        self.researchInstallation = None
-        self.sacredSite = None
-        self.scoutBase = None
-        self.specialEnclave = None
-        self.travellersAidSocietyHostel = None
-        self.ruins = set()
-        self.settlement = 0
-        self.terraformingAlien = None
-        self.terraformingPoints = 0
-        self.terraformingPointsUsed = 0
-        self.terraformingDone = False
-        self.minimumTechLevel = None
-        self.seedWithLife = False
-        self.baseDesirability = 0
-
-        if self.parentObject == self.star:
-            self.name = self.parentObject.name + " " + str(self.order)
-        else:
-            self.name = self.parentObject.name + "-" + str(len(self.parentObject.satellites) + 1)
-            self.parentObject.satellites.append(self)
 
 
     def dwarf_category(self):
