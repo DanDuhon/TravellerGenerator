@@ -1,5 +1,5 @@
 import orbitalbody
-import globalvariables
+import globalstuff
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -13,47 +13,47 @@ num = {
 }
 
 spectralTypeTable = LookupTable(
-    (2, globalvariables.spectralType.A),
-    (3, globalvariables.spectralType.F),
-    (4, globalvariables.spectralType.G),
-    (5, globalvariables.spectralType.K),
-    (13, globalvariables.spectralType.M),
-    (100, globalvariables.spectralType.L))
+    (2, globalstuff.spectralType.A),
+    (3, globalstuff.spectralType.F),
+    (4, globalstuff.spectralType.G),
+    (5, globalstuff.spectralType.K),
+    (13, globalstuff.spectralType.M),
+    (100, globalstuff.spectralType.L))
 
 # There are unnecessary LookupTables here (anything with one value),
 # but it simplifies the code that uses this from several elifs to one statement.
 luminosityClassDict = {
-    globalvariables.spectralType.A: LookupTable(
-        (2, LookupTable((100, globalvariables.luminosityClass.A_V))),
+    globalstuff.spectralType.A: LookupTable(
+        (2, LookupTable((100, globalstuff.luminosityClass.A_V))),
         (3, LookupTable(
-            (2, globalvariables.luminosityClass.F_IV),
-            (3, globalvariables.luminosityClass.K_III),
-            (100, globalvariables.luminosityClass.D))),
-        (15, LookupTable((100, globalvariables.luminosityClass.D)))),
-    globalvariables.spectralType.F: LookupTable(
-        (5, LookupTable((100, globalvariables.luminosityClass.F_V))),
+            (2, globalstuff.luminosityClass.F_IV),
+            (3, globalstuff.luminosityClass.K_III),
+            (100, globalstuff.luminosityClass.D))),
+        (15, LookupTable((100, globalstuff.luminosityClass.D)))),
+    globalstuff.spectralType.F: LookupTable(
+        (5, LookupTable((100, globalstuff.luminosityClass.F_V))),
         (6, LookupTable(
-            (4, globalvariables.luminosityClass.G_IV),
-            (100, globalvariables.luminosityClass.M_III))),
-        (100, LookupTable((100, globalvariables.luminosityClass.D)))),
-    globalvariables.spectralType.G: LookupTable(
-        (6, LookupTable((100, globalvariables.luminosityClass.G_V))),
+            (4, globalstuff.luminosityClass.G_IV),
+            (100, globalstuff.luminosityClass.M_III))),
+        (100, LookupTable((100, globalstuff.luminosityClass.D)))),
+    globalstuff.spectralType.G: LookupTable(
+        (6, LookupTable((100, globalstuff.luminosityClass.G_V))),
         (13, LookupTable(
-            (3, globalvariables.luminosityClass.K_IV),
-            (100, globalvariables.luminosityClass.M_III))),
-        (100, LookupTable((100, globalvariables.luminosityClass.D)))),
-    globalvariables.spectralType.K: LookupTable((100, LookupTable((100, globalvariables.luminosityClass.K_V)))),
-    globalvariables.spectralType.M: LookupTable(
-        (9, LookupTable((100, globalvariables.luminosityClass.M_V))),
-        (12, LookupTable((100, globalvariables.luminosityClass.M_Ve))),
-        (100, LookupTable((100, globalvariables.luminosityClass.L)))),
-    globalvariables.spectralType.L: LookupTable((100, LookupTable((100, globalvariables.luminosityClass.L))))
+            (3, globalstuff.luminosityClass.K_IV),
+            (100, globalstuff.luminosityClass.M_III))),
+        (100, LookupTable((100, globalstuff.luminosityClass.D)))),
+    globalstuff.spectralType.K: LookupTable((100, LookupTable((100, globalstuff.luminosityClass.K_V)))),
+    globalstuff.spectralType.M: LookupTable(
+        (9, LookupTable((100, globalstuff.luminosityClass.M_V))),
+        (12, LookupTable((100, globalstuff.luminosityClass.M_Ve))),
+        (100, LookupTable((100, globalstuff.luminosityClass.L)))),
+    globalstuff.spectralType.L: LookupTable((100, LookupTable((100, globalstuff.luminosityClass.L))))
 }
 
-companionOrbitTable = LookupTable((2, globalvariables.companionOrbit.Tight),
-                                  (4, globalvariables.companionOrbit.Close),
-                                  (5, globalvariables.companionOrbit.Moderate),
-                                  (6, globalvariables.companionOrbit.Distant))
+companionOrbitTable = LookupTable((2, globalstuff.companionOrbit.Tight),
+                                  (4, globalstuff.companionOrbit.Close),
+                                  (5, globalstuff.companionOrbit.Moderate),
+                                  (6, globalstuff.companionOrbit.Distant))
 
 
 def create_primary_star(systemHex):
@@ -107,8 +107,8 @@ def create_brown_dwarf_star(systemHex):
 
     star = Star(systemHex=systemHex)
 
-    star.spectralType = globalvariables.spectralType.L
-    star.luminosityClass = globalvariables.luminosityClass.L
+    star.spectralType = globalstuff.spectralType.L
+    star.luminosityClass = globalstuff.luminosityClass.L
 
 
 class Star():
@@ -281,11 +281,11 @@ class Star():
                 self.innerZoneOrbits +
                 self.outerZoneOrbits):
             if orbit < self.epistellarOrbits:
-                orbitType = globalvariables.orbitType.Epistellar
+                orbitType = globalstuff.orbitType.Epistellar
             elif orbit < self.epistellarOrbits + self.innerZoneOrbits:
-                orbitType = globalvariables.orbitType.InnerZone
+                orbitType = globalstuff.orbitType.InnerZone
             else:
-                orbitType = globalvariables.orbitType.OuterZone
+                orbitType = globalstuff.orbitType.OuterZone
 
             orbitalbody.create_orbital_body(
                 self,

@@ -1,11 +1,11 @@
 from globalstuff import category, className, type
-from terrestrialplanet import TerrestrialPlanet
+from helianplanet import HelianPlanet
 
 
-class Acheronian(TerrestrialPlanet):
+class Asphodelian(HelianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
-        self.category = category.Acheronian
+        self.category = category.Asphodelian
         self.set_chemistry_age_modifier_class_type()
         self.set_atmosphere()
         self.set_hydrosphere()
@@ -13,8 +13,8 @@ class Acheronian(TerrestrialPlanet):
 
 
     def set_chemistry_age_modifier_class_type(self):
-        self.className = className.Telluric
-        self.type = type.Acheronian
+        self.className = className.GeoHelian
+        self.type = type.Asphodelian
 
 
     def set_atmosphere(self):

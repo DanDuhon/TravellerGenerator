@@ -1,6 +1,6 @@
 import star
 import namegenerator
-import globalvariables
+import globalstuff
 from diceroller import roll_xdy
 from lookuptable import LookupTable
 
@@ -270,7 +270,7 @@ class System():
                 aliens.
         """
 
-        hexRange = (4 + maxReactionModifier) * (globalvariables.maxTechLevel - 9)
+        hexRange = (4 + maxReactionModifier) * (globalstuff.maxTechLevel - 9)
         
         for x in range(-hexRange, hexRange + 1):
             for y in range(max(-hexRange, -x - hexRange), min(hexRange, -x + hexRange) + 1):

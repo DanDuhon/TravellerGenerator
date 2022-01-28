@@ -1,12 +1,11 @@
-import globalvariables
+from globalstuff import group, roll_xdy
 from orbitalbody import OrbitalBody
-from diceroller import roll_xdy
 
 
 class AsteroidBelt(OrbitalBody):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
-        self.group = globalvariables.group.AsteroidBelt
+        self.group = group.AsteroidBelt
         self.atmosphere = 0
         self.hydrosphere = 0
         self.biosphere = 0

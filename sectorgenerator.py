@@ -8,7 +8,7 @@ import star
 import planet
 import animal
 import alien
-import globalvariables
+import globalstuff
 from diceroller import roll_xdy
 
 
@@ -18,19 +18,19 @@ def sectorgen():
     # low end of what the final area will probably be,
     # allowing surviving aliens to be far apart since
     # no aliens created outside this initial area survive.
-    if globalvariables.maxTechLevel == 9:
+    if globalstuff.maxTechLevel == 9:
         initialSectorSize = 1
-    elif globalvariables.maxTechLevel == 10:
+    elif globalstuff.maxTechLevel == 10:
         initialSectorSize = 10
-    elif globalvariables.maxTechLevel == 11:
+    elif globalstuff.maxTechLevel == 11:
         initialSectorSize = 17
-    elif globalvariables.maxTechLevel == 12:
+    elif globalstuff.maxTechLevel == 12:
         initialSectorSize = 50
-    elif globalvariables.maxTechLevel == 13:
+    elif globalstuff.maxTechLevel == 13:
         initialSectorSize = 70
-    elif globalvariables.maxTechLevel == 14:
+    elif globalstuff.maxTechLevel == 14:
         initialSectorSize = 94
-    elif globalvariables.maxTechLevel == 15:
+    elif globalstuff.maxTechLevel == 15:
         initialSectorSize = 118
     sectorMax = math.ceil(initialSectorSize / 2)
     sectorMin = -sectorMax
@@ -65,14 +65,14 @@ def sectorgen():
                             
     terraTarget = random.choice(validTerraTargets)
 
-    alien.create_terra_luna_humans(terraTarget, globalvariables.maxTechLevel)
+    alien.create_terra_luna_humans(terraTarget, globalstuff.maxTechLevel)
     terraTarget.innerZoneOrbits += 1
     for p in [p for p in terraTarget.systemHex.planets if (p.star == terraTarget
         and p.orbitType == "Outer Zone"
         and p.name not in ["Terra", "Luna"])]:
         p.order += 1
 
-    alien.set_tech_level(globalvariables.maxTechLevel)
+    alien.set_tech_level(globalstuff.maxTechLevel)
     maxReactionModifier = max(
         [a.reactionModifier for a in alien.allAliens if not a.extinct])
     for a in [a for a in alien.allAliens if not a.extinct]:
@@ -95,7 +95,7 @@ def sectorgen():
         a.populationModifier = a.relativePopulation / avgRelativePopulation
 
     # Determine how far extinct Aliens at Tech Level 9 expanded
-    for a in [a for a in alien.allAliens if a.globalvariables.maxTechLevel == 9 and a.extinct]:
+    for a in [a for a in alien.allAliens if a.globalstuffvariables.maxTechLevel == 9 and a.extinct]:
         for p in a.homePlanet.systemHex.planets:
             a.planets[p] = {
                 "outpostRoll": roll_xdy(1, 6),
@@ -114,7 +114,7 @@ def sectorgen():
             h = p.calculate_habitation(
                 a,
                 alienSurvivalPercent,
-                globalvariables.maxTechLevel,
+                globalstuff.maxTechLevel,
                 maxReactionModifier,
                 True)
                 
@@ -132,7 +132,7 @@ def sectorgen():
     # Exploration, colonization, and terraforming
     # The current Tech Level of the most advanced aliens start at 9, and
     # each other alien's current Tech Level is also appropriately reduced.
-    # Loop through Tech Levels exploring and colonizing until the globalvariables.maxTechLevel
+    # Loop through Tech Levels exploring and colonizing until the globalstuffvariables.maxTechLevel
     # is reached by the most advanced aliens and no more new colonies or outposts
     # are created.
     while True:
@@ -144,7 +144,7 @@ def sectorgen():
                 newIndustryEffect = p.planet_industry()
                 if newIndustryEffect:
                     p.planet_industry_effects()
-                p.planet_trade_codes(globalvariables.maxTechLevel)
+                p.planet_trade_codes(globalstuff.maxTechLevel)
                 p.planet_starport()
                 
             aliensExploring = []
@@ -192,7 +192,7 @@ def sectorgen():
                             h = p.calculate_habitation(
                                 a,
                                 alienSurvivalPercent,
-                                globalvariables.maxTechLevel,
+                                globalstuff.maxTechLevel,
                                 maxReactionModifier,
                                 p.systemHex.alienNearbyColony.get(a))
                             p.habitation[a] = h
@@ -278,7 +278,7 @@ def sectorgen():
                                             h = p.calculate_habitation(
                                                 a,
                                                 alienSurvivalPercent,
-                                                globalvariables.maxTechLevel,
+                                                globalstuff.maxTechLevel,
                                                 maxReactionModifier,
                                                 p.systemHex.alienNearbyColony.get(a))
                                             p.habitation[a] = h
@@ -300,7 +300,7 @@ def sectorgen():
             if not len(aliensExploring):
                 break
 
-        if max([a.currentTechLevel for a in alien.allAliens if not a.extinct]) == globalvariables.maxTechLevel:
+        if max([a.currentTechLevel for a in alien.allAliens if not a.extinct]) == globalstuff.maxTechLevel:
             break
 
         for a in [a for a in alien.allAliens if not a.extinct]:
@@ -321,7 +321,7 @@ def sectorgen():
                 h = p.calculate_habitation(
                     a,
                     alienSurvivalPercent,
-                    globalvariables.maxTechLevel,
+                    globalstuff.maxTechLevel,
                     maxReactionModifier,
                     p.systemHex.alienNearbyColony.get(a))
                 p.habitation[a] = h
@@ -355,7 +355,7 @@ def sectorgen():
         newIndustryEffect = p.planet_industry()
         if newIndustryEffect:
             p.planet_industry_effects()
-        p.planet_trade_codes(globalvariables.maxTechLevel)
+        p.planet_trade_codes(globalstuff.maxTechLevel)
         p.planet_starport()
 
     # Create the unexplored space beyond the frontier.
@@ -363,7 +363,7 @@ def sectorgen():
     for s in existingSystems:
         s.create_surrounding_systems(
             alienSurvivalPercent=alienSurvivalPercent,
-            globalvariables.maxTechLevel=globalvariables.maxTechLevel,
+            maxTechLevel=globalstuff.maxTechLevel,
             maxReactionModifier=maxReactionModifier)
 
     for s in systemhex.allSystems:

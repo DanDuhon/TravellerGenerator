@@ -1,14 +1,13 @@
-import globalvariables
 import asteroidbelt
 import planet
-from diceroller import roll_xdy
+from globalstuff import roll_xdy, group, luminosityClass
 
 
 def create_orbital_body(star,
         order,
         orbitType):
     roll = roll_xdy(1, 6)
-    roll -= (1 if star.spectralType == globalvariables.luminosityClass.L else 0)
+    roll -= (1 if star.spectralType == luminosityClass.L else 0)
 
     if roll <= 1:
         asteroidbelt.create_asteroid_belt(
@@ -100,19 +99,19 @@ class OrbitalBody():
 
     
     def create_satellite(self, planetGroupToCreate):
-        if planetGroupToCreate == globalvariables.group.DwarfPlanet:
+        if planetGroupToCreate == group.DwarfPlanet:
             planet.create_dwarf_planet(
                 self.star,
                 self.parentObject,
                 self.order,
                 self.orbitType)
-        elif planetGroupToCreate == globalvariables.group.TerrestrialPlanet:
+        elif planetGroupToCreate == group.TerrestrialPlanet:
             planet.create_terrestrial_planet(
                 self.star,
                 self.parentObject,
                 self.order,
                 self.orbitType)
-        elif planetGroupToCreate == globalvariables.group.HelianPlanet:
+        elif planetGroupToCreate == group.HelianPlanet:
             planet.create_helian_planet(
                 self.star,
                 self.parentObject,
