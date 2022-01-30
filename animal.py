@@ -1,5 +1,5 @@
-from diceroller import roll_xdy
 import namegenerator
+from globalstuff import roll_xdy
 
 allAnimals = []
 

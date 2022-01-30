@@ -1,8 +1,7 @@
 import star
 import namegenerator
 import globalstuff
-from diceroller import roll_xdy
-from lookuptable import LookupTable
+from globalstuff import roll_xdy, LookupTable
 
 
 allSystems = []

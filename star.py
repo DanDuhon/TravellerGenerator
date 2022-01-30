@@ -1,8 +1,8 @@
 import orbitalbody
-import globalstuff
-from diceroller import roll_xdy
-from lookuptable import LookupTable
+from globalstuff import roll_xdy, LookupTable, spectralType, luminosityClass, companionOrbit, orbitType
 
+
+allStars = []
 
 # Used for star names.
 num = {
@@ -13,47 +13,47 @@ num = {
 }
 
 spectralTypeTable = LookupTable(
-    (2, globalstuff.spectralType.A),
-    (3, globalstuff.spectralType.F),
-    (4, globalstuff.spectralType.G),
-    (5, globalstuff.spectralType.K),
-    (13, globalstuff.spectralType.M),
-    (100, globalstuff.spectralType.L))
+    (2, spectralType.A),
+    (3, spectralType.F),
+    (4, spectralType.G),
+    (5, spectralType.K),
+    (13, spectralType.M),
+    (100, spectralType.L))
 
 # There are unnecessary LookupTables here (anything with one value),
 # but it simplifies the code that uses this from several elifs to one statement.
 luminosityClassDict = {
-    globalstuff.spectralType.A: LookupTable(
-        (2, LookupTable((100, globalstuff.luminosityClass.A_V))),
+    spectralType.A: LookupTable(
+        (2, LookupTable((100, luminosityClass.A_V))),
         (3, LookupTable(
-            (2, globalstuff.luminosityClass.F_IV),
-            (3, globalstuff.luminosityClass.K_III),
-            (100, globalstuff.luminosityClass.D))),
-        (15, LookupTable((100, globalstuff.luminosityClass.D)))),
-    globalstuff.spectralType.F: LookupTable(
-        (5, LookupTable((100, globalstuff.luminosityClass.F_V))),
+            (2, luminosityClass.F_IV),
+            (3, luminosityClass.K_III),
+            (100, luminosityClass.D))),
+        (15, LookupTable((100, luminosityClass.D)))),
+    spectralType.F: LookupTable(
+        (5, LookupTable((100, luminosityClass.F_V))),
         (6, LookupTable(
-            (4, globalstuff.luminosityClass.G_IV),
-            (100, globalstuff.luminosityClass.M_III))),
-        (100, LookupTable((100, globalstuff.luminosityClass.D)))),
-    globalstuff.spectralType.G: LookupTable(
-        (6, LookupTable((100, globalstuff.luminosityClass.G_V))),
+            (4, luminosityClass.G_IV),
+            (100, luminosityClass.M_III))),
+        (100, LookupTable((100, luminosityClass.D)))),
+    spectralType.G: LookupTable(
+        (6, LookupTable((100, luminosityClass.G_V))),
         (13, LookupTable(
-            (3, globalstuff.luminosityClass.K_IV),
-            (100, globalstuff.luminosityClass.M_III))),
-        (100, LookupTable((100, globalstuff.luminosityClass.D)))),
-    globalstuff.spectralType.K: LookupTable((100, LookupTable((100, globalstuff.luminosityClass.K_V)))),
-    globalstuff.spectralType.M: LookupTable(
-        (9, LookupTable((100, globalstuff.luminosityClass.M_V))),
-        (12, LookupTable((100, globalstuff.luminosityClass.M_Ve))),
-        (100, LookupTable((100, globalstuff.luminosityClass.L)))),
-    globalstuff.spectralType.L: LookupTable((100, LookupTable((100, globalstuff.luminosityClass.L))))
+            (3, luminosityClass.K_IV),
+            (100, luminosityClass.M_III))),
+        (100, LookupTable((100, luminosityClass.D)))),
+    spectralType.K: LookupTable((100, LookupTable((100, luminosityClass.K_V)))),
+    spectralType.M: LookupTable(
+        (9, LookupTable((100, luminosityClass.M_V))),
+        (12, LookupTable((100, luminosityClass.M_Ve))),
+        (100, LookupTable((100, luminosityClass.L)))),
+    spectralType.L: LookupTable((100, LookupTable((100, luminosityClass.L))))
 }
 
-companionOrbitTable = LookupTable((2, globalstuff.companionOrbit.Tight),
-                                  (4, globalstuff.companionOrbit.Close),
-                                  (5, globalstuff.companionOrbit.Moderate),
-                                  (6, globalstuff.companionOrbit.Distant))
+companionOrbitTable = LookupTable((2, companionOrbit.Tight),
+                                  (4, companionOrbit.Close),
+                                  (5, companionOrbit.Moderate),
+                                  (6, companionOrbit.Distant))
 
 
 def create_primary_star(systemHex):
@@ -107,8 +107,8 @@ def create_brown_dwarf_star(systemHex):
 
     star = Star(systemHex=systemHex)
 
-    star.spectralType = globalstuff.spectralType.L
-    star.luminosityClass = globalstuff.luminosityClass.L
+    star.spectralType = spectralType.L
+    star.luminosityClass = luminosityClass.L
 
 
 class Star():
@@ -138,6 +138,7 @@ class Star():
             systemHex,
             primary=False,
             primaryOrbit=None):
+        allStars.append(self)
         self.systemHex = systemHex
         self.systemHex.stars.append(self)
         self.primary = primary
@@ -230,11 +231,19 @@ class Star():
         Value range is 0-2.
         """
 
-        if self.luminosityClass in ["L", "D", "K-III", "M-III"] or self.primaryOrbit in ["Close", "Moderate"]:
+        if self.luminosityClass in [
+            luminosityClass.L,
+            luminosityClass.D,
+            luminosityClass.K_III,
+            luminosityClass.M_III
+            ] or self.primaryOrbit in [
+                companionOrbit.Close,
+                companionOrbit.Moderate
+                ]:
             self.epistellarOrbits = 0
             return
             
-        self.epistellarOrbits = min([2, max([0, roll_xdy(1, 6) - 3 - (1 if self.luminosityClass == "M-V" else 0)])])
+        self.epistellarOrbits = min([2, max([0, roll_xdy(1, 6) - 3 - (1 if self.luminosityClass == luminosityClass.M_V else 0)])])
 
 
     def set_inner_zone_orbits(self):
@@ -248,11 +257,11 @@ class Star():
         Value range is 0-5.
         """
 
-        if self.primary and "Close" in self.companionOrbits or self.primaryOrbit in ["Close", "Moderate"]:
+        if self.primary and companionOrbit.Close in self.companionOrbits or self.primaryOrbit in [companionOrbit.Close, companionOrbit.Moderate]:
             self.innerZoneOrbits = 0
             return
 
-        self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == "M-V" else 0)])
+        self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == luminosityClass.M_V else 0)])
 
 
     def set_outer_zone_orbits(self):
@@ -265,30 +274,29 @@ class Star():
         Value range is 0-5.
         """
 
-        if self.primary and "Moderate" in self.companionOrbits or self.primaryOrbit in ["Close", "Moderate"]:
+        if self.primary and companionOrbit.Moderate in self.companionOrbits or self.primaryOrbit in [companionOrbit.Close, companionOrbit.Moderate]:
             self.outerZoneOrbits = 0
             return
 
-        self.outerZoneOrbits = max([0, roll_xdy(1, 6) - 1 - (1 if self.luminosityClass in ["L", "M-V"] else 0)])
+        self.outerZoneOrbits = max([0, roll_xdy(1, 6) - 1 - (1 if self.luminosityClass in [luminosityClass.L, luminosityClass.M_V] else 0)])
 
 
-    def create_planets(self):
+    def create_orbital_bodies(self):
         """
-        Creates planets orbiting this star.
+        Creates orbital bodies orbiting this star.
         """
         
         for orbit in range(self.epistellarOrbits +
                 self.innerZoneOrbits +
                 self.outerZoneOrbits):
             if orbit < self.epistellarOrbits:
-                orbitType = globalstuff.orbitType.Epistellar
+                ot = orbitType.Epistellar
             elif orbit < self.epistellarOrbits + self.innerZoneOrbits:
-                orbitType = globalstuff.orbitType.InnerZone
+                ot = orbitType.InnerZone
             else:
-                orbitType = globalstuff.orbitType.OuterZone
+                ot = orbitType.OuterZone
 
             orbitalbody.create_orbital_body(
                 self,
-                self,
                 orbit + 1,
-                orbitType)
+                ot)

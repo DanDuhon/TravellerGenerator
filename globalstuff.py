@@ -159,6 +159,11 @@ class terrain(Enum):
     SwampMarsh = 14
     Woods = 15
 
+class habitation(Enum):
+    Outpost = 0
+    Colony = 1
+    Homeworld = 2
+
 class starport(Enum):
     X = 0
     E = 1
@@ -187,6 +192,15 @@ class tradeCode(Enum):
     Wa = 16
     Va = 17
     Zo = 18
+
+class animalType(Enum):
+    Amphibian = 0
+    Aquatic = 1
+    Avian = 2
+    Fungal = 3
+    Insect = 4
+    Mammal = 5
+    Reptile = 6
 
 
 tradeCodeText = {

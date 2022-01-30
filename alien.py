@@ -2,9 +2,10 @@ import random
 import statistics
 
 import animal
-import planet
+import orbitalbody
 import namegenerator
-from diceroller import roll_xdy
+import globalstuff
+from globalstuff import roll_xdy, habitation, animalType
 
 allAliens = []
 
@@ -152,7 +153,7 @@ class Alien():
                 self.relativePopulation *= 3
 
 
-def create_terra_luna_humans(star, maxTechLevel):
+def create_terra_luna_humans(star):
     """
     This will create "Earth", the origin of humans.
     It will also create the moon and humans.
@@ -160,16 +161,14 @@ def create_terra_luna_humans(star, maxTechLevel):
     Parameters:
         star: Star class instance
             The star that Terra orbits.
-        maxTechLevel: Integer
-            The user-provided maximum tech level for any species.
     """
     # Terra
-    planet.create_terra(star=star)
+    orbitalbody.create_terra(star)
 
     terra = star.planets[-1]
 
     # Luna
-    planet.create_luna(star=star)
+    orbitalbody.create_luna(star)
 
     # Humans
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:
@@ -186,13 +185,13 @@ def create_terra_luna_humans(star, maxTechLevel):
                 set(), False, 0, 0, 10)
 
     terra.alien.name = "Terran"
-    terra.habitation[terra.alien] = "Homeworld"
+    terra.habitation[terra.alien] = habitation.Homeworld
     terra.terraformingAlien = terra.alien
     terra.terraformingDone = True
     terra.alien.planets[terra] = {"outpostRoll": None,
                                   "colonyRoll": None,
                                   "desirability": 8,
-                                  "habitation": "Homeworld"}
+                                  "habitation": habitation.Homeworld}
     terra.settlement = 100
 
 
@@ -318,18 +317,13 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     animal.allAnimals.remove(animalToConvert)
 
 
-def set_tech_level(maxTechLevel):
+def set_tech_level():
     """
     Sets the tech level of the alien, limited by the absolute max tech level
     as defined by the user.
-
-    Parameter:
-        maxTechLevel: Integer
-            The highest possible tech level that any species can achieve
-            right now.
     """
     maxTechLevelScore = max([alien.techLevelScore for alien in allAliens])
-    divisor = maxTechLevel / 2
+    divisor = globalstuff.maxTechLevel / 2
 
     # Complicated equation to figure out a reasonably balanced tech level.
     # Garbage comment, I know, but I don't even remember how I came up with this.
@@ -348,9 +342,9 @@ def set_tech_level(maxTechLevel):
         # not extinct but have also not developed the technology
         # to colonize other planets (aside from generational colony ships).
         if alien.name == "Terran" or roll_xdy(1, 2) == 2:
-            alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * maxTechLevel) + (
-                (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * maxTechLevel, 0))
-            alien.currentTechLevel = alien.maxTechLevel - (maxTechLevel - 9)
+            alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * globalstuff.maxTechLevel) + (
+                (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * globalstuff.maxTechLevel, 0))
+            alien.currentTechLevel = alien.maxTechLevel - (globalstuff.maxTechLevel - 9)
         else:
             tl = roll_xdy(1, 9)
             alien.maxTechLevel = tl

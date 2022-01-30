@@ -1,103 +1,102 @@
-import alien
-import dwarfplanet
-import terrestrialplanet
-import helianplanet
-import jovianplanet
-from orbitalbody import OrbitalBody
-from globalstuff import LookupTable, roll_xdy, starport
+# import alien
+# import dwarfplanet
+# import terrestrialplanet
+# import helianplanet
+# import jovianplanet
+# from globalstuff import LookupTable, roll_xdy, starport
 
 
-acceptableAtmospheres = {
-    0: [],
-    1: [],
-    2: [2, 4],
-    3: [3, 5],
-    4: [2, 4, 7],
-    5: [3, 5, 6],
-    6: [5, 6, 8],
-    7: [4, 7, 9],
-    8: [6, 8],
-    9: [7, 9],
-    10: [10],
-    11: [11],
-    12: [12],
-    13: [13],
-    14: [14]
-}
+# acceptableAtmospheres = {
+#     0: [],
+#     1: [],
+#     2: [2, 4],
+#     3: [3, 5],
+#     4: [2, 4, 7],
+#     5: [3, 5, 6],
+#     6: [5, 6, 8],
+#     7: [4, 7, 9],
+#     8: [6, 8],
+#     9: [7, 9],
+#     10: [10],
+#     11: [11],
+#     12: [12],
+#     13: [13],
+#     14: [14]
+# }
 
 
-idealAtmospheres = {
-    0: [],
-    1: [],
-    2: [2, 4],
-    3: [3, 5],
-    4: [4, 7],
-    5: [5, 6],
-    6: [6, 8],
-    7: [7, 9],
-    8: [8],
-    9: [9],
-    10: [10],
-    11: [11],
-    12: [12],
-    13: [13],
-    14: [14]
-}
+# idealAtmospheres = {
+#     0: [],
+#     1: [],
+#     2: [2, 4],
+#     3: [3, 5],
+#     4: [4, 7],
+#     5: [5, 6],
+#     6: [6, 8],
+#     7: [7, 9],
+#     8: [8],
+#     9: [9],
+#     10: [10],
+#     11: [11],
+#     12: [12],
+#     13: [13],
+#     14: [14]
+# }
 
 
-starportTable = LookupTable((2, starport.X),
-                            (4, starport.E),
-                            (6, starport.D),
-                            (8, starport.C),
-                            (10, starport.B),
-                            (100, starport.A))
+# starportTable = LookupTable((2, starport.X),
+#                             (4, starport.E),
+#                             (6, starport.D),
+#                             (8, starport.C),
+#                             (10, starport.B),
+#                             (100, starport.A))
 
 
-def create_planet(star, order, orbitType, roll):
-    if roll <= 2:
-        dwarfplanet.create_dwarf_planet(star, star, order, orbitType)
-    elif roll <= 3:
-        terrestrialplanet.create_terrestrial_planet(star, star, order, orbitType)
-    elif roll <= 4:
-        helianplanet.create_helian_planet(star, star, order, orbitType)
-    else:
-        jovianplanet.create_jovian_planet(star, star, order, orbitType)
+# def create_planet(star, order, orbitType, roll):
+#     if roll <= 2:
+#         dwarfplanet.create_dwarf_planet(star, star, order, orbitType)
+#     elif roll <= 3:
+#         terrestrialplanet.create_terrestrial_planet(star, star, order, orbitType)
+#     elif roll <= 4:
+#         helianplanet.create_helian_planet(star, star, order, orbitType)
+#     else:
+#         jovianplanet.create_jovian_planet(star, star, order, orbitType)
 
 
-class Planet(OrbitalBody):
-    """
-    Defines a planet that orbits a Star or other OrbitalBody.
+# class Planet(OrbitalBody):
+#     """
+#     Defines a planet that orbits a Star or other OrbitalBody.
 
-    Required Parameters:
-        star: Star class instance
-            The star that this Orbital Body orbits (even if it already
-            orbits another Orbital Body).
-        parentObject: Class instance
-            The object that this Orbital Body directly orbits. Valid classes
-            are Star and OrbitalBody.
-        order: Integer
-            Indicates that this is the nth orbit from the star (e.g. Earth
-            would have a value of 3).
-        orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
-            Outer Zone)
-    """
+#     Required Parameters:
+#         star: Star class instance
+#             The star that this Orbital Body orbits (even if it already
+#             orbits another Orbital Body).
+#         parentObject: Class instance
+#             The object that this Orbital Body directly orbits. Valid classes
+#             are Star and OrbitalBody.
+#         order: Integer
+#             Indicates that this is the nth orbit from the star (e.g. Earth
+#             would have a value of 3).
+#         orbitType: String
+#             The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+#             Outer Zone)
+#     """
 
-    def __init__(self, star, parentObject, order, orbitType):
-        super().__init__(star, parentObject, order, orbitType)
-        self.category = None
-        self.size = None
-        self.ageModifier = None
-        self.type = None
-        self.terrain = []
-        self.animals = []
-        self.ringSystem = False
-        self.homeAlien = None
-        self.terraformingAlien = None
-        self.terraformingPoints = 0
-        self.terraformingPointsUsed = 0
-        self.terraformingDone = False
-        self.seedWithLife = False
+#     def __init__(self, star, parentObject, order, orbitType):
+#         super().__init__(star, parentObject, order, orbitType)
+#         self.category = None
+#         self.size = None
+#         self.ageModifier = None
+#         self.type = None
+#         self.terrain = []
+#         self.animals = []
+#         self.ringSystem = False
+#         self.homeAlien = None
+#         self.terraformingAlien = None
+#         self.terraformingPoints = 0
+#         self.terraformingPointsUsed = 0
+#         self.terraformingDone = False
+#         self.seedWithLife = False
 
 
     # def calculate_desirability(self, alien, nearbyColony):

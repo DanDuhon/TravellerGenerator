@@ -1,5 +1,5 @@
-import random
 import math
+import random
 import statistics
 import copy
 
@@ -9,41 +9,38 @@ import planet
 import animal
 import alien
 import globalstuff
-from diceroller import roll_xdy
+from globalstuff import category, group, luminosityClass, orbitType, companionOrbit
+from globalstuff import chemistry, habitation, roll_xdy, chemistry
 
 
 def sectorgen():
     # This creates an initial area in which aliens can
-    # survive to TL10. The initial area is on the very
+    # survive to TL10. The initial area is on the
     # low end of what the final area will probably be,
     # allowing surviving aliens to be far apart since
     # no aliens created outside this initial area survive.
     if globalstuff.maxTechLevel == 9:
         initialSectorSize = 1
     elif globalstuff.maxTechLevel == 10:
-        initialSectorSize = 10
+        initialSectorSize = 12
     elif globalstuff.maxTechLevel == 11:
-        initialSectorSize = 17
+        initialSectorSize = 20
     elif globalstuff.maxTechLevel == 12:
-        initialSectorSize = 50
+        initialSectorSize = 60
     elif globalstuff.maxTechLevel == 13:
-        initialSectorSize = 70
+        initialSectorSize = 84
     elif globalstuff.maxTechLevel == 14:
-        initialSectorSize = 94
+        initialSectorSize = 113
     elif globalstuff.maxTechLevel == 15:
-        initialSectorSize = 118
+        initialSectorSize = 142
     sectorMax = math.ceil(initialSectorSize / 2)
     sectorMin = -sectorMax
-
+    
     validTerraTargets = []
 
     while not validTerraTargets:
         systemhex.allCoordinates = {}
         systemhex.allSystems = []
-        star.allStars = []
-        planet.allPlanets = []
-        animal.allAnimals = []
-        alien.allAliens = []
 
         for h in range(sectorMin, sectorMax + 1):
             for v in range(sectorMin, sectorMax + 1):
@@ -52,39 +49,50 @@ def sectorgen():
                         horizontalCoord=h,
                         verticalCoord=v)
 
+        for s in systemhex.allSystems:
+            s.create_stars()
+
         validTerraTargets = [targetStar for targetStar in star.allStars
-                            if targetStar.luminosityClass not in ["D", "M-Ve", "L", "K-III", "M-III"]
-                            and ((targetStar.luminosityClass != "M-V"
+                            if targetStar.luminosityClass not in [
+                                luminosityClass.D,
+                                luminosityClass.M_Ve,
+                                luminosityClass.L,
+                                luminosityClass.K_III,
+                                luminosityClass.M_III
+                                ]
+                            and ((targetStar.luminosityClass != luminosityClass.M_V
                                 and targetStar.innerZoneOrbits < 5)
-                                or (targetStar.luminosityClass == "M-V"
+                                or (targetStar.luminosityClass == luminosityClass.M_V
                                     and targetStar.innerZoneOrbits < 4))
                             and (targetStar.primaryOrbit is None
-                                or targetStar.primaryOrbit == "Distant")
-                            and "Close" not in targetStar.companionOrbits
+                                or targetStar.primaryOrbit == companionOrbit.Distant)
+                            and companionOrbit.Close not in targetStar.companionOrbits
                             and targetStar.systemHex.age >= 4]
+
+    for s in star.allStars:
+        s.create_orbital_bodies()
                             
     terraTarget = random.choice(validTerraTargets)
 
-    alien.create_terra_luna_humans(terraTarget, globalstuff.maxTechLevel)
+    alien.create_terra_luna_humans(terraTarget)
     terraTarget.innerZoneOrbits += 1
     for p in [p for p in terraTarget.systemHex.planets if (p.star == terraTarget
-        and p.orbitType == "Outer Zone"
+        and p.orbitType == orbitType.OuterZone
         and p.name not in ["Terra", "Luna"])]:
         p.order += 1
 
-    alien.set_tech_level(globalstuff.maxTechLevel)
+    alien.set_tech_level()
     maxReactionModifier = max(
         [a.reactionModifier for a in alien.allAliens if not a.extinct])
     for a in [a for a in alien.allAliens if not a.extinct]:
-        a.homePlanet.systemHex.create_surrounding_systems(
-            maxReactionModifier=maxReactionModifier)
+        a.homePlanet.systemHex.create_surrounding_systems(maxReactionModifier)
 
     # Now that the initial area has been created, we don't want any more Aliens to survive
     # otherwise this could literally go on forever. Not to mention it would be really hard
     # to introduce a new Alien in the middle of the exploration and colonization phase.
     # You'd pretty much have to back out everything done in this section and start it all
     # over. Every time you get a new alien.
-    alienSurvivalPercent = 0
+    globalstuff.alienSurvivalPercent = 0
 
     # Set each surviving alien's population modifier. This determines how many individuals
     # make up a population of this species. Put another way, it makes it so that aliens
@@ -95,7 +103,7 @@ def sectorgen():
         a.populationModifier = a.relativePopulation / avgRelativePopulation
 
     # Determine how far extinct Aliens at Tech Level 9 expanded
-    for a in [a for a in alien.allAliens if a.globalstuffvariables.maxTechLevel == 9 and a.extinct]:
+    for a in [a for a in alien.allAliens if a.maxTechLevel == 9 and a.extinct]:
         for p in a.homePlanet.systemHex.planets:
             a.planets[p] = {
                 "outpostRoll": roll_xdy(1, 6),
@@ -103,7 +111,7 @@ def sectorgen():
                 "desirability": None,
                 "habitation": None,
                 "population": None}
-            if p.category in ["Jovian", "Asteroid Belt"]:
+            if p.category in [category.Jovian, category.AsteroidBelt]:
                 d = p.calculate_desirability_jovian_asteroid_belt(a, True)
             else:
                 d = p.calculate_desirability(a, True)
@@ -113,8 +121,6 @@ def sectorgen():
                 
             h = p.calculate_habitation(
                 a,
-                alienSurvivalPercent,
-                globalstuff.maxTechLevel,
                 maxReactionModifier,
                 True)
                 
@@ -137,43 +143,43 @@ def sectorgen():
     # are created.
     while True:
         while True:
-            for p in [p for p in planet.allPlanets if {"Outpost", "Colony", "Homeworld"} & set(p.habitation.values())]:
+            for p in [p for p in planet.allPlanets if {habitation.Outpost, habitation.Colony, habitation.Homeworld} & set(p.habitation.values())]:
                 p.planet_population()
                 p.planet_government()
                 p.planet_law_level()
                 newIndustryEffect = p.planet_industry()
                 if newIndustryEffect:
                     p.planet_industry_effects()
-                p.planet_trade_codes(globalstuff.maxTechLevel)
+                p.planet_trade_codes()
                 p.planet_starport()
                 
             aliensExploring = []
 
-            for p in [p for p in planet.allPlanets if {"Outpost", "Colony"} & set(p.habitation.values())]:
+            for p in [p for p in planet.allPlanets if {habitation.Outpost, habitation.Colony} & set(p.habitation.values())]:
                 p.settlement += 1
 
                 terraformingOccurred = False
                 
                 if (not p.terraformingDone
-                        and p.orbitType == "Inner Zone"
+                        and p.orbitType == orbitType.InnerZone
                         and 1 <= p.size <= 11
                         and 1 <= p.atmosphere <= 13
                         and p.hydrosphere < 15
-                        and p.category not in ["Stygian", "Acheronian", "Asphodelian"]):
+                        and p.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
                     p.terraformingPoints = -15 + p.settlement + p.terraformingAlien.currentTechLevel
-                    if (p.groupName == "Dwarf"
+                    if (p.groupName == group.DwarfPlanet
                         and not p.terraformingDone
                         and p.terraformingPoints > p.terraformingPointsUsed):
                         terraformingOccurred = p.terraform_planet(p.terraformingAlien)
                         if terraformingOccurred:
                             p.terraformingPointsUsed += 1
-                    elif (p.groupName == "Terrestrial"
+                    elif (p.groupName == group.TerrestrialPlanet
                         and not p.terraformingDone
                         and p.terraformingPoints - p.terraformingPointsUsed >= 2):
                         terraformingOccurred = p.terraform_planet(p.terraformingAlien)
                         if terraformingOccurred:
                             p.terraformingPointsUsed += 2
-                    elif (p.groupName == "Helian"
+                    elif (p.groupName == group.HelianPlanet
                         and not p.terraformingDone
                         and p.terraformingPoints - p.terraformingPointsUsed >= 3):
                         terraformingOccurred = p.terraform_planet(p.terraformingAlien)
@@ -191,8 +197,6 @@ def sectorgen():
                             a.planets[p]["desirability"] = d
                             h = p.calculate_habitation(
                                 a,
-                                alienSurvivalPercent,
-                                globalstuff.maxTechLevel,
                                 maxReactionModifier,
                                 p.systemHex.alienNearbyColony.get(a))
                             p.habitation[a] = h
@@ -202,11 +206,11 @@ def sectorgen():
                             # have made the planet temporarily worse, they won't
                             # abandon it. Otherwise, a lower level of habitation
                             # causes ruins to be present on the planet.
-                            if previousHabitation == "Colony" and a.planets[p]["habitation"] == "Outpost":
+                            if previousHabitation == habitation.Colony and a.planets[p]["habitation"] == habitation.Outpost:
                                 p.ruins.add(a)
-                            elif previousHabitation == "Colony" and not a.planets[p]["habitation"]:
+                            elif previousHabitation == habitation.Colony and not a.planets[p]["habitation"]:
                                 p.ruins.add(a)
-                            elif previousHabitation == "Outpost" and not a.planets[p]["habitation"]:
+                            elif previousHabitation == habitation.Outpost and not a.planets[p]["habitation"]:
                                 p.ruins.add(a)
 
                             if previousHabitation and not a.planets[p]["habitation"] and p.terraformingAlien == a:
@@ -219,7 +223,7 @@ def sectorgen():
                     and 2 <= p.atmosphere <= 13
                     and p.hydrosphere < 15
                     and p.chemistry
-                    and "Colony" in p.habitation.values()):
+                    and habitation.Colony in p.habitation.values()):
                     p.biosphere += 1
                         
 
@@ -235,7 +239,7 @@ def sectorgen():
                 maxRange = a.currentTechLevel - 8
                 alreadyChecked = []
                 
-                for p in [p for p in a.planets if a.planets[p]["habitation"] in ["Colony", "Homeworld"]]:
+                for p in [p for p in a.planets if a.planets[p]["habitation"] in [habitation.Colony, habitation.Homeworld]]:
                     colonizedSystems.add(p.systemHex)
                     p.systemHex.set_nearby_colony_systems(a)
 
@@ -267,7 +271,7 @@ def sectorgen():
                                                             "desirability": None,
                                                             "habitation": None,
                                                             "population": 0}
-                                            if p.category in ["Jovian", "Asteroid Belt"]:
+                                            if p.category in [category.Jovian, category.AsteroidBelt]:
                                                 d = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                                             else:
                                                 d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
@@ -277,8 +281,6 @@ def sectorgen():
 
                                             h = p.calculate_habitation(
                                                 a,
-                                                alienSurvivalPercent,
-                                                globalstuff.maxTechLevel,
                                                 maxReactionModifier,
                                                 p.systemHex.alienNearbyColony.get(a))
                                             p.habitation[a] = h
@@ -310,7 +312,7 @@ def sectorgen():
             # Recheck all explored planets when the TL increases.
             for p in a.planets:
                 previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
-                if p.category in ["Jovian", "Asteroid Belt"]:
+                if p.category in [category.Jovian, category.AsteroidBelt]:
                     d = p.calculate_desirability_jovian_asteroid_belt(a, p.systemHex.alienNearbyColony.get(a))
                 else:
                     d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
@@ -320,8 +322,6 @@ def sectorgen():
 
                 h = p.calculate_habitation(
                     a,
-                    alienSurvivalPercent,
-                    globalstuff.maxTechLevel,
                     maxReactionModifier,
                     p.systemHex.alienNearbyColony.get(a))
                 p.habitation[a] = h
@@ -343,34 +343,31 @@ def sectorgen():
             and p.chemistry
             and p.biosphere >= 9
             and not p.animals)
-            and "Colony" in p.habitation.values()]:
+            and habitation.Colony in p.habitation.values()]:
         for terrain in p.terrain:
             animalList = [a[2] for a in animalsForSeeding if a[0] == p.chemistry and a[1] == terrain]
             p.animals += random.choices(population=animalList, k=3)
 
-    for p in [p for p in planet.allPlanets if {"Outpost", "Colony", "Homeworld"} & set(p.habitation.values())]:
+    for p in [p for p in planet.allPlanets if {habitation.Outpost, habitation.Colony, habitation.Homeworld} & set(p.habitation.values())]:
         p.planet_population()
         p.planet_government()
         p.planet_law_level()
         newIndustryEffect = p.planet_industry()
         if newIndustryEffect:
             p.planet_industry_effects()
-        p.planet_trade_codes(globalstuff.maxTechLevel)
+        p.planet_trade_codes()
         p.planet_starport()
 
     # Create the unexplored space beyond the frontier.
     existingSystems = systemhex.allSystems.copy()
     for s in existingSystems:
-        s.create_surrounding_systems(
-            alienSurvivalPercent=alienSurvivalPercent,
-            maxTechLevel=globalstuff.maxTechLevel,
-            maxReactionModifier=maxReactionModifier)
+        s.create_surrounding_systems(maxReactionModifier)
 
     for s in systemhex.allSystems:
         if any([s.fuelUnrefinedAvailable, s.fuelRefinedAvailable]):
             continue
 
         for p in s.planets:
-            if p.chemistry == "Water":
+            if p.chemistry == chemistry.Water:
                 s.fuelUnrefinedAvailable = True
                 break
