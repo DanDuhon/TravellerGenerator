@@ -7,6 +7,42 @@ from collections.abc import Mapping
 maxTechLevel = 0
 alienSurvivalPercent = 0
 
+
+class LookupTable(Mapping):
+    """
+    A lookup table with contiguous ranges of small integers as
+    keys. Initialize a table by passing pairs (max, value) as
+    arguments. The first range starts at -10, and second and subsequent
+    ranges start at the end of the previous range.
+
+    >>> t = LookupTable((10, '-10 - 10'), (35, '11 - 35'), (100, '36 - 100'))
+    >>> t[10], t[11], t[100]
+    ('-10 - 10', '11 - 35', '36 - 100')
+    >>> t[0]
+    Traceback (most recent call last):
+      ...
+    KeyError: 0
+    >>> next(iter(t.items()))
+    (1, '-10 - 10')
+    """
+
+    def __init__(self, *table):
+        self.table = sorted(table)
+        self.max = self.table[-1][0]
+
+    def __getitem__(self, key):
+        key = int(key)
+        if not -10 <= key <= self.max:
+            raise KeyError(key)
+        return self.table[bisect_left(self.table, (key,))][1]
+
+    def __iter__(self):
+        return iter(range(1, self.max + 1))
+
+    def __len__(self):
+        return self.max
+
+
 class spectralType(Enum):
     A = 0
     F = 1
@@ -193,7 +229,7 @@ class tradeCode(Enum):
     Va = 17
     Zo = 18
 
-class animalType(Enum):
+class animalClass(Enum):
     Amphibian = 0
     Aquatic = 1
     Avian = 2
@@ -201,6 +237,48 @@ class animalType(Enum):
     Insect = 4
     Mammal = 5
     Reptile = 6
+
+class movement(Enum):
+    Walk = 0
+    Burrow = 1
+    Swim = 2
+    Fly = 3
+
+class behavior(Enum):
+    CarrionEater = 0
+    Chaser = 1
+    Eater = 2
+    Filter = 3
+    Gatherer = 4
+    Grazer = 5
+    Hunter = 6
+    Hijacker = 7
+    Intimidator = 8
+    Killer = 9
+    Intermittent = 10
+    Pouncer = 11
+    Reducer = 12
+    Siren = 13
+    Trapper = 14
+
+
+weight = {
+    1: "1 kg",
+    2: "3 kg",
+    3: "6 kg",
+    4: "12 kg",
+    5: "25 kg",
+    6: "50 kg",
+    7: "100 kg",
+    8: "200 kg",
+    9: "400 kg",
+    10: "800 kg",
+    11: "1,600 kg",
+    12: "3,200 kg",
+    13: "5,000 kg",
+    14: "8,000 kg",
+    15: "10,000 kg"
+}
 
 
 tradeCodeText = {
@@ -304,41 +382,6 @@ categoryNameDescriptionDict = {
         "description": "These worlds are tide-locked to their primary, but at a distance that permits surface liquid and the development of life."
     }
 }
-
-
-class LookupTable(Mapping):
-    """
-    A lookup table with contiguous ranges of small integers as
-    keys. Initialize a table by passing pairs (max, value) as
-    arguments. The first range starts at -10, and second and subsequent
-    ranges start at the end of the previous range.
-
-    >>> t = LookupTable((10, '-10 - 10'), (35, '11 - 35'), (100, '36 - 100'))
-    >>> t[10], t[11], t[100]
-    ('-10 - 10', '11 - 35', '36 - 100')
-    >>> t[0]
-    Traceback (most recent call last):
-      ...
-    KeyError: 0
-    >>> next(iter(t.items()))
-    (1, '-10 - 10')
-    """
-
-    def __init__(self, *table):
-        self.table = sorted(table)
-        self.max = self.table[-1][0]
-
-    def __getitem__(self, key):
-        key = int(key)
-        if not -10 <= key <= self.max:
-            raise KeyError(key)
-        return self.table[bisect_left(self.table, (key,))][1]
-
-    def __iter__(self):
-        return iter(range(1, self.max + 1))
-
-    def __len__(self):
-        return self.max
 
 
 def roll_xdy(numberToRoll, dieSides):

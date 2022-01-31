@@ -1,38 +1,37 @@
 import namegenerator
-from globalstuff import roll_xdy
+from globalstuff import roll_xdy, terrain, animalClass, movement, behavior
 
-allAnimals = []
 
-behaviorDescriptions = {"Carrion-Eater": "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
-                        "Chaser": "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
-                        "Eater": "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
-                        "Filter": "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
-                        "Gatherer": "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
-                        "Grazer": "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
-                        "Hijacker": "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
-                        "Hunter": "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
-                        "Intermittent": "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
-                        "Intimidator": "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
-                        "Killer": "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
-                        "Pouncer": "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
-                        "Reducer": "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or ‘bottom feeders’, Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
-                        "Siren": "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
-                        "Trapper": "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"}
+behaviorDescriptions = {behavior.CarrionEater: "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
+                        behavior.Chaser: "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
+                        behavior.Eater: "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
+                        behavior.Filter: "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
+                        behavior.Gatherer: "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
+                        behavior.Grazer: "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
+                        behavior.Hijacker: "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
+                        behavior.Hunter: "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
+                        behavior.Intermittent: "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
+                        behavior.Intimidator: "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
+                        behavior.Killer: "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
+                        behavior.Pouncer: "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
+                        behavior.Reducer: "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or ‘bottom feeders’, Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
+                        behavior.Siren: "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
+                        behavior.Trapper: "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"}
 
 
 sizeModDict = {
-    "Desert": -3,
-    "Forest": -4,
-    "Woods": -1,
-    "Jungle": -3,
-    "Rainforest": -2,
-    "Rough/Broken": -3,
-    "Swamp/Marsh": 4,
-    "Beach/Shore": 2,
-    "Riverbank": 1,
-    "Shallow Ocean": 1,
-    "Open Ocean": -4,
-    "Deep Ocean": 2
+    terrain.Desert: -3,
+    terrain.Forest: -4,
+    terrain.Woods: -1,
+    terrain.Jungle: -3,
+    terrain.Rainforest: -2,
+    terrain.RoughBroken: -3,
+    terrain.SwampMarsh: 4,
+    terrain.BeachShore: 2,
+    terrain.Riverbank: 1,
+    terrain.ShallowOcean: 1,
+    terrain.OpenOcean: -4,
+    terrain.DeepOcean: 2
 }
 
 
@@ -40,7 +39,7 @@ def create_amphibian(
         planet,
         terrain):
     """
-    Creates an asteroid belt.
+    Creates an amphibian.
 
     Required Parameters:
         planet: Planet class instance
@@ -49,7 +48,7 @@ def create_amphibian(
             The type of terrain this animal calls home.
     """
 
-    newAnimal = Amphibian(planet=planet, terrain=terrain)
+    return Amphibian(planet, terrain)
 
 
 class Animal():
@@ -65,7 +64,6 @@ class Animal():
     """
 
     def __init__(self, planet, terrain):
-        allAnimals.append(self)
         # Animal naming disabled for now to increase testing speed.
         # Animal names should probably be done on demand anyway so you don't waste time
         # naming things that may never be seen.
@@ -112,154 +110,154 @@ class Animal():
         self.primaryMovement = None
         roll = roll_xdy(1, 6)
         burrowRoll = roll_xdy(2, 6)
-        if terrain == "Clear":
+        if terrain == terrain.Clear:
             if roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Plains":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Plains:
             if roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Desert":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Desert:
             if roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Hills":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Hills:
             if roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Mountains":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Mountains:
             if roll <= 3:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Forest":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Forest:
             if roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Woods":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Woods:
             if roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Jungle":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Jungle:
             if roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Rainforest":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Rainforest:
             if roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Rough/Broken":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.RoughBroken:
             if roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Swamp/Marsh":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.SwampMarsh:
             if roll <= 2:
-                self.primaryMovement = "Swim"
+                self.primaryMovement = movement.Swim
             elif roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Beach/Shore":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.BeachShore:
             if roll <= 2:
-                self.primaryMovement = "Swim"
+                self.primaryMovement = movement.Swim
             elif roll <= 4:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Riverbank":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.Riverbank:
             if roll <= 2:
-                self.primaryMovement = "Swim"
+                self.primaryMovement = movement.Swim
             elif roll <= 5:
-                self.primaryMovement = "Walk"
+                self.primaryMovement = movement.Walk
             else:
                 if burrowRoll >= 10:
-                    self.primaryMovement = "Burrow"
+                    self.primaryMovement = movement.Burrow
                     self.stealth += 1
                     self.instinct += 2
                 else:
-                    self.primaryMovement = "Fly"
-        elif terrain == "Shallow Ocean":
+                    self.primaryMovement = movement.Fly
+        elif terrain == terrain.ShallowOcean:
             if roll <= 4:
-                self.primaryMovmement = "Swim"
+                self.primaryMovmement = movement.Swim
             else:
-                self.primaryMovement = "Fly"
-        elif terrain == "Open Ocean":
+                self.primaryMovement = movement.Fly
+        elif terrain == terrain.OpenOcean:
             if roll <= 4:
-                self.primaryMovmement = "Swim"
+                self.primaryMovmement = movement.Swim
             else:
-                self.primaryMovement = "Fly"
-        elif terrain == "Deep Ocean":
-            self.primaryMovmement = "Swim"
+                self.primaryMovement = movement.Fly
+        elif terrain == terrain.DeepOcean:
+            self.primaryMovmement = movement.Swim
 
     def raise_skill_level(self, skill, points):
         """
@@ -286,40 +284,40 @@ class Animal():
         that animal exhibits.
         """
         for behavior in self.behaviors:
-            if behavior == "Carrion-Eater":
+            if behavior == behavior.CarrionEater:
                 self.instinct += 2
                 self.sizeRollModifier -= 2
-            elif behavior == "Chaser":
+            elif behavior == behavior.Chaser:
                 self.dexterity += 4
                 self.instinct += 2
                 self.pack += 2
-            elif behavior == "Eater":
+            elif behavior == behavior.Eater:
                 self.endurance += 4
                 self.pack += 4
-            elif behavior == "Filter":
+            elif behavior == behavior.Filter:
                 self.endurance += 4
                 if self.pack - 2 < 0:
                     self.pack = 0
                 else:
                     self.pack -= 2
-            elif behavior == "Gatherer":
+            elif behavior == behavior.Gatherer:
                 self.stealth += 1
                 self.pack += 2
                 self.instinct += 1
-            elif behavior == "Grazer":
+            elif behavior == behavior.Grazer:
                 self.instinct += 2
                 self.pack += 4
-            elif behavior == "Hunter":
+            elif behavior == behavior.Hunter:
                 self.instinct += 2
                 self.survival += 1
                 self.recon += 1
-            elif behavior == "Hijacker":
+            elif behavior == behavior.Hijacker:
                 self.strength += 2
                 self.pack += 2
-            elif behavior == "Intimidator":
+            elif behavior == behavior.Intimidator:
                 self.instinct += 1
                 self.persuade += 1
-            elif behavior == "Killer":
+            elif behavior == behavior.Killer:
                 self.meleeNaturalWeapons += 1
                 self.instinct += 4
                 if self.pack - 2 < 0:
@@ -330,26 +328,26 @@ class Animal():
                     self.strength += 4
                 else:
                     self.dexterity += 4
-            elif behavior == "Intermittent":
+            elif behavior == behavior.Intermittent:
                 self.survival += 1
                 self.pack += 4
                 self.sizeRollModifier += 2
-            elif behavior == "Pouncer":
+            elif behavior == behavior.Pouncer:
                 self.stealth += 1
                 self.recon += 1
                 self.athletics += 1
                 self.dexterity += 2
                 self.instinct += 2
-            elif behavior == "Reducer":
+            elif behavior == behavior.Reducer:
                 self.endurance += 2
                 self.pack += 4
-            elif behavior == "Siren":
+            elif behavior == behavior.Siren:
                 self.deception += 1
                 if self.pack - 4 < 0:
                     self.pack = 0
                 else:
                     self.pack -= 4
-            elif behavior == "Trapper":
+            elif behavior == behavior.Trapper:
                 self.stealth += 1
                 self.endurance += 1
                 if self.pack - 2 < 0:
@@ -369,36 +367,6 @@ class Animal():
                 The sum of all roll modifiers to the size roll.
         """
         self.size = self.sizeRoll + self.sizeRollModifier
-        if self.size <= 1:
-            self.weight = "1 kg"
-        elif self.size == 2:
-            self.weight = "3 kg"
-        elif self.size == 3:
-            self.weight = "6 kg"
-        elif self.size == 4:
-            self.weight = "12 kg"
-        elif self.size == 5:
-            self.weight = "25 kg"
-        elif self.size == 6:
-            self.weight = "50 kg"
-        elif self.size == 7:
-            self.weight = "100 kg"
-        elif self.size == 8:
-            self.weight = "200 kg"
-        elif self.size == 9:
-            self.weight = "400 kg"
-        elif self.size == 10:
-            self.weight = "800 kg"
-        elif self.size == 11:
-            self.weight = "1,600 kg"
-        elif self.size == 12:
-            self.weight = "3,200 kg"
-        elif self.size == 13:
-            self.weight = "5,000 kg"
-        elif self.size == 14:
-            self.weight = "8,000 kg"
-        else:  # 15+
-            self.weight = "10,000 kg"
 
     def set_strength(self, sizeRoll):
         """
@@ -533,7 +501,7 @@ class Animal():
                 ["Diseased", "Poison", "Bleed", "Bioelectric", "Concealing Mist", "Ranged"])
             exoticWeaponRolls = 0
 
-        if exoticWeaponRolls > 0 and "Carrion-Eater" in self.behaviors:
+        if exoticWeaponRolls > 0 and behavior.CarrionEater in self.behaviors:
             self.exoticWeapons.add("Diseased")
 
         while exoticWeaponRolls > len(self.exoticWeapons):
@@ -848,63 +816,63 @@ class Animal():
         elif self.diet == "Herbivore":
             self.initiative -= 1
 
-        if "Filter" in self.behaviors:
+        if behavior.Filter in self.behaviors:
             self.initiative -= 4
 
-        if "Intermittent" in self.behaviors:
+        if behavior.Intermittent in self.behaviors:
             self.initiative -= 2
 
-        if "Reducer" in self.behaviors:
+        if behavior.Reducer in self.behaviors:
             self.initiative -= 2
 
-        if "Grazer" in self.behaviors:
+        if behavior.Grazer in self.behaviors:
             self.initiative -= 1
 
-        if "Carrion-Eater" in self.behaviors:
+        if behavior.CarrionEater in self.behaviors:
             self.initiative -= 1
 
-        if "Hunter" in self.behaviors:
+        if behavior.Hunter in self.behaviors:
             self.initiative += 1
 
-        if "Hijacker" in self.behaviors:
+        if behavior.Hijacker in self.behaviors:
             self.initiative += 1
 
-        if "Eater" in self.behaviors:
+        if behavior.Eater in self.behaviors:
             self.initiative += 1
 
-        if "Chaser" in self.behaviors:
+        if behavior.Chaser in self.behaviors:
             self.initiative += 2
 
-        if "Trapper" in self.behaviors:
+        if behavior.Trapper in self.behaviors:
             self.initiative += 2
 
-        if "Killer" in self.behaviors:
+        if behavior.Killer in self.behaviors:
             self.initiative += 2
 
-        if "Pouncer" in self.behaviors:
+        if behavior.Pouncer in self.behaviors:
             self.initiative += 3
 
-        if self.terrain == "Rainforest":
+        if self.terrain == terrain.Rainforest:
             self.initiative -= 2
-        elif self.terrain == "Deep Ocean":
+        elif self.terrain == terrain.DeepOcean:
             self.initiative -= 2
-        elif self.terrain == "Forest":
+        elif self.terrain == terrain.Forest:
             self.initiative -= 1
-        elif self.terrain == "Jungle":
+        elif self.terrain == terrain.Jungle:
             self.initiative -= 1
-        elif self.terrain == "Beach/Shore":
+        elif self.terrain == terrain.BeachShore:
             self.initiative += 1
-        elif self.terrain == "Riverbank":
+        elif self.terrain == terrain.Riverbank:
             self.initiative += 1
-        elif self.terrain == "Hills":
+        elif self.terrain == terrain.Hills:
             self.initiative += 2
-        elif self.terrain == "Swamp/Marsh":
+        elif self.terrain == terrain.SwampMarsh:
             self.initiative += 2
-        elif self.terrain == "Shallow Ocean":
+        elif self.terrain == terrain.ShallowOcean:
             self.initiative += 2
-        elif self.terrain == "Clear":
+        elif self.terrain == terrain.Clear:
             self.initiative += 3
-        elif self.terrain == "Plains":
+        elif self.terrain == terrain.Plains:
             self.initiative += 3
         elif self.terrain == "Mountain":
             self.initiative += 3
@@ -914,49 +882,49 @@ class Animal():
         Sets the thresholds or conditions needed for the animal to
         flee and attack.
         """
-        if "Filter" in self.behaviors:
+        if behavior.Filter in self.behaviors:
             self.attackTrigger = "10+"
             self.fleeTrigger = "5-"
-        elif "Intermittent" in self.behaviors:
+        elif behavior.Intermittent in self.behaviors:
             self.attackTrigger = "10+"
             self.fleeTrigger = "4-"
-        elif "Grazer" in self.behaviors:
+        elif behavior.Grazer in self.behaviors:
             self.attackTrigger = "8+"
             self.fleeTrigger = "6-"
-        elif "Gatherer" in self.behaviors:
+        elif behavior.Gatherer in self.behaviors:
             self.attackTrigger = "9+"
             self.fleeTrigger = "7-"
-        elif "Hunter" in self.behaviors:
+        elif behavior.Hunter in self.behaviors:
             self.attackTrigger = "If the Hunter is heavier than at least one foe, it attacks on a 6+. Otherwise, it attacks on a 10+."
             self.fleeTrigger = "5-"
-        elif "Eater" in self.behaviors:
+        elif behavior.Eater in self.behaviors:
             self.attackTrigger = "5+"
             self.fleeTrigger = "4-"
-        elif "Pouncer" in self.behaviors:
+        elif behavior.Pouncer in self.behaviors:
             self.attackTrigger = "If the Pouncer has surprise, it attacks."
             self.fleeTrigger = "If the Pouncer is surprised, it flees. If it cannot flee, it attacks."
-        elif "Chaser" in self.behaviors:
+        elif behavior.Chaser in self.behaviors:
             self.attackTrigger = "If the Chasers outnumber the foes, they attack."
             self.fleeTrigger = "5-"
-        elif "Trapper" in self.behaviors:
+        elif behavior.Trapper in self.behaviors:
             self.attackTrigger = "If the Trapper has surprise, it attacks."
             self.fleeTrigger = "5-"
-        elif "Siren" in self.behaviors:
+        elif behavior.Siren in self.behaviors:
             self.attackTrigger = "If the Siren has surprise, it attacks."
             self.fleeTrigger = "4-"
-        elif "Killer" in self.behaviors:
+        elif behavior.Killer in self.behaviors:
             self.attackTrigger = "6+"
             self.fleeTrigger = "3-"
-        elif "Hijacker" in self.behaviors:
+        elif behavior.Hijacker in self.behaviors:
             self.attackTrigger = "7+"
             self.fleeTrigger = "6-"
-        elif "Intimidator" in self.behaviors:
+        elif behavior.Intimidator in self.behaviors:
             self.attackTrigger = "8+"
             self.fleeTrigger = "7-"
-        elif "Carrion-Eater" in self.behaviors:
+        elif behavior.CarrionEater in self.behaviors:
             self.attackTrigger = "11+"
             self.fleeTrigger = "7-"
-        elif "Reducer" in self.behaviors:
+        elif behavior.Reducer in self.behaviors:
             self.attackTrigger = "10+"
             self.fleeTrigger = "7-"
 
@@ -1082,7 +1050,7 @@ class Amphibian(Animal):
                 quirk7 = True
                 self.quirks.append(
                     "These amphibians emit a natural pheromone that other animals find highly attractive.")
-                self.behaviors.add("Siren")
+                self.behaviors.add(behavior.Siren)
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append(
@@ -1161,63 +1129,63 @@ class Amphibian(Animal):
         behaviorRoll = roll_xdy(1, 6)
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Trapper")
+                self.behaviors.add(behavior.Trapper)
                 self.reactionModifier -= 2
             elif behaviorRoll == 3:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 2
             elif behaviorRoll == 4:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
             else:
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
                 self.reactionModifier -= 2
         elif self.diet == "Herbivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
             elif behaviorRoll == 3:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 2
             elif behaviorRoll == 4:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             else:
-                self.behaviors.add("Grazer")
+                self.behaviors.add(behavior.Grazer)
                 self.reactionModifier -= 2
         else:
             if behaviorRoll == 1:
-                self.behaviors.add("Carrion-Eater")
+                self.behaviors.add(behavior.CarrionEater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Gatherer")
+                self.behaviors.add(behavior.Gatherer)
                 self.reactionModifier -= 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 4:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
             elif behaviorRoll == 5:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 2
 
         self.behavior_effects()
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.size = self.sizeRoll + self.sizeRollModifier
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -1251,7 +1219,7 @@ class Aquatic(Animal):
         self.recon = 0
         self.survival = 0
 
-        self.primaryMovement = "Swim"
+        self.primaryMovement = movement.Swim
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
@@ -1338,7 +1306,7 @@ class Aquatic(Animal):
                 quirk4 = True
                 self.quirks.append(
                     "Posseses a frail physique and has the ability to engage in extremely swift movement.")
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
                 self.armor = 0
             if quirkRoll == 5 and not quirk5:
                 quirk5 = True
@@ -1429,56 +1397,56 @@ class Aquatic(Animal):
         behaviorRoll = roll_xdy(1, 6)
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 2
             elif behaviorRoll == 3:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
                 self.reactionModifier -= 1
             elif behaviorRoll == 4:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
             elif behaviorRoll == 5:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
                 self.reactionModifier += 1
             else:
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
                 self.reactionModifier -= 2
         elif self.diet == "Herbivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
             elif behaviorRoll == 3:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
                 self.reactionModifier += 1
             elif behaviorRoll == 4:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             else:
-                self.behaviors.add("Grazer")
+                self.behaviors.add(behavior.Grazer)
                 self.reactionModifier -= 2
         else:
             if behaviorRoll == 1:
-                self.behaviors.add("Carrion-Eater")
+                self.behaviors.add(behavior.CarrionEater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
             elif behaviorRoll == 4:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier += 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 2
 
         self.behavior_effects()
@@ -1542,7 +1510,7 @@ class Avian(Animal):
         self.recon = 1
         self.survival = 0
 
-        self.primaryMovement = "Fly"
+        self.primaryMovement = movement.Fly
         evolutionRollModifier = 0
         physicalSkillRolls = 0
         socialSkillRolls = 0
@@ -1644,7 +1612,7 @@ class Avian(Animal):
                 quirk7 = True
                 self.quirks.append(
                     "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer.")
-                self.behaviors.add("Siren")
+                self.behaviors.add(behavior.Siren)
             if quirkRoll == 8:
                 self.quirks.append(
                     "Environmental pressures have forced this animal to adapt to a hostile environment.")
@@ -1654,7 +1622,7 @@ class Avian(Animal):
                 quirk9 = True
                 self.quirks.append(
                     "Not just ground bound, this flightless species thrives because of it.")
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
                 self.endurance += 1
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
@@ -1725,54 +1693,54 @@ class Avian(Animal):
         behaviorRoll = roll_xdy(1, 6)
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
             elif behaviorRoll == 3:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
             elif behaviorRoll == 4:
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
             elif behaviorRoll == 5:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
                 self.reactionModifier += 1
             else:
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
                 self.reactionModifier -= 2
         elif self.diet == "Herbivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Intimidator")
+                self.behaviors.add(behavior.Intimidator)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             elif behaviorRoll == 3:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             elif behaviorRoll == 4:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier += 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier += 2
             else:
-                self.behaviors.add("Grazer")
+                self.behaviors.add(behavior.Grazer)
                 self.reactionModifier -= 2
         else:
             if behaviorRoll == 1:
-                self.behaviors.add("Carrion-Eater")
+                self.behaviors.add(behavior.CarrionEater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
             elif behaviorRoll == 4:
-                self.behaviors.add("Intimidator")
+                self.behaviors.add(behavior.Intimidator)
                 self.reactionModifier += 1
             elif behaviorRoll == 5:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 2
 
         self.behavior_effects()
@@ -1794,7 +1762,7 @@ class Avian(Animal):
             else:
                 self.pack = self.pack * 2
         if quirk4 or quirk9:
-            self.primaryMovement = "Walk"
+            self.primaryMovement = movement.Walk
         if quirk11:
             self.numberEncountered = 2
 
@@ -1911,12 +1879,12 @@ class Fungal(Animal):
                 quirk4 = True
                 self.quirks.append(
                     "The Fungal can inflate itself with a light gas, allowing for a slow form of flight.")
-                self.primaryMovement = "Fly"
+                self.primaryMovement = movement.Fly
             if quirkRoll == 5 and not quirk5 and not quirk4 and not quirk11:
                 quirk5 = True
                 self.quirks.append(
                     "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
-                self.behaviors.add("Siren")
+                self.behaviors.add(behavior.Siren)
                 self.primaryMovement = "Stationary"
                 self.endurance += roll_xdy(1, 6)
             if quirkRoll == 6:
@@ -1931,7 +1899,7 @@ class Fungal(Animal):
                 quirk8 = True
                 self.quirks.append(
                     "The scent and outlandish appearance of this fungal terrifies other animals.")
-                self.behaviors.add("Hijacker")
+                self.behaviors.add(behavior.Hijacker)
             if quirkRoll == 9 and not quirk9:
                 quirk9 = True
                 self.quirks.append("Unfortunately for this fungal, its biological structure is extremely nutritious, capable of feeding even carnivores in its environment. When encountered, there is a 50% chance that a predator of another species is also in the area.")
@@ -1943,7 +1911,7 @@ class Fungal(Animal):
                 quirk11 = True
                 self.quirks.append(
                     "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts.")
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
                 self.dexterity += 2
             if quirkRoll == 12:
                 quirkRolls += 1
@@ -2008,53 +1976,53 @@ class Fungal(Animal):
             behaviorRoll = roll_xdy(1, 6)
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                     self.reactionModifier -= 2
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Siren")
+                    self.behaviors.add(behavior.Siren)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Siren")
+                    self.behaviors.add(behavior.Siren)
                     self.reactionModifier += 1
                 else:
-                    self.behaviors.add("Killer")
+                    self.behaviors.add(behavior.Killer)
             elif self.diet == "Herbivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier -= 2
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Grazer")
+                    self.behaviors.add(behavior.Grazer)
                     self.reactionModifier -= 1
                 else:
-                    self.behaviors.add("Grazer")
+                    self.behaviors.add(behavior.Grazer)
                     self.reactionModifier -= 2
             else:
                 if behaviorRoll == 1:
-                    self.behaviors.add("Carrion-Eater")
+                    self.behaviors.add(behavior.CarrionEater)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Carrion-Eater")
+                    self.behaviors.add(behavior.CarrionEater)
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Eater")
+                    self.behaviors.add(behavior.Eater)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Reducer")
+                    self.behaviors.add(behavior.Reducer)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Reducer")
+                    self.behaviors.add(behavior.Reducer)
                     self.reactionModifier -= 1
                 else:
-                    self.behaviors.add("Reducer")
+                    self.behaviors.add(behavior.Reducer)
                     self.reactionModifier -= 2
 
         if quirk2:
@@ -2187,11 +2155,11 @@ class Insect(Animal):
             if quirkRoll == 4:
                 self.quirks.append(
                     "This perk granted flying if the insect didn't have it, or takes it away to add strength.")
-                if self.primaryMovement == "Fly":
-                    self.primaryMovement = "Walk"
+                if self.primaryMovement == movement.Fly:
+                    self.primaryMovement = movement.Walk
                     self.strength += roll_xdy(1, 6)
                 else:
-                    self.primaryMovement = "Fly"
+                    self.primaryMovement = movement.Fly
                     if self.strength - 1 < 0:
                         self.strength = 0
                     else:
@@ -2207,10 +2175,10 @@ class Insect(Animal):
                 quirk6 = True
                 self.quirks.append(
                     "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus.")
-                if self.primaryMovement != "Fly":
-                    self.behaviors.add("Trapper")
+                if self.primaryMovement != movement.Fly:
+                    self.behaviors.add(behavior.Trapper)
                 else:
-                    self.behaviors.add("Pouncer")
+                    self.behaviors.add(behavior.Pouncer)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append("Acutely self-aware.")
@@ -2228,7 +2196,7 @@ class Insect(Animal):
             if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append("The insect can generate a hypnotic drone.")
-                self.behaviors.add("Siren")
+                self.behaviors.add(behavior.Siren)
             if quirkRoll == 12:
                 quirkRolls += 1
 
@@ -2293,52 +2261,52 @@ class Insect(Animal):
         behaviorRoll = roll_xdy(1, 6)
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
             elif behaviorRoll == 2:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier += 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier += 2
             elif behaviorRoll == 4:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
             elif behaviorRoll == 5:
-                self.behaviors.add("Trapper")
+                self.behaviors.add(behavior.Trapper)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
         elif self.diet == "Herbivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 2
             elif behaviorRoll == 2:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Filter")
+                self.behaviors.add(behavior.Filter)
             elif behaviorRoll == 4:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             elif behaviorRoll == 5:
-                self.behaviors.add("Grazer")
+                self.behaviors.add(behavior.Grazer)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Gatherer")
+                self.behaviors.add(behavior.Gatherer)
         else:
             if behaviorRoll == 1:
-                self.behaviors.add("Carrion-Eater")
+                self.behaviors.add(behavior.CarrionEater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
             elif behaviorRoll == 3:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier += 2
             elif behaviorRoll == 4:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
             elif behaviorRoll == 5:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
                 self.reactionModifier -= 2
 
         self.behavior_effects()
@@ -2468,7 +2436,7 @@ class Mammal(Animal):
                 quirk2 = True
                 self.quirks.append(
                     "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment.")
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
             if quirkRoll == 3:
                 quirk3 += 1
                 self.quirks.append("Extremely swift.")
@@ -2497,16 +2465,16 @@ class Mammal(Animal):
             if quirkRoll == 9:
                 self.quirks.append(
                     "Unusually vicious, these mammals are hostile to any species but their own.")
-                if "Killer" in self.behaviors:
+                if behavior.Killer in self.behaviors:
                     self.reactionModifier += 2
                     self.strength += 2
                 else:
-                    self.behaviors.add("Killer")
+                    self.behaviors.add(behavior.Killer)
             if quirkRoll == 10 and not quirk10:
                 quirk10 = True
                 self.quirks.append(
                     "Adapted to an aquatic environment even if they do not normally live near one.")
-                self.primaryMovement = "Swim"
+                self.primaryMovement = movement.Swim
             if quirkRoll == 11 and not quirk11:
                 quirk11 = True
                 self.quirks.append(
@@ -2577,93 +2545,93 @@ class Mammal(Animal):
         behaviorRoll = roll_xdy(1, 6)
         if self.diet == "Carnivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Pouncer")
+                self.behaviors.add(behavior.Pouncer)
             elif behaviorRoll == 2:
-                self.behaviors.add("Killer")
+                self.behaviors.add(behavior.Killer)
                 self.reactionModifier += 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Trapper")
+                self.behaviors.add(behavior.Trapper)
             elif behaviorRoll == 4:
-                self.behaviors.add("Chaser")
+                self.behaviors.add(behavior.Chaser)
             elif behaviorRoll == 5:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Hijacker")
+                self.behaviors.add(behavior.Hijacker)
         elif self.diet == "Herbivore":
             if behaviorRoll == 1:
-                self.behaviors.add("Eater")
+                self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 2
             elif behaviorRoll == 2:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
                 self.reactionModifier -= 1
             elif behaviorRoll == 3:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             elif behaviorRoll == 4:
-                self.behaviors.add("Intermittent")
+                self.behaviors.add(behavior.Intermittent)
             elif behaviorRoll == 5:
-                self.behaviors.add("Grazer")
+                self.behaviors.add(behavior.Grazer)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Gatherer")
+                self.behaviors.add(behavior.Gatherer)
         else:
             if behaviorRoll == 1:
-                self.behaviors.add("Carrion-Eater")
+                self.behaviors.add(behavior.CarrionEater)
                 self.reactionModifier -= 1
             elif behaviorRoll == 2:
-                self.behaviors.add("Gatherer")
+                self.behaviors.add(behavior.Gatherer)
             elif behaviorRoll == 3:
-                self.behaviors.add("Gatherer")
+                self.behaviors.add(behavior.Gatherer)
                 self.reactionModifier += 1
             elif behaviorRoll == 4:
-                self.behaviors.add("Hunter")
+                self.behaviors.add(behavior.Hunter)
             elif behaviorRoll == 5:
-                self.behaviors.add("Intimidator")
+                self.behaviors.add(behavior.Intimidator)
                 self.reactionModifier -= 1
             else:
-                self.behaviors.add("Reducer")
+                self.behaviors.add(behavior.Reducer)
 
         if extraBehaviorRoll:
             behaviorRoll = roll_xdy(1, 6)
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Pouncer")
+                    self.behaviors.add(behavior.Pouncer)
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Killer")
+                    self.behaviors.add(behavior.Killer)
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Trapper")
+                    self.behaviors.add(behavior.Trapper)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Chaser")
+                    self.behaviors.add(behavior.Chaser)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                 else:
-                    self.behaviors.add("Hijacker")
+                    self.behaviors.add(behavior.Hijacker)
             elif self.diet == "Herbivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Eater")
+                    self.behaviors.add(behavior.Eater)
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Grazer")
+                    self.behaviors.add(behavior.Grazer)
                 else:
-                    self.behaviors.add("Gatherer")
+                    self.behaviors.add(behavior.Gatherer)
             else:
                 if behaviorRoll == 1:
-                    self.behaviors.add("Carrion-Eater")
+                    self.behaviors.add(behavior.CarrionEater)
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Gatherer")
+                    self.behaviors.add(behavior.Gatherer)
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Gatherer")
+                    self.behaviors.add(behavior.Gatherer)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Intimidator")
+                    self.behaviors.add(behavior.Intimidator)
                 else:
-                    self.behaviors.add("Reducer")
+                    self.behaviors.add(behavior.Reducer)
 
             self.reactionModifier = 0
 
@@ -2829,7 +2797,7 @@ class Reptile(Animal):
                 else:
                     self.diet = "Omnivore"
                     self.dietDescription = "These animals have an uncommon trait for their kind – a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
-                self.behaviors.add("Trapper")
+                self.behaviors.add(behavior.Trapper)
                 self.raise_skill_level("stealth", 1)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
@@ -2838,7 +2806,7 @@ class Reptile(Animal):
             if quirkRoll == 8 and not quirk8:
                 quirk8 = True
                 self.quirks.append("Capable of flying, these reptiles have adapted body structures that generate heat through wind friction, allowing them to stay warm during flight. They do not sleep, they never land intentionally and will die within 1d6 hours if grounded.")
-                self.primaryMovement = "Fly"
+                self.primaryMovement = movement.Fly
             if quirkRoll == 9:
                 quirk9 += 1
                 self.quirks.append(
@@ -2916,53 +2884,53 @@ class Reptile(Animal):
             behaviorRoll = roll_xdy(1, 6)
             if self.diet == "Carnivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Pouncer")
+                    self.behaviors.add(behavior.Pouncer)
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Killer")
+                    self.behaviors.add(behavior.Killer)
                     self.reactionModifier += 1
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Killer")
+                    self.behaviors.add(behavior.Killer)
                     self.reactionModifier += 2
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Intimidator")
+                    self.behaviors.add(behavior.Intimidator)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                     self.reactionModifier += 1
                 else:
-                    self.behaviors.add("Hijacker")
+                    self.behaviors.add(behavior.Hijacker)
             elif self.diet == "Herbivore":
                 if behaviorRoll == 1:
-                    self.behaviors.add("Gatherer")
+                    self.behaviors.add(behavior.Gatherer)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Intermittent")
+                    self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier += 1
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Grazer")
+                    self.behaviors.add(behavior.Grazer)
                     self.reactionModifier -= 1
                 else:
-                    self.behaviors.add("Grazer")
+                    self.behaviors.add(behavior.Grazer)
             else:
                 if behaviorRoll == 1:
-                    self.behaviors.add("Carrion-Eater")
+                    self.behaviors.add(behavior.CarrionEater)
                     self.reactionModifier -= 1
                 elif behaviorRoll == 2:
-                    self.behaviors.add("Gatherer")
+                    self.behaviors.add(behavior.Gatherer)
                 elif behaviorRoll == 3:
-                    self.behaviors.add("Hijacker")
+                    self.behaviors.add(behavior.Hijacker)
                     self.reactionModifier += 1
                 elif behaviorRoll == 4:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                 elif behaviorRoll == 5:
-                    self.behaviors.add("Hunter")
+                    self.behaviors.add(behavior.Hunter)
                     self.reactionModifier += 1
                 else:
-                    self.behaviors.add("Reducer")
+                    self.behaviors.add(behavior.Reducer)
 
         self.behavior_effects()
         self.set_size(self.sizeRoll, self.sizeRollModifier)
