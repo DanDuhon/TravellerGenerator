@@ -5,7 +5,7 @@ import animal
 import orbitalbody
 import namegenerator
 import globalstuff
-from globalstuff import roll_xdy, habitation, animalType
+from globalstuff import roll_xdy, coin_flip, habitation
 
 allAliens = []
 
@@ -340,8 +340,8 @@ def set_tech_level():
         # equation will always result in at least a 10.
         # This way there are intelligent species out there that are
         # not extinct but have also not developed the technology
-        # to colonize other planets (aside from generational colony ships).
-        if alien.name == "Terran" or roll_xdy(1, 2) == 2:
+        # to colonize other planets (aside from perhaps generational colony ships).
+        if alien.name == "Terran" or coin_flip():
             alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * globalstuff.maxTechLevel) + (
                 (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * globalstuff.maxTechLevel, 0))
             alien.currentTechLevel = alien.maxTechLevel - (globalstuff.maxTechLevel - 9)

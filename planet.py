@@ -1,55 +1,54 @@
-# import alien
-# import dwarfplanet
-# import terrestrialplanet
-# import helianplanet
-# import jovianplanet
-# from globalstuff import LookupTable, roll_xdy, starport
+import alien
+from globalstuff import LookupTable, roll_xdy, starport
 
 
-# acceptableAtmospheres = {
-#     0: [],
-#     1: [],
-#     2: [2, 4],
-#     3: [3, 5],
-#     4: [2, 4, 7],
-#     5: [3, 5, 6],
-#     6: [5, 6, 8],
-#     7: [4, 7, 9],
-#     8: [6, 8],
-#     9: [7, 9],
-#     10: [10],
-#     11: [11],
-#     12: [12],
-#     13: [13],
-#     14: [14]
-# }
+allPlanets = []
 
 
-# idealAtmospheres = {
-#     0: [],
-#     1: [],
-#     2: [2, 4],
-#     3: [3, 5],
-#     4: [4, 7],
-#     5: [5, 6],
-#     6: [6, 8],
-#     7: [7, 9],
-#     8: [8],
-#     9: [9],
-#     10: [10],
-#     11: [11],
-#     12: [12],
-#     13: [13],
-#     14: [14]
-# }
+acceptableAtmospheres = {
+    0: [],
+    1: [],
+    2: [2, 4],
+    3: [3, 5],
+    4: [2, 4, 7],
+    5: [3, 5, 6],
+    6: [5, 6, 8],
+    7: [4, 7, 9],
+    8: [6, 8],
+    9: [7, 9],
+    10: [10],
+    11: [11],
+    12: [12],
+    13: [13],
+    14: [14]
+}
 
 
-# starportTable = LookupTable((2, starport.X),
-#                             (4, starport.E),
-#                             (6, starport.D),
-#                             (8, starport.C),
-#                             (10, starport.B),
-#                             (100, starport.A))
+idealAtmospheres = {
+    0: [],
+    1: [],
+    2: [2, 4],
+    3: [3, 5],
+    4: [4, 7],
+    5: [5, 6],
+    6: [6, 8],
+    7: [7, 9],
+    8: [8],
+    9: [9],
+    10: [10],
+    11: [11],
+    12: [12],
+    13: [13],
+    14: [14]
+}
+
+
+starportTable = LookupTable((2, starport.X),
+                            (4, starport.E),
+                            (6, starport.D),
+                            (8, starport.C),
+                            (10, starport.B),
+                            (100, starport.A))
 
 
 # def create_planet(star, order, orbitType, roll):

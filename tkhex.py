@@ -4,11 +4,29 @@ import tkinter
 
 import systemhex
 import star
-import planet
+import orbitalbody
+from globalstuff import group
 
 # TODO: Max/Min Zoom
 # TODO: Zoom from mouse
 # TODO: Avoid double line drawing
+
+
+starLuminosity = {
+    star.luminosityClass.A_V: "A-V",
+    star.luminosityClass.D: "D",
+    star.luminosityClass.F_IV: "F-IV",
+    star.luminosityClass.F_V: "F-V",
+    star.luminosityClass.G_IV: "G-IV",
+    star.luminosityClass.G_V: "G-V",
+    star.luminosityClass.K_III: "K-III",
+    star.luminosityClass.K_IV: "K-IV",
+    star.luminosityClass.K_V: "K-V",
+    star.luminosityClass.L: "L",
+    star.luminosityClass.M_III: "M-III",
+    star.luminosityClass.M_V: "M-V",
+    star.luminosityClass.M_Ve: "M-Ve"
+}
 
 
 class Colors:
@@ -79,7 +97,7 @@ class SystemDisplay:
                                      background=Colors.background,
                                      width=600, height=600)
 
-        self.galaxy.grid(row=0, column=0, rowspan=5, sticky='nsew')
+        self.galaxy.grid(row=0, column=0, rowspan=6, sticky='nsew')
 
         self.galaxykeybindings()
 
@@ -96,23 +114,37 @@ class SystemDisplay:
                 width=400, height=200)
         self.system.grid(row=1, column=1, sticky='n')
 
+        # System Info Panel
+        self.systemInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
+        self.systemInfo.grid(row=1, column=2)
+
         # Star Label
         self.starlabel = tkinter.Label(tk, width=40, height=1)
         self.starlabel.grid(row=2, column=1)
 
         # Star Screen
         self.star = tkinter.Canvas(tk,
-                background='green',
+                background='black',
                 width=550, height=300)
         self.star.grid(row=3, column=1, sticky='n')
+
+        # Star Info Panel
+        self.starInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
+        self.starInfo.grid(row=3, column=2)
 
         # Planet Label
         self.planetlabel = tkinter.Label(tk, width=40, height=1, anchor="n")
         self.planetlabel.grid(row=4, column=1)
 
-        # Info Panel
-        self.info = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
-        self.info.grid(row=0, column=2, rowspan=5)
+        # Planet Screen
+        self.planet = tkinter.Canvas(tk,
+                background='black',
+                width=550, height=300)
+        self.planet.grid(row=5, column=1, sticky='n')
+
+        # Planet Info Panel
+        self.planetInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
+        self.planetInfo.grid(row=5, column=2)
 
         tk.mainloop()
 
@@ -121,7 +153,7 @@ class SystemDisplay:
             displayInfo = ["coordinates", "name", "fuelUnrefinedAvailable", "fuelRefinedAvailable"]
         elif isinstance(object, star.Star):
             displayInfo = ["name", "spectralType", "luminosityClass"]
-        elif isinstance(object, planet.OrbitalBody):
+        elif isinstance(object, orbitalbody.OrbitalBody):
             displayInfo = [
                 "name",
                 "orbitType",
@@ -170,12 +202,14 @@ class SystemDisplay:
                 continue
             if x[0] not in displayInfo:
                 continue
+            if not x[1]:
+                continue
             infotext.append(": ".join(str(i)[:200] for i in x))
 
-        if isinstance(object, planet.OrbitalBody):
+        if isinstance(object, orbitalbody.OrbitalBody) and object.satellites:
             infotext.append("Satellites: " + ",".join([(p.properName if p.properName else p.name) for p in object.satellites]))
 
-        self.info.config(text="\n".join(infotext))
+        return infotext
 
     def create_hexagon(self, system):
         """
@@ -224,7 +258,7 @@ class SystemDisplay:
             self.galaxy.create_oval(
                     centerx - osize, centery - osize,
                     centerx + osize, centery + osize,
-                    fill=Colors.luminosity[star.luminosityClass[0]][0],
+                    fill=Colors.luminosity[starLuminosity[star.luminosityClass][0]][0],
                     width=0, state="disabled")
 
         def clickhex_create(hexagon_id):
@@ -290,7 +324,7 @@ class SystemDisplay:
         text = "Name: {}\n".format(system.name)
         text += "Coordinates: {}\n".format((system.coordinates[0], system.coordinates[1]))
 
-        self.info.config(text=text)
+        self.systemInfo.config(text=text)
         self.systemlabel.config(text=system.name)
 
         def clicksystem_create(star):
@@ -303,15 +337,15 @@ class SystemDisplay:
         for i, star in enumerate(system.stars):
             star_id = self.system.create_oval(
                     x-size, 100+y-size, x+size, 100+y+size,
-                    fill=Colors.luminosity[star.luminosityClass[0]][0],
-                    outline=Colors.luminosity[star.luminosityClass[0]][1],
+                    fill=Colors.luminosity[starLuminosity[star.luminosityClass][0]][0],
+                    outline=Colors.luminosity[starLuminosity[star.luminosityClass][0]][1],
                     width=2, tags=str(i))
             self.starlist[star_id] = star
             self.system.tag_bind(star_id, '<Button-1>', clicksystem_create(star))
             x += 60
             y = -y
 
-        self.set_info(system)
+        self.systemInfo.config(text="\n".join(self.set_info(system)))
 
     def selectstar(self, selectedStar):
         self.clearstar()
@@ -335,8 +369,8 @@ class SystemDisplay:
         self.star.create_oval(
                 overhang - size, 100 - size / 2,
                 overhang, 150 + size / 2,
-                fill=Colors.luminosity[selectedStar.luminosityClass[0]][0],
-                outline=Colors.luminosity[selectedStar.luminosityClass[0]][1],
+                fill=Colors.luminosity[starLuminosity[selectedStar.luminosityClass][0]][0],
+                outline=Colors.luminosity[starLuminosity[selectedStar.luminosityClass][0]][1],
                 width = 10)
 
         numberOfOrbits = max([-2] + [p.order for p in selectedStar.planets]) + 2
@@ -345,7 +379,7 @@ class SystemDisplay:
                 overhang * (x * 1.3) - size, 100 - size / 2,
                 overhang * (x * 1.3), 150 + size / 2,
                 fill=None,
-                outline="black",
+                outline="white",
                 width=1
             )
 
@@ -355,15 +389,15 @@ class SystemDisplay:
             return clickstar
             
         for planet in selectedStar.planets:
-            if planet.groupName == "Asteroid Belt":
+            if planet.group == group.AsteroidBelt:
                 size = 5
-            elif planet.groupName == "Jovian":
+            elif planet.group == group.JovianPlanet:
                 size = 25
-            elif planet.groupName == "Helian":
+            elif planet.group == group.HelianPlanet:
                 size = 20
-            elif planet.groupName == "Terrestrial":
+            elif planet.group == group.TerrestrialPlanet:
                 size = 15
-            elif planet.groupName == "Dwarf":
+            elif planet.group == group.DwarfPlanet:
                 size = 10
 
             if isinstance(planet.parentObject, star.Star):
@@ -374,17 +408,17 @@ class SystemDisplay:
             if satelliteNum == 0:
                 x_center_mod = 38.5 + (planet.order / 2)
             elif satelliteNum == 1:
-                x_center_mod = 38.5 + (planet.order / 2)
+                x_center_mod = 37.5 + (planet.order / 2)
             elif satelliteNum == 2:
-                x_center_mod = 35.5 + (planet.order / 2)
+                x_center_mod = 35.0 + (planet.order / 2)
             elif satelliteNum == 3:
-                x_center_mod = 30.5 + (planet.order / 2)
+                x_center_mod = 30.0 + (planet.order / 2)
             elif satelliteNum == 4:
-                x_center_mod = 23.5 + (planet.order / 2)
+                x_center_mod = 23.0 + (planet.order / 2)
             elif satelliteNum == 5:
-                x_center_mod = 14.5 + (planet.order / 2)
+                x_center_mod = 14.0 + (planet.order / 2)
             elif satelliteNum == 6:
-                x_center_mod = 2.5 + (planet.order / 2)
+                x_center_mod = 2.0 + (planet.order / 2)
 
             row, column = satelliteNum, planet.order
             x_center = (38.5 * column) + x_center_mod
@@ -395,7 +429,7 @@ class SystemDisplay:
                     fill=Colors.planet)
             self.star.tag_bind(planet_id, '<Button-1>', clickstar_create(planet))
 
-        self.set_info(selectedStar)
+        self.starInfo.config(text="\n".join(self.set_info(selectedStar)))
 
     def selectplanet(self, planet):
         for id in self.planet_selectmarks:
@@ -436,7 +470,7 @@ class SystemDisplay:
                     fill="white", width=2)
             self.planet_selectmarks.append(selectionmark_id)
 
-        self.set_info(planet)
+        self.planetInfo.config(text="\n".join(self.set_info(planet)))
         self.planetlabel.config(text=planet.name)
 
     def clearsystem(self):

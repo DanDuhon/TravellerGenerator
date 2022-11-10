@@ -1,9 +1,8 @@
-import animal
-import globalstuff
+from animal import create_amphibian, create_aquatic, create_avian, create_fungal, create_insect, create_mammal, create_reptile
 from globalstuff import roll_xdy, coin_flip, group, luminosityClass
 from globalstuff import category, className, type, chemistry, orbitType
 from globalstuff import LookupTable, starport, terrain, animalClass
-from globalstuff import habitation, tradeCode
+from globalstuff import habitation, tradeCode, maxTechLevel
 
 
 chemistryArean = LookupTable(
@@ -167,7 +166,7 @@ def create_dwarf_planet(star, parentObject, order, orbitType):
             # If this planet is a companion to another dwarf planet
             # but that dwarf planet is part of an asteroid belt
             or (parentObject.group == group.DwarfPlanet
-                and parentObject.parentObject.group == group.AsteroidBelt))):
+                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.AsteroidBelt))):
         roll -= 2
 
     if orbitType == orbitType.Epistellar:
@@ -180,7 +179,7 @@ def create_dwarf_planet(star, parentObject, order, orbitType):
             # If this planet is a companion to another dwarf planet
             # but that dwarf planet is orbiting a helian planet
             or (parentObject.group == group.DwarfPlanet
-                and parentObject.parentObject.group == group.HelianPlanet))):
+                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.HelianPlanet))):
         roll += 1
     # If this planet is orbiting a jovian planet
     elif (star != parentObject
@@ -188,7 +187,7 @@ def create_dwarf_planet(star, parentObject, order, orbitType):
             # If this planet is a companion to another dwarf planet
             # but that dwarf planet is orbiting a jovian planet
             or (parentObject.group == group.DwarfPlanet
-                and parentObject.parentObject.group == group.JovianPlanet))):
+                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.JovianPlanet))):
         roll += 2
 
     if orbitType == orbitType.InnerZone:
@@ -484,19 +483,19 @@ class OrbitalBody():
         if planetGroupToCreate == group.DwarfPlanet:
             create_dwarf_planet(
                 self.star,
-                self.parentObject,
+                self,
                 self.order,
                 self.orbitType)
         elif planetGroupToCreate == group.TerrestrialPlanet:
             create_terrestrial_planet(
                 self.star,
-                self.parentObject,
+                self,
                 self.order,
                 self.orbitType)
         elif planetGroupToCreate == group.HelianPlanet:
             create_helian_planet(
                 self.star,
-                self.parentObject,
+                self,
                 self.order,
                 self.orbitType)
 
@@ -528,7 +527,7 @@ class OrbitalBody():
         homeSystem = alien.homePlanet.systemHex == self.systemHex
         hab = None
 
-        if not self.alien or not self.alien.extinct:
+        if not self.homeAlien or not self.homeAlien.extinct:
             if alien.currentTechLevel >= 10 or (alien.currentTechLevel == 9 and homeSystem):
                 if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
                     hab = habitation.Colony
@@ -816,7 +815,7 @@ class OrbitalBody():
             if tradeCode.Hi in self.tradeCodes:
                 self.tradeCodes.discard(tradeCode.Hi)
         
-        if self.industry >= globalstuff.maxTechLevel - 3:
+        if self.industry >= maxTechLevel - 3:
             if tradeCode.Ht not in self.tradeCodes:
                 self.tradeCodes.add(tradeCode.Ht)
         else:
@@ -978,8 +977,12 @@ class AsteroidBelt(OrbitalBody):
         super().__init__(star, parentObject, order, orbitType)
         self.group = group.AsteroidBelt
         self.category = category.AsteroidBelt
+        self.homeAlien = None
+        self.terraformingAlien = None
         self.atmosphere = 0
         self.hydrosphere = 0
+        self.subsurfaceOceans = None
+        self.chemistry = None
         self.biosphere = 0
         self.baseDesirability = roll_xdy(1, 6) - roll_xdy(1, 6)
 
@@ -1011,7 +1014,7 @@ class AsteroidBelt(OrbitalBody):
             self.systemHex.set_distance_from_homeworld(alien)
 
         modifiedDistance = int(round(
-            self.systemHex.distanceFromAlienHomeSystem[alien]  (
+            self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
             0)) - (1 if nearbyColony else 0)
@@ -1024,8 +1027,8 @@ class AsteroidBelt(OrbitalBody):
         if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
-        colonyInSystem = any(p.groupName not in [group.Jovian, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
-        outpostInSystem = any(p.groupName not in [group.Jovian, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
+        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
+        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
 
         if not colonyInSystem and not outpostInSystem:
             desirability -= 3
@@ -1062,7 +1065,9 @@ class Planet(OrbitalBody):
         self.type = None
         self.atmosphere = None
         self.hydrosphere = None
+        self.subsurfaceOceans = None
         self.biosphere = None
+        self.chemistry = None
         self.terrain = []
         self.animals = []
         self.ringSystem = False
@@ -1095,7 +1100,7 @@ class Planet(OrbitalBody):
             self.systemHex.set_distance_from_homeworld(alien)
 
         modifiedDistance = max([0, int(round(
-            self.systemHex.distanceFromAlienHomeSystem[alien]  (
+            self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
             0)) - (1 if nearbyColony else 0)])
@@ -1359,98 +1364,99 @@ class Planet(OrbitalBody):
         for t in self.terrain:
             if t == terrain.BeachShore:
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(self, t))
-                    self.animals.append(animal.Aquatic(self, t))
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
+                    self.animals.append(create_amphibian(self, t))
+                    self.animals.append(create_aquatic(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
             elif t == terrain.Clear:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
             elif t == terrain.DeepOcean:
                 for _ in range(3):
-                    self.animals.append(animal.Aquatic(self, t))
+                    self.animals.append(create_aquatic(self, t))
             elif t == terrain.Desert:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Forest:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Fungal(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_fungal(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
             elif t == terrain.Hills:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Jungle:
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(self, t))
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Fungal(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_amphibian(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_fungal(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Mountains:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
             elif t == terrain.OpenOcean:
                 for _ in range(3):
-                    self.animals.append(animal.Aquatic(self, t))
+                    self.animals.append(create_aquatic(self, t))
             elif t == terrain.Plains:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Rainforest:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Fungal(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_fungal(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Riverbank:
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(self, t))
-                    self.animals.append(animal.Aquatic(self, t))
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_amphibian(self, t))
+                    self.animals.append(create_aquatic(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.RoughBroken:
                 for _ in range(3):
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.ShallowOcean:
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(self, t))
-                    self.animals.append(animal.Aquatic(self, t))
-                    self.animals.append(animal.Avian(self, t))
+                    self.animals.append(create_amphibian(self, t))
+                    self.animals.append(create_aquatic(self, t))
+                    self.animals.append(create_avian(self, t))
             elif t == terrain.SwampMarsh:
                 for _ in range(3):
-                    self.animals.append(animal.Amphibian(self, t))
-                    self.animals.append(animal.Aquatic(self, t))
-                    self.animals.append(animal.Avian(self, t))
-                    self.animals.append(animal.Fungal(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Reptile(self, t))
+                    self.animals.append(create_amphibian(self, t))
+                    self.animals.append(create_aquatic(self, t))
+                    self.animals.append(create_avian(self, t))
+                    self.animals.append(create_fungal(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_reptile(self, t))
             elif t == terrain.Woods:
                 for _ in range(3):
-                    self.animals.append(animal.Fungal(self, t))
-                    self.animals.append(animal.Insect(self, t))
-                    self.animals.append(animal.Mammal(self, t))
+                    self.animals.append(create_fungal(self, t))
+                    self.animals.append(create_insect(self, t))
+                    self.animals.append(create_mammal(self, t))
 
 
 class DwarfPlanet(Planet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.size = roll_xdy(1, 6) - 1
+        self.group = group.DwarfPlanet
 
         if self.parentObject == self.star and roll_xdy(1, 6) == 6:
             self.create_satellite(group.DwarfPlanet)
@@ -1460,8 +1466,9 @@ class TerrestrialPlanet(Planet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.size = roll_xdy(1, 6) + 4
+        self.group = group.TerrestrialPlanet
 
-        if roll_xdy(1, 6) >= 5:
+        if self.parentObject == self.star and roll_xdy(1, 6) >= 5:
             self.create_satellite(group.DwarfPlanet)
 
 
@@ -1469,22 +1476,25 @@ class HelianPlanet(Planet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.size = min(14, roll_xdy(1, 6) + 9)
+        self.group = group.HelianPlanet
 
-        numOfSatellites = roll_xdy(1, 6) - 3
-        terrestrialSatellite = roll_xdy(1, 6) == 6
+        if self.parentObject == self.star:
+            numOfSatellites = roll_xdy(1, 6) - 3
+            terrestrialSatellite = roll_xdy(1, 6) == 6
 
-        if terrestrialSatellite and numOfSatellites > 0:
-            self.create_satellite(group.TerrestrialPlanet)
-            numOfSatellites -= 1
+            if terrestrialSatellite and numOfSatellites > 0:
+                self.create_satellite(group.TerrestrialPlanet)
+                numOfSatellites -= 1
 
-        for _ in range(numOfSatellites):
-            self.create_satellite(group.DwarfPlanet)
+            for _ in range(numOfSatellites):
+                self.create_satellite(group.DwarfPlanet)
 
 
 class JovianPlanet(Planet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.size = 16
+        self.group = group.JovianPlanet
         self.hydrosphere = 16
 
         numOfSatellites = roll_xdy(1, 6)
@@ -1523,7 +1533,7 @@ class JovianPlanet(Planet):
             self.systemHex.set_distance_from_homeworld(alien)
 
         modifiedDistance = int(round(
-            self.systemHex.distanceFromAlienHomeSystem[alien]  (
+            self.systemHex.distanceFromAlienHomeSystem[alien] / (
                 (1 if alien.currentTechLevel == 9 else (
                     alien.currentTechLevel - 9))),
             0)) - (1 if nearbyColony else 0)
@@ -1536,8 +1546,8 @@ class JovianPlanet(Planet):
         if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
-        colonyInSystem = any(p.groupName not in [group.Jovian, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
-        outpostInSystem = any(p.groupName not in [group.Jovian, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
+        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
+        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
 
         if not colonyInSystem and not outpostInSystem:
             desirability -= 3
@@ -2200,6 +2210,8 @@ class Tectonic(TerrestrialPlanet):
                 self.atmosphere = max(2, min(9, roll_xdy(2, 6) + self.size - 7))
             elif self.chemistry in [chemistry.Sulfur, chemistry.Chlorine]:
                 self.atmosphere = 11
+            else:
+                self.atmosphere = 10
         else:
             self.atmosphere = 10
         

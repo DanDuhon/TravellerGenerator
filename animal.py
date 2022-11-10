@@ -2,6 +2,9 @@ import namegenerator
 from globalstuff import roll_xdy, terrain, animalClass, movement, behavior
 
 
+allAnimals = []
+
+
 behaviorDescriptions = {behavior.CarrionEater: "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
                         behavior.Chaser: "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
                         behavior.Eater: "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
@@ -35,9 +38,7 @@ sizeModDict = {
 }
 
 
-def create_amphibian(
-        planet,
-        terrain):
+def create_amphibian(planet, terrain):
     """
     Creates an amphibian.
 
@@ -49,6 +50,90 @@ def create_amphibian(
     """
 
     return Amphibian(planet, terrain)
+
+
+def create_aquatic(planet, terrain):
+    """
+    Creates an aquatic.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Aquatic(planet, terrain)
+
+
+def create_avian(planet, terrain):
+    """
+    Creates an avian.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Avian(planet, terrain)
+
+
+def create_fungal(planet, terrain):
+    """
+    Creates an fungal.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Fungal(planet, terrain)
+
+
+def create_insect(planet, terrain):
+    """
+    Creates an insect.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Insect(planet, terrain)
+
+
+def create_mammal(planet, terrain):
+    """
+    Creates an mammal.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Mammal(planet, terrain)
+
+
+def create_reptile(planet, terrain):
+    """
+    Creates an reptile.
+
+    Required Parameters:
+        planet: Planet class instance
+            The planet this animal lives on.
+        terrain: String
+            The type of terrain this animal calls home.
+    """
+
+    return Reptile(planet, terrain)
 
 
 class Animal():
@@ -67,6 +152,7 @@ class Animal():
         # Animal naming disabled for now to increase testing speed.
         # Animal names should probably be done on demand anyway so you don't waste time
         # naming things that may never be seen.
+        allAnimals.append(self)
         self.name = None#namegenerator.animalNGrams.generate_name()
         self.planet = planet
         self.terrain = terrain
