@@ -7,9 +7,7 @@ import star
 import orbitalbody
 from globalstuff import group, orbitType
 
-# TODO: Max/Min Zoom
-# TODO: Zoom from mouse
-# TODO: Avoid double line drawing
+# TODO: Avoid double line drawing - not sure this is possible while using built-in methods
 
 
 planetDisplaySize = {
@@ -154,6 +152,11 @@ class SystemDisplay:
         self.planetInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
         self.planetInfo.grid(row=5, column=2)
 
+        self.zoomInLimit = 1000
+        self.zoomOutLimit = -2400
+        self.zoom = 0
+
+        tk.state('zoomed')
         tk.mainloop()
 
     def set_info(self, object):
@@ -300,12 +303,20 @@ class SystemDisplay:
 
     def galaxykeybindings(self):
         self.galaxy.bind("<MouseWheel>", self.do_zoom)
+        self.galaxy.bind("<Button->", self.do_zoom)
+        self.galaxy.bind("<Button-5>", self.do_zoom)
         self.galaxy.bind('<ButtonPress-1>', self.do_click)
         self.galaxy.bind("<B1-Motion>", self.do_drag)
 
     def do_zoom(self, event):
+        # Limit zoom out and in
+        if self.zoom + event.delta < self.zoomOutLimit or self.zoom + event.delta > self.zoomInLimit:
+            return
+        trueX = self.galaxy.canvasx(event.x)
+        trueY = self.galaxy.canvasy(event.y)
         factor = 1.001 ** event.delta
-        self.galaxy.scale(tkinter.ALL, event.x, event.y, factor, factor)
+        self.zoom += event.delta
+        self.galaxy.scale(tkinter.ALL, trueX, trueY, factor, factor)
 
     def do_click(self, event):
         self.galaxy.scan_mark(event.x, event.y)
