@@ -5,27 +5,35 @@ import tkinter
 import systemhex
 import star
 import orbitalbody
-from globalstuff import group
+from globalstuff import group, orbitType
 
 # TODO: Max/Min Zoom
 # TODO: Zoom from mouse
 # TODO: Avoid double line drawing
 
 
-starLuminosity = {
-    star.luminosityClass.A_V: "A-V",
-    star.luminosityClass.D: "D",
-    star.luminosityClass.F_IV: "F-IV",
-    star.luminosityClass.F_V: "F-V",
-    star.luminosityClass.G_IV: "G-IV",
-    star.luminosityClass.G_V: "G-V",
-    star.luminosityClass.K_III: "K-III",
-    star.luminosityClass.K_IV: "K-IV",
-    star.luminosityClass.K_V: "K-V",
-    star.luminosityClass.L: "L",
-    star.luminosityClass.M_III: "M-III",
-    star.luminosityClass.M_V: "M-V",
-    star.luminosityClass.M_Ve: "M-Ve"
+planetDisplaySize = {
+    group.AsteroidBelt: 5,
+    group.JovianPlanet: 25,
+    group.HelianPlanet: 20,
+    group.TerrestrialPlanet: 15,
+    group.DwarfPlanet: 10
+}
+
+planetDisplayOffset = {
+    0: 38.5,
+    1: 37.5,
+    2: 35.0,
+    3: 30.0,
+    4: 23.0,
+    5: 14.0,
+    6: 2.0
+}
+
+orbitRangeOffset = {
+    orbitType.Epistellar: 2,
+    orbitType.InnerZone: 4,
+    orbitType.OuterZone: 9
 }
 
 
@@ -157,7 +165,7 @@ class SystemDisplay:
             displayInfo = [
                 "name",
                 "orbitType",
-                "groupName",
+                "group",
                 "className",
                 "typeName",
                 "atmosphere",
@@ -258,7 +266,7 @@ class SystemDisplay:
             self.galaxy.create_oval(
                     centerx - osize, centery - osize,
                     centerx + osize, centery + osize,
-                    fill=Colors.luminosity[starLuminosity[star.luminosityClass][0]][0],
+                    fill=Colors.luminosity[star.luminosityClass.upper()[0]][0],
                     width=0, state="disabled")
 
         def clickhex_create(hexagon_id):
@@ -337,8 +345,8 @@ class SystemDisplay:
         for i, star in enumerate(system.stars):
             star_id = self.system.create_oval(
                     x-size, 100+y-size, x+size, 100+y+size,
-                    fill=Colors.luminosity[starLuminosity[star.luminosityClass][0]][0],
-                    outline=Colors.luminosity[starLuminosity[star.luminosityClass][0]][1],
+                    fill=Colors.luminosity[star.luminosityClass.upper()[0]][0],
+                    outline=Colors.luminosity[star.luminosityClass.upper()[0]][1],
                     width=2, tags=str(i))
             self.starlist[star_id] = star
             self.system.tag_bind(star_id, '<Button-1>', clicksystem_create(star))
@@ -346,6 +354,7 @@ class SystemDisplay:
             y = -y
 
         self.systemInfo.config(text="\n".join(self.set_info(system)))
+
 
     def selectstar(self, selectedStar):
         self.clearstar()
@@ -369,58 +378,43 @@ class SystemDisplay:
         self.star.create_oval(
                 overhang - size, 100 - size / 2,
                 overhang, 150 + size / 2,
-                fill=Colors.luminosity[starLuminosity[selectedStar.luminosityClass][0]][0],
-                outline=Colors.luminosity[starLuminosity[selectedStar.luminosityClass][0]][1],
+                fill=Colors.luminosity[selectedStar.luminosityClass.upper()[0]][0],
+                outline=Colors.luminosity[selectedStar.luminosityClass.upper()[0]][1],
                 width = 10)
-
-        numberOfOrbits = max([-2] + [p.order for p in selectedStar.planets]) + 2
-        for x in range(2, numberOfOrbits):
-            self.star.create_oval(
-                overhang * (x * 1.3) - size, 100 - size / 2,
-                overhang * (x * 1.3), 150 + size / 2,
-                fill=None,
-                outline="white",
-                width=1
-            )
+        
+        for orbit in [orbitType.Epistellar, orbitType.InnerZone, orbitType.OuterZone]:
+            for x in range(orbitRangeOffset[orbit], sum([1 for planet in selectedStar.planets if planet.orbitType == orbit and planet.parentObject == selectedStar]) + orbitRangeOffset[orbit]):
+                self.star.create_oval(
+                    overhang * (x * 1.3) - size, 100 - size / 2,
+                    overhang * (x * 1.3), 150 + size / 2,
+                    fill=None,
+                    outline="white",
+                    width=1
+                )
 
         def clickstar_create(planet):
             def clickstar(event):
-                self.selectplanet(planet)
+                self.selectplanet(planet, selectedStar)
             return clickstar
             
         for planet in selectedStar.planets:
-            if planet.group == group.AsteroidBelt:
-                size = 5
-            elif planet.group == group.JovianPlanet:
-                size = 25
-            elif planet.group == group.HelianPlanet:
-                size = 20
-            elif planet.group == group.TerrestrialPlanet:
-                size = 15
-            elif planet.group == group.DwarfPlanet:
-                size = 10
+            size = planetDisplaySize[planet.group]
 
             if isinstance(planet.parentObject, star.Star):
                 satelliteNum = 0
             else:
                 satelliteNum = int(planet.name[-1])
 
-            if satelliteNum == 0:
-                x_center_mod = 38.5 + (planet.order / 2)
-            elif satelliteNum == 1:
-                x_center_mod = 37.5 + (planet.order / 2)
-            elif satelliteNum == 2:
-                x_center_mod = 35.0 + (planet.order / 2)
-            elif satelliteNum == 3:
-                x_center_mod = 30.0 + (planet.order / 2)
-            elif satelliteNum == 4:
-                x_center_mod = 23.0 + (planet.order / 2)
-            elif satelliteNum == 5:
-                x_center_mod = 14.0 + (planet.order / 2)
-            elif satelliteNum == 6:
-                x_center_mod = 2.0 + (planet.order / 2)
+            if planet.orbitType == orbitType.Epistellar:
+                planetOrder = planet.order
+            elif planet.orbitType == orbitType.InnerZone:
+                planetOrder = planet.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
+            elif planet.orbitType == orbitType.OuterZone:
+                planetOrder = planet.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
 
-            row, column = satelliteNum, planet.order
+            x_center_mod = planetDisplayOffset[satelliteNum] + (planetOrder / 2)
+
+            row, column = satelliteNum, planetOrder
             x_center = (38.5 * column) + x_center_mod
             y_center = (11 * row) + 124 + (15 * satelliteNum)
             planet_id = self.star.create_oval(
@@ -431,7 +425,7 @@ class SystemDisplay:
 
         self.starInfo.config(text="\n".join(self.set_info(selectedStar)))
 
-    def selectplanet(self, planet):
+    def selectplanet(self, planet, selectedStar):
         for id in self.planet_selectmarks:
             self.star.delete(id)
         self.planet_selectmarks = []
@@ -441,22 +435,16 @@ class SystemDisplay:
         else:
             satelliteNum = int(planet.name[-1])
 
-        if satelliteNum == 0:
-            x_center_mod = 38 + (planet.order / 2)
-        elif satelliteNum == 1:
-            x_center_mod = 38 + (planet.order / 2)
-        elif satelliteNum == 2:
-            x_center_mod = 35 + (planet.order / 2)
-        elif satelliteNum == 3:
-            x_center_mod = 31 + (planet.order / 2)
-        elif satelliteNum == 4:
-            x_center_mod = 23 + (planet.order / 2)
-        elif satelliteNum == 5:
-            x_center_mod = 14 + (planet.order / 2)
-        elif satelliteNum == 6:
-            x_center_mod = 2 + (planet.order / 2)
+        if planet.orbitType == orbitType.Epistellar:
+            planetOrder = planet.order
+        elif planet.orbitType == orbitType.InnerZone:
+            planetOrder = planet.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
+        elif planet.orbitType == orbitType.OuterZone:
+            planetOrder = planet.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
 
-        row, column = satelliteNum, planet.order
+        x_center_mod = planetDisplayOffset[satelliteNum] + (planetOrder / 2)
+
+        row, column = satelliteNum, planetOrder
         x_center = (38.5 * column) + x_center_mod
         y_center = (11 * row) + 124 + (15 * satelliteNum)
         outer = 11
@@ -471,7 +459,7 @@ class SystemDisplay:
             self.planet_selectmarks.append(selectionmark_id)
 
         self.planetInfo.config(text="\n".join(self.set_info(planet)))
-        self.planetlabel.config(text=planet.name)
+        self.planetlabel.config(text=(planet.properName + "(" + planet.name + ")" if planet.properName else planet.name))
 
     def clearsystem(self):
         self.systemlabel.config(text="")

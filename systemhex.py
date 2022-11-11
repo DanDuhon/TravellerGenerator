@@ -1,7 +1,7 @@
 import star
 import namegenerator
 import globalstuff
-from globalstuff import roll_xdy, LookupTable
+from globalstuff import roll_xdy, coin_flip, LookupTable
 
 
 allSystems = []
@@ -101,9 +101,10 @@ class System():
             verticalCoord,
             openCluster):
         allSystems.append(self)
-        self.coordinates = (horizontalCoord,
-                            verticalCoord,
-                            -horizontalCoord - verticalCoord)
+        self.coordinates = (
+            horizontalCoord,
+            verticalCoord,
+            -horizontalCoord - verticalCoord)
         allCoordinates[self.coordinates] = self
         self.openCluster = openCluster
         self.age = roll_xdy(3, 6) - 3
@@ -125,7 +126,7 @@ class System():
             5: self.set_systems_at_range(5),
             6: self.set_systems_at_range(6)
             }
-        self.brownDwarf = roll_xdy(1, 2) == 1
+        self.brownDwarf = coin_flip()
 
 
     def set_number_of_stars(self):

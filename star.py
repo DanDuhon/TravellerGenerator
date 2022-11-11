@@ -50,10 +50,11 @@ luminosityClassDict = {
     spectralType.L: LookupTable((100, LookupTable((100, luminosityClass.L))))
 }
 
-companionOrbitTable = LookupTable((2, companionOrbit.Tight),
-                                  (4, companionOrbit.Close),
-                                  (5, companionOrbit.Moderate),
-                                  (6, companionOrbit.Distant))
+companionOrbitTable = LookupTable(
+    (2, companionOrbit.Tight),
+    (4, companionOrbit.Close),
+    (5, companionOrbit.Moderate),
+    (6, companionOrbit.Distant))
 
 
 def create_primary_star(systemHex):
@@ -142,9 +143,6 @@ class Star():
         self.systemHex = systemHex
         self.systemHex.stars.append(self)
         self.primary = primary
-        # The name of a star is the name of the system hex.
-        # If there is more than one star in a system, a roman numeral is
-        # appended.
         self.name = systemHex.name + num[len(systemHex.stars)]
         self.spectralTypeRoll = None
         self.spectralType = None

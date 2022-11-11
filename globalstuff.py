@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, StrEnum, auto
 from random import randint
 from bisect import bisect_left
 from collections.abc import Mapping
@@ -43,223 +43,223 @@ class LookupTable(Mapping):
         return self.max
 
 
-class spectralType(Enum):
-    A = 0
-    F = 1
-    G = 2
-    K = 3
-    M = 4
-    L = 5
+class spectralType(StrEnum):
+    A = auto()
+    F = auto()
+    G = auto()
+    K = auto()
+    M = auto()
+    L = auto()
 
-class luminosityClass(Enum):
-    A_V = 0
-    D = 1
-    F_IV = 2
-    F_V = 3
-    G_IV = 4
-    G_V = 5
-    K_III = 6
-    K_IV = 7
-    K_V = 8
-    L = 9
-    M_III = 10
-    M_V = 11
-    M_Ve = 12
+class luminosityClass(StrEnum):
+    A_V = auto()
+    D = auto()
+    F_IV = auto()
+    F_V = auto()
+    G_IV = auto()
+    G_V = auto()
+    K_III = auto()
+    K_IV = auto()
+    K_V = auto()
+    L = auto()
+    M_III = auto()
+    M_V = auto()
+    M_Ve = auto()
 
-class companionOrbit(Enum):
-    Tight = 0
-    Close = 1
-    Moderate = 2
-    Distant = 3
+class companionOrbit(StrEnum):
+    Tight = auto()
+    Close = auto()
+    Moderate = auto()
+    Distant = auto()
 
-class group(Enum):
-    AsteroidBelt = 0
-    DwarfPlanet = 1
-    TerrestrialPlanet = 2
-    HelianPlanet = 3
-    JovianPlanet = 4
+class group(StrEnum):
+    AsteroidBelt = "Asteroid Belt"
+    DwarfPlanet = "Dwarf Planet"
+    TerrestrialPlanet = "Terrestrial Planet"
+    HelianPlanet = "Helian Planet"
+    JovianPlanet = "Jovian Planet"
 
-class orbitType(Enum):
-    Epistellar = 0
-    InnerZone = 1
-    OuterZone = 2
+class orbitType(StrEnum):
+    Epistellar = auto()
+    InnerZone = auto()
+    OuterZone = auto()
 
-class chemistry(Enum):
-    Ammonia = 0
-    Chlorine = 1
-    Methane = 2
-    Sulfur = 3
-    Water = 4
+class chemistry(StrEnum):
+    Ammonia = auto()
+    Chlorine = auto()
+    Methane = auto()
+    Sulfur = auto()
+    Water = auto()
 
-class category(Enum):
-    Acheronian = 0
-    Arean = 1
-    Arid = 2
-    Asphodelian = 3
-    AsteroidBelt = 4
-    Chthonian = 5
-    Hebean = 6
-    Helian = 7
-    JaniLithic = 8
-    Jovian = 9
-    Meltball = 10
-    Oceanic = 11
-    Panthalassic = 12
-    Promethean = 13
-    Rockball = 14
-    Snowball = 15
-    Stygian = 16
-    Tectonic = 17
-    Telluric = 18
-    Vesperian = 19
+class category(StrEnum):
+    Acheronian = auto()
+    Arean = auto()
+    Arid = auto()
+    Asphodelian = auto()
+    AsteroidBelt = auto()
+    Chthonian = auto()
+    Hebean = auto()
+    Helian = auto()
+    JaniLithic = auto()
+    Jovian = auto()
+    Meltball = auto()
+    Oceanic = auto()
+    Panthalassic = auto()
+    Promethean = auto()
+    Rockball = auto()
+    Snowball = auto()
+    Stygian = auto()
+    Tectonic = auto()
+    Telluric = auto()
+    Vesperian = auto()
 
-class className(Enum):
-    Arid = 0
-    AsteroidBelt = 1
-    Chthonian = 2
-    DwarfJovian = 3
-    Epistellar = 4
-    GeoHelian = 5
-    Geocyclic = 6
-    Geopassive = 7
-    Geothermic = 8
-    Geotidal = 9
-    Jovian = 10
-    Oceanic = 11
-    Panthalassic = 12
-    Nebulous = 13
-    Tectonic = 14
-    Telluric = 15
+class className(StrEnum):
+    Arid = auto()
+    AsteroidBelt = "Asteroid Belt"
+    Chthonian = auto()
+    DwarfJovian = "Dwarf Jovian"
+    Epistellar = auto()
+    GeoHelian = "Geo-Helian"
+    Geocyclic = auto()
+    Geopassive = auto()
+    Geothermic = auto()
+    Geotidal = auto()
+    Jovian = auto()
+    Oceanic = auto()
+    Panthalassic = auto()
+    Nebulous = auto()
+    Tectonic = auto()
+    Telluric = auto()
 
-class type(Enum):
-    Acheronian = 0
-    Amunian = 1
-    Apollonian = 2
-    Arean = 3
-    Asimovian = 4
-    Asphodelian = 5
-    AsteroidBelt = 6
-    Atlan = 7
-    BathyAmunian = 8
-    BathyGaian = 9
-    BathyTartarian = 10
-    Brammian = 11
-    Burian = 12
-    Carbonian = 13
-    ChloriticGaian = 14
-    Cytherean = 15
-    Darwinian = 16
-    Erisian = 17
-    Ferrinian = 18
-    Gaian = 19
-    Gelidian = 20
-    Hebean = 21
-    Helian = 22
-    Hephaestian = 23
-    Idunnian = 24
-    JaniLithic = 25
-    Khonsonian = 26
-    Lithic = 27
-    Lokian = 28
-    Nunnic = 29
-    Pelagic = 30
-    Phaethonic = 31
-    Phosphorian = 32
-    Plutonian = 33
-    Promethean = 34
-    Saganian = 35
-    Sethian = 36
-    Stygian = 37
-    Tartarian = 38
-    Teathic = 39
-    ThioGaian = 40
-    Titanian = 41
-    Utgardian = 42
-    Vesperian = 43
+class type(StrEnum):
+    Acheronian = auto()
+    Amunian = auto()
+    Apollonian = auto()
+    Arean = auto()
+    Asimovian = auto()
+    Asphodelian = auto()
+    AsteroidBelt = auto()
+    Atlan = auto()
+    BathyAmunian = "Bathy-Amunian"
+    BathyGaian = "Bathy-Gaian"
+    BathyTartarian = "Bathy-Tartarian"
+    Brammian = auto()
+    Burian = auto()
+    Carbonian = auto()
+    ChloriticGaian = "Chloritic-Gaiain"
+    Cytherean = auto()
+    Darwinian = auto()
+    Erisian = auto()
+    Ferrinian = auto()
+    Gaian = auto()
+    Gelidian = auto()
+    Hebean = auto()
+    Helian = auto()
+    Hephaestian = auto()
+    Idunnian = auto()
+    JaniLithic = "Jani-Lithic"
+    Khonsonian = auto()
+    Lithic = auto()
+    Lokian = auto()
+    Nunnic = auto()
+    Pelagic = auto()
+    Phaethonic = auto()
+    Phosphorian = auto()
+    Plutonian = auto()
+    Promethean = auto()
+    Saganian = auto()
+    Sethian = auto()
+    Stygian = auto()
+    Tartarian = auto()
+    Teathic = auto()
+    ThioGaian = "Thio-Gaian"
+    Titanian = auto()
+    Utgardian = auto()
+    Vesperian = auto()
 
-class terrain(Enum):
-    BeachShore = 0
-    Clear = 1
-    DeepOcean = 2
-    Desert = 3
-    Forest = 4
-    Hills = 5
-    Jungle = 6
-    Mountains = 7
-    OpenOcean = 8
-    Plains = 9
-    Rainforest = 10
-    Riverbank = 11
-    RoughBroken = 12
-    ShallowOcean = 13
-    SwampMarsh = 14
-    Woods = 15
+class terrain(StrEnum):
+    BeachShore = "beach/shore"
+    Clear = auto()
+    DeepOcean = auto()
+    Desert = auto()
+    Forest = auto()
+    Hills = auto()
+    Jungle = auto()
+    Mountains = auto()
+    OpenOcean = "open ocean"
+    Plains = auto()
+    Rainforest = auto()
+    Riverbank = auto()
+    RoughBroken = auto()
+    ShallowOcean = "shallow ocean"
+    SwampMarsh = "swamp/marsh"
+    Woods = auto()
 
-class habitation(Enum):
-    Outpost = 0
-    Colony = 1
-    Homeworld = 2
+class habitation(StrEnum):
+    Outpost = auto()
+    Colony = auto()
+    Homeworld = auto()
 
-class starport(Enum):
-    X = 0
-    E = 1
-    D = 2
-    C = 3
-    B = 4
-    A = 5
+class starport(StrEnum):
+    X = auto()
+    E = auto()
+    D = auto()
+    C = auto()
+    B = auto()
+    A = auto()
 
-class tradeCode(Enum):
-    Ag = 0
-    As = 1
-    De = 2
-    Fl = 3
-    Ga = 4
-    Hi = 5
-    Ht = 6
-    Ic = 7
-    In = 8
-    Lo = 9
-    Lt = 10
-    Na = 11
-    Ni = 12
-    Po = 13
-    Ri = 14
-    St = 15
-    Wa = 16
-    Va = 17
-    Zo = 18
+class tradeCode(StrEnum):
+    Ag = auto()
+    As = auto()
+    De = auto()
+    Fl = auto()
+    Ga = auto()
+    Hi = auto()
+    Ht = auto()
+    Ic = auto()
+    In = auto()
+    Lo = auto()
+    Lt = auto()
+    Na = auto()
+    Ni = auto()
+    Po = auto()
+    Ri = auto()
+    St = auto()
+    Wa = auto()
+    Va = auto()
+    Zo = auto()
 
-class animalClass(Enum):
-    Amphibian = 0
-    Aquatic = 1
-    Avian = 2
-    Fungal = 3
-    Insect = 4
-    Mammal = 5
-    Reptile = 6
+class animalClass(StrEnum):
+    Amphibian = auto()
+    Aquatic = auto()
+    Avian = auto()
+    Fungal = auto()
+    Insect = auto()
+    Mammal = auto()
+    Reptile = auto()
 
-class movement(Enum):
-    Walk = 0
-    Burrow = 1
-    Swim = 2
-    Fly = 3
+class movement(StrEnum):
+    Walk = auto()
+    Burrow = auto()
+    Swim = auto()
+    Fly = auto()
 
-class behavior(Enum):
-    CarrionEater = 0
-    Chaser = 1
-    Eater = 2
-    Filter = 3
-    Gatherer = 4
-    Grazer = 5
-    Hunter = 6
-    Hijacker = 7
-    Intimidator = 8
-    Killer = 9
-    Intermittent = 10
-    Pouncer = 11
-    Reducer = 12
-    Siren = 13
-    Trapper = 14
+class behavior(StrEnum):
+    CarrionEater = "carrion eater"
+    Chaser = auto()
+    Eater = auto()
+    Filter = auto()
+    Gatherer = auto()
+    Grazer = auto()
+    Hunter = auto()
+    Hijacker = auto()
+    Intimidator = auto()
+    Killer = auto()
+    Intermittent = auto()
+    Pouncer = auto()
+    Reducer = auto()
+    Siren = auto()
+    Trapper = auto()
 
 
 weight = {
