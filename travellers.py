@@ -16,13 +16,13 @@ parser.add_argument(
 parser.add_argument(
     "-t",
     dest='techlevel',
-    default=10,
+    default=15,
     type=int,
     help="maximum tech level (default=15)")
 parser.add_argument(
     "-v",
     dest='validation',
-    default=False,
+    default=True,
     action='store_true',
     help="run validations")
 
@@ -35,4 +35,4 @@ sectorgenerator.sectorgen()
 if args.validation:
     validation.validation(args.techlevel)
     
-tkhex.SystemDisplay()
+#tkhex.SystemDisplay()

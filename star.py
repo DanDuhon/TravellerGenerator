@@ -37,7 +37,7 @@ luminosityClassDict = {
             (100, luminosityClass.M_III))),
         (100, LookupTable((100, luminosityClass.D)))),
     spectralType.G: LookupTable(
-        (6, LookupTable((100, luminosityClass.G_V))),
+        (11, LookupTable((100, luminosityClass.G_V))),
         (13, LookupTable(
             (3, luminosityClass.K_IV),
             (100, luminosityClass.M_III))),
@@ -119,7 +119,7 @@ class Star():
     the planets that orbit them.
 
     Required Parameters:
-        systemHex: SystemHex class instance
+        systemHex: System class instance
             The system in which the star is located.
 
     Optional Parameters:
@@ -157,10 +157,6 @@ class Star():
 
         self.set_expansion_affected_orbits()
         self.set_companion_orbits()
-        self.set_epistellar_orbits()
-        self.set_inner_zone_orbits()
-        self.set_outer_zone_orbits()
-
 
 
     def set_spectral_type_roll(self, primary=False, primarySpectralTypeRoll=None):
@@ -228,16 +224,14 @@ class Star():
 
         Value range is 0-2.
         """
-
-        if self.luminosityClass in [
-            luminosityClass.L,
-            luminosityClass.D,
-            luminosityClass.K_III,
-            luminosityClass.M_III
-            ] or self.primaryOrbit in [
-                companionOrbit.Close,
-                companionOrbit.Moderate
-                ]:
+        
+        if (self.primaryOrbit != companionOrbit.Distant
+            or self.luminosityClass in [
+                luminosityClass.L,
+                luminosityClass.D,
+                luminosityClass.K_III,
+                luminosityClass.M_III
+                ]):
             self.epistellarOrbits = 0
             return
             
@@ -255,11 +249,11 @@ class Star():
         Value range is 0-5.
         """
 
-        if self.primary and companionOrbit.Close in self.companionOrbits or self.primaryOrbit in [companionOrbit.Close, companionOrbit.Moderate]:
+        if companionOrbit.Close in self.companionOrbits or self.primaryOrbit != companionOrbit.Distant:
             self.innerZoneOrbits = 0
             return
-
-        self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == "L" else 6)) - 1 - (1 if self.luminosityClass == luminosityClass.M_V else 0)])
+        
+        self.innerZoneOrbits = max([0, roll_xdy(1, (3 if self.luminosityClass == luminosityClass.L else 6)) - 1 - (1 if self.luminosityClass == luminosityClass.M_V else 0)])
 
 
     def set_outer_zone_orbits(self):
@@ -271,8 +265,8 @@ class Star():
 
         Value range is 0-5.
         """
-
-        if self.primary and companionOrbit.Moderate in self.companionOrbits or self.primaryOrbit in [companionOrbit.Close, companionOrbit.Moderate]:
+        
+        if companionOrbit.Moderate in self.companionOrbits or self.primaryOrbit != companionOrbit.Distant:
             self.outerZoneOrbits = 0
             return
 
@@ -284,6 +278,10 @@ class Star():
         Creates orbital bodies orbiting this star.
         """
         
+        self.set_epistellar_orbits()
+        self.set_inner_zone_orbits()
+        self.set_outer_zone_orbits()
+
         for orbit in range(self.epistellarOrbits +
                 self.innerZoneOrbits +
                 self.outerZoneOrbits):

@@ -1,4 +1,5 @@
 import star
+import orbitalbody
 import namegenerator
 import globalstuff
 from globalstuff import roll_xdy, coin_flip, LookupTable
@@ -147,7 +148,6 @@ class System():
         Creates the stars in the system and sets the desirability penalty
         for having a flare star in the system, if there is one.
         """
-        
         self.create_primary_star_in_system()
         self.create_companion_stars_in_system()
         self.create_automatic_brown_dwarf()
@@ -222,7 +222,7 @@ class System():
         Creates the primary star in this system, if there is one.
         """
         
-        if self.numberOfStars > 0 - (1 if self.brownDwarf else 0):
+        if self.numberOfStars - (1 if self.brownDwarf else 0) > 0:
             star.create_primary_star(systemHex=self)
 
 

@@ -1,9 +1,12 @@
 from animal import create_amphibian, create_aquatic, create_avian, create_fungal, create_insect, create_mammal, create_reptile
+from alien import create_alien
 from globalstuff import roll_xdy, coin_flip, group, luminosityClass
 from globalstuff import category, className, type, chemistry, orbitType
 from globalstuff import LookupTable, starport, terrain, animalClass
-from globalstuff import habitation, tradeCode, maxTechLevel
+from globalstuff import habitation, tradeCode, maxTechLevel, alienSurvivalPercent
 
+
+allBodies = []
 
 chemistryArean = LookupTable(
     (4, (chemistry.Water, 0, className.Geocyclic, type.Arean)),
@@ -136,58 +139,45 @@ def create_orbital_body(star,
     else:
         create_planet(
             star,
+            star,
             order,
             orbitType,
-            roll)
+            roll=roll)
 
 
-def create_planet(star, order, orbitType, roll):
-    if roll <= 2:
-        create_dwarf_planet(star, star, order, orbitType)
-    elif roll <= 3:
-        create_terrestrial_planet(star, star, order, orbitType)
-    elif roll <= 4:
-        create_helian_planet(star, star, order, orbitType)
+def create_planet(star, parentObject, order, orbitType, roll=100, groupToCreate=None):
+    if not roll and not groupToCreate:
+        raise ValueError
+
+    if roll <= 2 or groupToCreate == group.DwarfPlanet:
+        create_dwarf_planet(star, parentObject, order, orbitType)
+    elif roll <= 3 or groupToCreate == group.TerrestrialPlanet:
+        create_terrestrial_planet(star, parentObject, order, orbitType)
+    elif roll <= 4 or groupToCreate == group.HelianPlanet:
+        create_helian_planet(star, parentObject, order, orbitType)
     else:
-        create_jovian_planet(star, star, order, orbitType)
+        create_jovian_planet(star, parentObject, order, orbitType)
 
 
 def create_dwarf_planet(star, parentObject, order, orbitType):
     if order <= star.expansionAffectedOrbits:
         Stygian(star, parentObject, order, orbitType)
-        return
         
     roll = roll_xdy(1, 6)
     roll2 = roll_xdy(1, 6)
 
     # If this planet is part of an asteroid belt
-    if (star != parentObject
-        and (parentObject.group == group.AsteroidBelt
-            # If this planet is a companion to another dwarf planet
-            # but that dwarf planet is part of an asteroid belt
-            or (parentObject.group == group.DwarfPlanet
-                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.AsteroidBelt))):
+    if (star != parentObject and parentObject.group == group.AsteroidBelt):
         roll -= 2
 
     if orbitType == orbitType.Epistellar:
         create_epistellar_dwarf_planet(star, parentObject, order, orbitType, roll, roll2)
-        return
         
     # If this planet is orbiting a helian planet
-    if (star != parentObject
-        and (parentObject.group == group.HelianPlanet
-            # If this planet is a companion to another dwarf planet
-            # but that dwarf planet is orbiting a helian planet
-            or (parentObject.group == group.DwarfPlanet
-                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.HelianPlanet))):
+    if (star != parentObject and parentObject.group == group.HelianPlanet):
         roll += 1
     # If this planet is orbiting a jovian planet
-    elif (star != parentObject
-        and (parentObject.group == group.JovianPlanet
-            # If this planet is a companion to another dwarf planet
-            # but that dwarf planet is orbiting a jovian planet
-            or (parentObject.group == group.DwarfPlanet
-                and isinstance(parentObject.parentObject, OrbitalBody) and parentObject.parentObject.group == group.JovianPlanet))):
+    elif (star != parentObject and parentObject.group == group.JovianPlanet):
         roll += 2
 
     if orbitType == orbitType.InnerZone:
@@ -199,7 +189,6 @@ def create_dwarf_planet(star, parentObject, order, orbitType):
 def create_terrestrial_planet(star, parentObject, order, orbitType):
     if order <= star.expansionAffectedOrbits:
         Acheronian(star, parentObject, order, orbitType)
-        return
         
     if orbitType == orbitType.Epistellar:
         create_epistellar_terrestrial_planet(star, parentObject, order, orbitType, roll_xdy(1, 6))
@@ -212,7 +201,6 @@ def create_terrestrial_planet(star, parentObject, order, orbitType):
 def create_helian_planet(star, parentObject, order, orbitType):
     if order <= star.expansionAffectedOrbits:
         Asphodelian(star, parentObject, order, orbitType)
-        return
         
     if orbitType == orbitType.Epistellar:
         create_epistellar_helian_planet(star, parentObject, order, orbitType, roll_xdy(1, 6))
@@ -225,7 +213,6 @@ def create_helian_planet(star, parentObject, order, orbitType):
 def create_jovian_planet(star, parentObject, order, orbitType):
     if order <= star.expansionAffectedOrbits:
         Chthonian(star, parentObject, order, orbitType)
-        return
         
     if orbitType == orbitType.Epistellar:
         create_epistellar_jovian_planet(star, parentObject, order, orbitType, roll_xdy(1, 6))
@@ -316,7 +303,7 @@ def create_epistellar_helian_planet(star, parentObject, order, orbitType, roll):
     if roll <= 5:
         Helian(star, parentObject, order, orbitType)
     else:
-        Panthalassic(star, parentObject, order, orbitType)
+        Asphodelian(star, parentObject, order, orbitType)
 
 
 def create_inner_zone_helian_planet(star, parentObject, order, orbitType, roll):
@@ -428,6 +415,7 @@ class OrbitalBody():
             parentObject,
             order,
             orbitType):
+        allBodies.append(self)
         self.systemHex = star.systemHex
         self.systemHex.planets.append(self)
         self.star = star
@@ -480,24 +468,12 @@ class OrbitalBody():
 
     
     def create_satellite(self, planetGroupToCreate):
-        if planetGroupToCreate == group.DwarfPlanet:
-            create_dwarf_planet(
-                self.star,
-                self,
-                self.order,
-                self.orbitType)
-        elif planetGroupToCreate == group.TerrestrialPlanet:
-            create_terrestrial_planet(
-                self.star,
-                self,
-                self.order,
-                self.orbitType)
-        elif planetGroupToCreate == group.HelianPlanet:
-            create_helian_planet(
-                self.star,
-                self,
-                self.order,
-                self.orbitType)
+        create_planet(
+            self.star,
+            self,
+            self.order,
+            self.orbitType,
+            groupToCreate=planetGroupToCreate)
 
     def calculate_habitation(
             self,
@@ -619,7 +595,7 @@ class OrbitalBody():
             popString = str(roll_xdy(1, 9))
 
             # This generates the rest of the population numbers (can use 0 here).
-            # Industry can affect population, see planet_industry_effects.
+            # Industry can affect population, see set_industry_effects.
             for _ in range(basePop + self.industryPopulationEffect + 1):
                 popString += str(roll_xdy(1, 10) - 1)
 
@@ -645,7 +621,7 @@ class OrbitalBody():
                 self.population = len(str(sum(populationRelative))) - 1
 
 
-    def planet_government(self):
+    def set_government(self):
         """
         Sets the government.
         """
@@ -740,8 +716,6 @@ class OrbitalBody():
         and also sets whether the planet has industrial pollution
         (does not apply to Asteroid Belts or Jovians).
         """
-
-        roll = roll_xdy(1, 2)
         
         if self.industry == 0:
             self.industryPopulationEffect = -1
@@ -751,17 +725,17 @@ class OrbitalBody():
             self.pollution = False
         elif 4 <= self.industry <= 9:
             self.industryPopulationEffect = 1
-            self.pollution = (True if self.group in [group.DwarfPlanet, group.TerrestrialPlanet, group.Helian] else False)
+            self.pollution = (True if self.group in [group.DwarfPlanet, group.TerrestrialPlanet, group.HelianPlanet] else False)
         elif self.industry >= 10:
             if coin_flip:
                 self.industryPopulationEffect = 1
                 self.pollution = False
             else:
                 self.industryPopulationEffect = 2
-                self.pollution = (True if self.group in [group.DwarfPlanet, group.TerrestrialPlanet, group.Helian] else False)
+                self.pollution = (True if self.group in [group.DwarfPlanet, group.TerrestrialPlanet, group.HelianPlanet] else False)
 
 
-    def planet_trade_codes(self):
+    def set_trade_codes(self):
         """
         Sets the trade codes.
         """
@@ -775,7 +749,7 @@ class OrbitalBody():
             if tradeCode.Ag in self.tradeCodes:
                 self.tradeCodes.discard(tradeCode.Ag)
         
-        if self.category == "Asteroid Belt":
+        if self.category == category.AsteroidBelt:
             if tradeCode.As not in self.tradeCodes:
                 self.tradeCodes.add(tradeCode.As)
         else:
@@ -977,6 +951,7 @@ class AsteroidBelt(OrbitalBody):
         super().__init__(star, parentObject, order, orbitType)
         self.group = group.AsteroidBelt
         self.category = category.AsteroidBelt
+        self.size = 25
         self.homeAlien = None
         self.terraformingAlien = None
         self.atmosphere = 0
@@ -1356,7 +1331,7 @@ class Planet(OrbitalBody):
         self.terrain = t
         
         
-    def planet_animals(self):
+    def add_animals(self):
         """
         Adds animals for each terrain.
         """
@@ -1561,40 +1536,20 @@ class Acheronian(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Acheronian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
         self.className = className.Telluric
         self.type = type.Acheronian
-
-
-    def set_atmosphere(self):
         self.atmosphere = 1
-        
-
-    def set_hydrosphere(self):
         self.hydrosphere = 0
-
-
-    def set_biosphere(self):
         self.biosphere = 0
+        self.set_terrain()
 
 
 class Arean(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Arean
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
+        
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.L:
             roll += 2
@@ -1608,19 +1563,16 @@ class Arean(DwarfPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         if roll_xdy(1, 6) - (2 if self.star.luminosityClass == luminosityClass.D else 0):
             self.atmosphere = 1
         else:
             self.atmosphere = 10
         
-
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = max(0, roll_xdy(2, 3) + self.size - 7 - (4 if self.atmosphere == 1 else 0))
 
-
-    def set_biosphere(self):
+        # Biosphere
         if self.systemHex.age >= 4 + self.ageModifier and self.atmosphere == 10:
             self.biosphere = max(0, roll_xdy(1, 6) + self.size - 2)
         elif self.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
@@ -1628,18 +1580,19 @@ class Arean(DwarfPlanet):
         else:
             self.biosphere = 0
 
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
+
 
 class Arid(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Arid
-        self.set_chemistry_age_modifier_class_type()
-        self.set_hydrosphere()
-        self.set_biosphere()
-        self.set_atmosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.L:
             roll += 5
@@ -1658,127 +1611,87 @@ class Arid(TerrestrialPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
-        if self.biosphere >= 3 and self.chemistry == chemistry.Water:
-            self.atmosphere = max(0, min(9, roll_xdy(2, 6) - 7 + self.size))
-        else:
-            self.atmosphere = 10
-        
-
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = roll_xdy(1, 3)
 
-
-    def set_biosphere(self):
+        # Biosphere
         if self.systemHex.age >= 4 + self.ageModifier:
-            self.biosphere = roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0)
+            self.biosphere = max([0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0)])
         elif self.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
             self.biosphere = roll_xdy(1, 3)
         else:
             self.biosphere = 0
+
+        # Atmosphere
+        if self.biosphere >= 3 and self.chemistry == chemistry.Water:
+            self.atmosphere = max(2, min(9, roll_xdy(2, 6) - 7 + self.size))
+        else:
+            self.atmosphere = 10
+
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
 
 
 class Asphodelian(HelianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Asphodelian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
         self.className = className.GeoHelian
         self.type = type.Asphodelian
-
-
-    def set_atmosphere(self):
         self.atmosphere = 1
-        
-
-    def set_hydrosphere(self):
         self.hydrosphere = 0
-
-
-    def set_biosphere(self):
         self.biosphere = 0
+        self.set_terrain()
 
 
 class Chthonian(JovianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Chthonian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
         self.className = className.Chthonian
-
-
-    def set_atmosphere(self):
         self.atmosphere = 1
-        
-
-    def set_hydrosphere(self):
         self.hydrosphere = 0
-
-
-    def set_biosphere(self):
         self.biosphere = 0
+        self.set_terrain()
 
 
 class Hebean(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Hebean
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         self.className = className.Geotidal
         self.type = (type.Hebean if coin_flip else type.Idunnian)
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         roll = roll_xdy(1, 6) + self.size - 6
         self.atmosphere = max(0, (10 if roll >= 2 else roll))
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = max(0, roll_xdy(2, 6) + self.size - 11)
 
-
-    def set_biosphere(self):
+        # Biosphere
         self.biosphere = 0
+
+        self.set_terrain()
 
 
 class Helian(HelianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Helian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         self.className = (className.GeoHelian if coin_flip else className.Nebulous)
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         self.atmosphere = 13
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         roll = roll_xdy(1, 6)
         if roll <= 2:
             self.hydrosphere = 0
@@ -1787,52 +1700,58 @@ class Helian(HelianPlanet):
         else:
             self.hydrosphere = 15
 
-
-    def set_biosphere(self):
+        # Biosphere
         self.biosphere = 0
+
+        self.set_terrain()
 
 
 class JaniLithic(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.JaniLithic
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         self.className = className.Epistellar
         self.type = type.JaniLithic
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         if coin_flip:
             self.atmosphere = 1
         else:
             self.atmosphere = 10
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = 0
 
-
-    def set_biosphere(self):
+        # Biosphere
         self.biosphere = 0
+
+        self.set_terrain()
 
 
 class Jovian(JovianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Jovian
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-        self.set_chemistry_age_modifier_class_type()
-        
+        # Atmosphere
+        self.atmosphere = 16
 
-    def set_chemistry_age_modifier_class_type(self):
+        # Hydrosphere
+        self.hydrosphere = 16
+
+        # Biosphere
+        if roll_xdy(1, 6) <= 5:
+            self.biosphere = 0
+        else:
+            if self.systemHex.age >= 7:
+                self.biosphere = roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0)
+            elif self.systemHex.age >= roll_xdy(1, 6):
+                self.biosphere = roll_xdy(1, 3)
+            else:
+                self.biosphere = 0
+
+        # Chemistry
         if self.biosphere > 0:
             roll = roll_xdy(1, 6)
             if self.star.luminosityClass == luminosityClass.L:
@@ -1852,68 +1771,37 @@ class Jovian(JovianPlanet):
             self.className = className.Jovian
 
 
-    def set_atmosphere(self):
-        self.atmosphere = 16
-        
-
-    def set_hydrosphere(self):
-        self.hydrosphere = 16
-
-
-    def set_biosphere(self):
-        if roll_xdy(1, 6) <= 5:
-            self.biosphere = 0
-        else:
-            if self.systemHex.age >= 7:
-                self.biosphere = roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0)
-            elif self.systemHex.age >= roll_xdy(1, 6):
-                self.biosphere = roll_xdy(1, 3)
-            else:
-                self.biosphere = 0
-
-
 class Meltball(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Meltball
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
-        r = chemistryMeltball[roll_xdy(1, 6)]
+        # Chemistry
+        r = chemistryMeltball[roll_xdy(1, 6)][roll_xdy(1, 6)]
         
         self.chemistry = r[0]
         self.ageModifier = r[1]
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         self.atmosphere = 1
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = 15
 
-
-    def set_biosphere(self):
+        # Biosphere
         self.biosphere = 0
+
+        self.set_terrain()
 
 
 class Oceanic(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Oceanic
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.K_V:
             roll += 2
@@ -1932,8 +1820,7 @@ class Oceanic(TerrestrialPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         if self.chemistry == chemistry.Water:
             roll = roll_xdy(2, 6)
             if self.star.luminosityClass == luminosityClass.K_V:
@@ -1955,32 +1842,34 @@ class Oceanic(TerrestrialPlanet):
                 self.atmosphere = 10
             else:
                 self.atmosphere = 12
-        
 
-    def set_hydrosphere(self):
-        self.hydrosphere = 11
-
-
-    def set_biosphere(self):
+        # Biosphere
         if self.systemHex.age >= 4 + self.ageModifier:
-            max(0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0))
+            self.biosphere = max(0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0))
         elif self.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
             self.biosphere = roll_xdy(1, 3)
         else:
             self.biosphere = 0
+
+        # Hydrosphere
+        self.hydrosphere = 11
+
+        if self.biosphere > 0:
+            self.subsurfaceOceans = True
+
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
 
 
 class Panthalassic(HelianPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Panthalassic
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.K_V:
             roll += 2
@@ -1996,16 +1885,13 @@ class Panthalassic(HelianPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         self.atmosphere = min(13, roll_xdy(1, 6) + 8)
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = 11
 
-
-    def set_biosphere(self):
+        # Biosphere
         if self.systemHex.age >= 4 + self.ageModifier:
             self.biosphere = roll_xdy(2, 6)
         elif self.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
@@ -2013,18 +1899,19 @@ class Panthalassic(HelianPlanet):
         else:
             self.biosphere = 0
 
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
+
 
 class Promethean(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Promethean
-        self.set_chemistry_age_modifier_class_type()
-        self.set_hydrosphere()
-        self.set_biosphere()
-        self.set_atmosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.L:
             roll += 2
@@ -2040,19 +1927,7 @@ class Promethean(DwarfPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
-        if self.biosphere >= 3 and self.chemistry == chemistry.Water:
-            self.atmosphere = max(2, min(9, roll_xdy(2, 6) + self.size - 7))
-        else:
-            self.atmosphere = 10
-        
-
-    def set_hydrosphere(self):
-        self.hydrosphere = roll_xdy(2, 6) - 2
-
-
-    def set_biosphere(self):
+        # Biosphere
         if self.systemHex.age >= 4 + self.ageModifier:
             self.biosphere = roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0)
         elif self.systemHex.age >= roll_xdy(1, 3) + self.ageModifier:
@@ -2060,18 +1935,28 @@ class Promethean(DwarfPlanet):
         else:
             self.biosphere = 0
 
+        # Atmosphere
+        if self.biosphere >= 3 and self.chemistry == chemistry.Water:
+            self.atmosphere = max(2, min(9, roll_xdy(2, 6) + self.size - 7))
+        else:
+            self.atmosphere = 10
+
+        # Hydrosphere
+        self.hydrosphere = roll_xdy(2, 6) - 2
+
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
+
 
 class Rockball(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Rockball
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         r = chemistryRockball[roll_xdy(1, 6)]
         
         self.chemistry = r[0]
@@ -2079,12 +1964,10 @@ class Rockball(DwarfPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         self.atmosphere = 0
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         roll = roll_xdy(2, 6)
         if self.star.luminosityClass == luminosityClass.L:
             roll += 1
@@ -2093,24 +1976,20 @@ class Rockball(DwarfPlanet):
         elif self.orbitType == orbitType.OuterZone:
             roll += 2
 
-        self.hydrosphere = max(0, roll_xdy(2, 6) + self.size - 11)
+        self.hydrosphere = max(0, roll + self.size - 11)
 
-
-    def set_biosphere(self):
+        # Biosphere
         self.biosphere = 0
+
+        self.set_terrain()
 
 
 class Snowball(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Snowball
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.L:
             roll += 2
@@ -2124,68 +2003,51 @@ class Snowball(DwarfPlanet):
         self.className = r[2]
         self.type = r[3]
 
-
-    def set_atmosphere(self):
+        # Atmosphere
         self.atmosphere = (0 if roll_xdy(1, 6) <= 4 else 1)
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         if coin_flip:
             self.hydrosphere = roll_xdy(2, 6) - 2
             self.subsurfaceOceans = True
         else:
             self.hydrosphere = 10
 
-
-    def set_biosphere(self):
+        # Biosphere
         if not self.subsurfaceOceans:
             self.biosphere = 0
-            return
-
-        if self.systemHex.age >= 6 + self.ageModifier:
+        elif self.systemHex.age >= 6 + self.ageModifier:
             self.biosphere = max(0, roll_xdy(1, 6) + self.size - 2)
         elif self.systemHex.age >= roll_xdy(1, 6):
             self.biosphere = max(0, roll_xdy(1, 6) - 3)
+        else:
+            self.biosphere = 0
+
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
 
 
 class Stygian(DwarfPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Stygian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
         self.className = className.Geopassive
         self.type = type.Stygian
-
-
-    def set_atmosphere(self):
         self.atmosphere = 0
-        
-
-    def set_hydrosphere(self):
         self.hydrosphere = 0
-
-
-    def set_biosphere(self):
         self.biosphere = 0
+        self.set_terrain()
 
 
 class Tectonic(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Tectonic
-        self.set_chemistry_age_modifier_class_type()
-        self.set_hydrosphere()
-        self.set_biosphere()
-        self.set_atmosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         roll = roll_xdy(1, 6)
         if self.star.luminosityClass == luminosityClass.K_V:
             roll += 2
@@ -2203,8 +2065,13 @@ class Tectonic(TerrestrialPlanet):
         self.className = r[2]
         self.type = r[3]
 
+        # Biosphere
+        if self.systemHex.age >= 4 + self.ageModifier:
+            self.biosphere = max(0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0))
+        else:
+            self.biosphere = 0
 
-    def set_atmosphere(self):
+        # Atmosphere
         if self.biosphere >= 3:
             if self.chemistry == chemistry.Water:
                 self.atmosphere = max(2, min(9, roll_xdy(2, 6) + self.size - 7))
@@ -2214,57 +2081,35 @@ class Tectonic(TerrestrialPlanet):
                 self.atmosphere = 10
         else:
             self.atmosphere = 10
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = roll_xdy(2, 6) - 2
 
-
-    def set_biosphere(self):
-        if self.systemHex.age >= 4 + self.ageModifier:
-            self.biosphere = max(0, roll_xdy(2, 6) - (3 if self.star.luminosityClass == luminosityClass.D else 0))
-        else:
-            self.biosphere = 0
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)
 
 
 class Telluric(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Telluric
-        self.set_chemistry_age_modifier_class_type()
-        self.set_atmosphere()
-        self.set_hydrosphere()
-        self.set_biosphere()
-
-
-    def set_chemistry_age_modifier_class_type(self):
         self.className = className.Telluric
         self.type = (type.Phosphorian if coin_flip else type.Cytherean)
-
-
-    def set_atmosphere(self):
         self.atmosphere = 12
-        
-
-    def set_hydrosphere(self):
         self.hydrosphere = (0 if roll_xdy(1, 6) <= 4 else 15)
-
-
-    def set_biosphere(self):
         self.biosphere = 0
+        self.set_terrain()
 
 
 class Vesperian(TerrestrialPlanet):
     def __init__(self, star, parentObject, order, orbitType):
         super().__init__(star, parentObject, order, orbitType)
         self.category = category.Vesperian
-        self.set_chemistry_age_modifier_class_type()
-        self.set_hydrosphere()
-        self.set_biosphere()
-        self.set_atmosphere()
 
-
-    def set_chemistry_age_modifier_class_type(self):
+        # Chemistry
         r = chemistryVesperian[roll_xdy(2, 6)]
         
         self.chemistry = r[0]
@@ -2272,8 +2117,15 @@ class Vesperian(TerrestrialPlanet):
         self.className = r[2]
         self.type = r[3]
 
+        # Biosphere
+        if self.systemHex.age >= 4:
+            self.biosphere = roll_xdy(2, 6)
+        elif self.systemHex.age >= roll_xdy(1, 3):
+            self.biosphere = roll_xdy(1, 3)
+        else:
+            self.biosphere = 0
 
-    def set_atmosphere(self):
+        # Atmosphere
         if self.biosphere >= 3:
             if self.chemistry == chemistry.Water:
                 self.atmosphere = max(2, min(9, roll_xdy(2, 6) + self.size - 7))
@@ -2281,16 +2133,12 @@ class Vesperian(TerrestrialPlanet):
                 self.atmosphere = 11
         else:
             self.atmosphere = 10
-        
 
-    def set_hydrosphere(self):
+        # Hydrosphere
         self.hydrosphere = roll_xdy(2, 6) - 2
 
-
-    def set_biosphere(self):
-        if self.systemHex.age >= 4:
-            self.biosphere = roll_xdy(2, 6)
-        elif self.systemHex.age >= roll_xdy(1, 3):
-            self.biosphere = roll_xdy(1, 3)
-        else:
-            self.biosphere = 0
+        self.set_terrain()
+        if self.biosphere > 8:
+            self.add_animals()
+        if self.biosphere > 11:
+            create_alien(self, alienSurvivalPercent)

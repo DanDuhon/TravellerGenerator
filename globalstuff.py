@@ -238,11 +238,17 @@ class animalClass(StrEnum):
     Mammal = auto()
     Reptile = auto()
 
+class diet(StrEnum):
+    Carnivore = auto()
+    Herbivore = auto()
+    Omnivore = auto()
+
 class movement(StrEnum):
     Walk = auto()
     Burrow = auto()
     Swim = auto()
     Fly = auto()
+    Stationary = auto()
 
 class behavior(StrEnum):
     CarrionEater = "carrion eater"
@@ -260,6 +266,36 @@ class behavior(StrEnum):
     Reducer = auto()
     Siren = auto()
     Trapper = auto()
+
+class weapon(StrEnum):
+    Teeth = auto()
+    Mandibles = auto()
+    Suckers = auto()
+    Horns = auto()
+    Antlers = auto()
+    Beak = auto()
+    Headbutt = auto()
+    Hooves = auto()
+    Stomp = auto()
+    BodySlam = auto()
+    Thrasher = auto()
+    Constriction = auto()
+    Trample = auto()
+    Claws = auto()
+    Fins = auto()
+    SharpScales = auto()
+    Talons = auto()
+    Stinger = auto()
+    DartingTongue = auto()
+    NoWeapon = auto()
+
+class exoticWeapon(StrEnum):
+    Diseased = auto()
+    Poison = auto()
+    Bleed = auto()
+    Bioelectric = auto()
+    ConcealingMist = auto()
+    Ranged = auto()
 
 
 weight = {

@@ -1,5 +1,5 @@
 import namegenerator
-from globalstuff import roll_xdy, terrain, animalClass, movement, behavior
+from globalstuff import roll_xdy, terrain, animalClass, movement, behavior, diet, weapon, exoticWeapon
 
 
 allAnimals = []
@@ -441,27 +441,17 @@ class Animal():
                 else:
                     self.pack -= 2
 
-    def set_size(self, sizeRoll, sizeRollModifier):
+    def set_size(self):
         """
         Sets the weight of the animal based on 2d6 and any modifiers
         to that dice roll.
-
-        Parameters:
-            sizeRoll: Integer
-                The result of a 2d6 roll.
-            sizeRollModifier: Integer
-                The sum of all roll modifiers to the size roll.
         """
         self.size = self.sizeRoll + self.sizeRollModifier
 
-    def set_strength(self, sizeRoll):
+    def set_strength(self):
         """
         Sets the strength of the animal based on the size roll
         and any strength modifiers the animal has already gotten.
-
-        Parameters:
-            sizeRoll: Integer
-                The result of the 2d6 roll for size.
         """
         if self.sizeRoll <= 1:
             self.strength += 1
@@ -494,14 +484,10 @@ class Animal():
         else:  # 15+
             self.strength += roll_xdy(9, 6)
 
-    def set_endurance(self, sizeRoll):
+    def set_endurance(self):
         """
         Sets the endurance of the animal based on the size roll
         and any endurance modifiers the animal has already gotten.
-
-        Parameters:
-            sizeRoll: Integer
-                The result of the 2d6 roll for size.
         """
         if self.sizeRoll <= 1:
             self.endurance += 1
@@ -534,14 +520,10 @@ class Animal():
         else:  # 15+
             self.endurance += roll_xdy(9, 6)
 
-    def set_dexterity(self, sizeRoll):
+    def set_dexterity(self):
         """
         Sets the dexterity of the animal based on the size roll
         and any dexterity modifiers the animal has already gotten.
-
-        Parameters:
-            sizeRoll: Integer
-                The result of the 2d6 roll for size.
         """
         if self.sizeRoll <= 1:
             self.dexterity += roll_xdy(1, 6)
@@ -584,26 +566,26 @@ class Animal():
         """
         if exoticWeaponRolls >= 6:
             self.exoticWeapons = set(
-                ["Diseased", "Poison", "Bleed", "Bioelectric", "Concealing Mist", "Ranged"])
+                [exoticWeapon.Diseased, exoticWeapon.Poison, exoticWeapon.Bleed, exoticWeapon.Bioelectric, exoticWeapon.ConcealingMist, exoticWeapon.Ranged])
             exoticWeaponRolls = 0
 
         if exoticWeaponRolls > 0 and behavior.CarrionEater in self.behaviors:
-            self.exoticWeapons.add("Diseased")
+            self.exoticWeapons.add(exoticWeapon.Diseased)
 
         while exoticWeaponRolls > len(self.exoticWeapons):
             roll = roll_xdy(1, 6)
             if roll == 1:
-                self.exoticWeapons.add("Diseased")
+                self.exoticWeapons.add(exoticWeapon.Diseased)
             elif roll == 2:
-                self.exoticWeapons.add("Poison")
+                self.exoticWeapons.add(exoticWeapon.Poison)
             elif roll == 3:
-                self.exoticWeapons.add("Bleed")
+                self.exoticWeapons.add(exoticWeapon.Bleed)
             elif roll == 4:
-                self.exoticWeapons.add("Bioelectric")
+                self.exoticWeapons.add(exoticWeapon.Bioelectric)
             elif roll == 5:
-                self.exoticWeapons.add("Concealing Mist")
+                self.exoticWeapons.add(exoticWeapon.ConcealingMist)
             else:
-                self.exoticWeapons.add("Ranged")
+                self.exoticWeapons.add(exoticWeapon.Ranged)
 
     def set_weapon_and_damage_modifier(self):
         """
@@ -614,11 +596,11 @@ class Animal():
         """
         roll = roll_xdy(2, 6)
         if len(self.exoticWeapons) == 0:
-            if self.diet == "Carnivore":
+            if self.diet == diet.Carnivore:
                 roll += 8
-            elif self.diet == "Herbivore":
+            elif self.diet == diet.Herbivore:
                 roll -= 6
-            elif self.diet == "Omnivore":
+            elif self.diet == diet.Omnivore:
                 roll += 4
 
         if (self.meleeNaturalWeapons == -3 and
@@ -635,195 +617,195 @@ class Animal():
         if roll == 2 or (roll < 2 and len(self.exoticWeapons) > 0):
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Teeth")
+                self.weapons.add(weapon.Teeth)
             elif roll2 == 2:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 3:
             roll2 = roll_xdy(1, 4)
             if roll2 == 1:
-                self.weapons.add("Horns")
+                self.weapons.add(weapon.Horns)
             elif roll2 == 2:
-                self.weapons.add("Antlers")
+                self.weapons.add(weapon.Antlers)
             elif roll2 == 3:
-                self.weapons.add("Beak")
+                self.weapons.add(weapon.Beak)
             else:
-                self.weapons.add("Headbutt")
+                self.weapons.add(weapon.Headbutt)
         elif roll == 4:
             roll2 = roll_xdy(1, 6)
             if roll2 == 1:
-                self.weapons.add("Hooves")
+                self.weapons.add(weapon.Hooves)
             if roll2 == 2:
-                self.weapons.add("Stomp")
+                self.weapons.add(weapon.Stomp)
             if roll2 == 3:
-                self.weapons.add("Body Slam")
+                self.weapons.add(weapon.BodySlam)
             if roll2 == 4:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 5:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             else:
-                self.weapons.add("Trample")
+                self.weapons.add(weapon.Trample)
         elif roll == 5:
             roll2 = roll_xdy(1, 8)
             if roll2 == 1:
-                self.weapons.add("Hooves")
+                self.weapons.add(weapon.Hooves)
             if roll2 == 2:
-                self.weapons.add("Stomp")
+                self.weapons.add(weapon.Stomp)
             if roll2 == 3:
-                self.weapons.add("Body Slam")
+                self.weapons.add(weapon.BodySlam)
             if roll2 == 4:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 5:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             if roll2 == 6:
-                self.weapons.add("Trample and Teeth")
+                self.weapons.update(set([weapon.Trample, weapon.Teeth]))
             if roll2 == 7:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 6:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Teeth")
+                self.weapons.add(weapon.Teeth)
             if roll2 == 2:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 7:
             roll2 = roll_xdy(1, 4)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             else:
-                self.weapons.add("Talons")
+                self.weapons.add(weapon.Talons)
         elif roll == 8:
             roll2 = roll_xdy(1, 2)
             if roll2 == 1:
-                self.weapons.add("Stinger")
+                self.weapons.add(weapon.Stinger)
             else:
-                self.weapons.add("Darting Tongue")
+                self.weapons.add(weapon.DartingTongue)
         elif roll == 9:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 2:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             else:
-                self.weapons.add("Trample")
+                self.weapons.add(weapon.Trample)
         elif roll == 10:
             roll2 = roll_xdy(1, 6)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             if roll2 == 4:
-                self.weapons.add("Talons and Teeth")
+                self.weapons.update(set([weapon.Talons, weapon.Teeth]))
             if roll2 == 5:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 11:
             roll2 = roll_xdy(1, 4)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             else:
-                self.weapons.add("Talons")
+                self.weapons.add(weapon.Talons)
         elif roll == 12:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Teeth")
+                self.weapons.add(weapon.Teeth)
             if roll2 == 2:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 13:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 2:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             else:
-                self.weapons.add("Trample")
+                self.weapons.add(weapon.Trample)
         elif roll == 14:
             roll2 = roll_xdy(1, 6)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             if roll2 == 4:
-                self.weapons.add("Talons and Teeth")
+                self.weapons.update(set([weapon.Talons, weapon.Teeth]))
             if roll2 == 5:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 15:
             roll2 = roll_xdy(1, 4)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             else:
-                self.weapons.add("Talons")
+                self.weapons.add(weapon.Talons)
         elif roll == 16:
             roll2 = roll_xdy(1, 2)
             if roll2 == 1:
-                self.weapons.add("Stinger")
+                self.weapons.add(weapon.Stinger)
             else:
-                self.weapons.add("Darting Tongue")
+                self.weapons.add(weapon.DartingTongue)
         elif roll == 17:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 2:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             else:
-                self.weapons.add("Trample")
+                self.weapons.add(weapon.Trample)
         elif roll == 18:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Teeth")
+                self.weapons.add(weapon.Teeth)
             if roll2 == 2:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 19:
             roll2 = roll_xdy(1, 6)
             if roll2 == 1:
-                self.weapons.add("Claws")
+                self.weapons.add(weapon.Claws)
             if roll2 == 2:
-                self.weapons.add("Fins")
+                self.weapons.add(weapon.Fins)
             if roll2 == 3:
-                self.weapons.add("Sharp Scales")
+                self.weapons.add(weapon.SharpScales)
             if roll2 == 4:
-                self.weapons.add("Talons and Teeth")
+                self.weapons.update(set([weapon.Talons, weapon.Teeth]))
             if roll2 == 5:
-                self.weapons.add("Mandibles")
+                self.weapons.add(weapon.Mandibles)
             else:
-                self.weapons.add("Suckers")
+                self.weapons.add(weapon.Suckers)
         elif roll == 20:
             roll2 = roll_xdy(1, 3)
             if roll2 == 1:
-                self.weapons.add("Thrasher")
+                self.weapons.add(weapon.Thrasher)
             if roll2 == 2:
-                self.weapons.add("Constriction")
+                self.weapons.add(weapon.Constriction)
             else:
-                self.weapons.add("Trample")
+                self.weapons.add(weapon.Trample)
         else:  # 1 or less
-            self.weapons.add("None")
+            self.weapons.add(weapon.NoWeapon)
 
     def set_weapon_damage(self):
         """
@@ -897,9 +879,9 @@ class Animal():
         Modifies the initiative of the animal based on diet,
         behaviors, and terrain.
         """
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             self.initiative += 1
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             self.initiative -= 1
 
         if behavior.Filter in self.behaviors:
@@ -960,7 +942,7 @@ class Animal():
             self.initiative += 3
         elif self.terrain == terrain.Plains:
             self.initiative += 3
-        elif self.terrain == "Mountain":
+        elif self.terrain == terrain.Mountains:
             self.initiative += 3
 
     def set_reactions(self):
@@ -1029,7 +1011,7 @@ class Amphibian(Animal):
 
     def __init__(self, planet, terrain):
         super(Amphibian, self).__init__(planet, terrain)
-        self.animalClass = "Amphibian"
+        self.animalClass = animalClass.Amphibian
 
         # Skills this class innately has.
         self.athletics = 0
@@ -1041,25 +1023,25 @@ class Amphibian(Animal):
         socialSkillRolls = 0
         evolutionSkillRolls = 0
         quirkRolls = 0
-        exoticWeaponRolls = 0
+        self.exoticWeaponRolls = 0
 
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 2:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous amphibians usually feed off the young of other amphibious species or smaller aquatic life. Insects may also comprise a large part of their diet."
             self.strength += 1
             self.meleeNaturalWeapons = 0
             evolutionRollModifier += 1
             physicalSkillRolls += 1
         elif dietRoll == 3:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Rare among amphibians, these herbivores are most likely plankton and algae eaters, remaining close to water sources for their nutrition. Larger herbivorous amphibians may be nut and fruit eaters but this is even rarer as their digestive systems are not usually complex enough to handle such a diet."
             self.endurance += 1
             self.instinct += 1
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "Most amphibians are omnivorous, eating in an opportunistic fashion as their environment allows. By design, amphibians are adaptive and therefore make the most of any sustenance in their ecosystem."
             self.pack += 4
             self.instinct += 1
@@ -1171,7 +1153,7 @@ class Amphibian(Animal):
             elif evoSkillRoll == 5:
                 socialSkillRolls += 1
             else:
-                exoticWeaponRolls += 1
+                self.exoticWeaponRolls += 1
 
             evolutionSkillRolls -= 1
 
@@ -1213,7 +1195,7 @@ class Amphibian(Animal):
 
         # Roll for a behavior.
         behaviorRoll = roll_xdy(1, 6)
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Pouncer)
                 self.reactionModifier -= 1
@@ -1231,7 +1213,7 @@ class Amphibian(Animal):
             else:
                 self.behaviors.add(behavior.Chaser)
                 self.reactionModifier -= 2
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Filter)
                 self.reactionModifier -= 1
@@ -1272,7 +1254,7 @@ class Amphibian(Animal):
         self.set_strength()
         self.set_endurance()
         self.set_dexterity()
-        self.set_exotic_weapons(exoticWeaponRolls)
+        self.set_exotic_weapons(self.exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
         self.set_armor()
@@ -1298,7 +1280,7 @@ class Aquatic(Animal):
 
     def __init__(self, planet, terrain):
         super(Aquatic, self).__init__(planet, terrain)
-        self.animalClass = "Aquatic"
+        self.animalClass = animalClass.Aquatic
 
         # Skills this class innately has.
         self.athletics = 0
@@ -1317,19 +1299,19 @@ class Aquatic(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 3:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous aquatics usually have large teeth, comparative to their size, and hunt by the scent of blood released into the water. They are very commonly opportunistic feeders, hunting and killing anything they come across."
             self.meleeNaturalWeapons = 0
             self.dexterity += 1
             self.pack += 4
             physicalSkillRolls = 1
         elif dietRoll <= 5:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = " Like amphibians of this variety, herbivore aquatics typically feast on plankton, water-rotted plants and algae. Larger herbivorous aquatics have the same diet but commonly strain their sustenance from the same medium they breathe."
             self.endurance += roll_xdy(1, 6)
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "Rare among aquatic life, omnivorous water dwellers are almost always scavengers and eat whatever they can find. It is a common adaptation of these life forms to be extremely foul tasting as a result of their diet and they are rarely considered prey by other aquatics."
             self.meleeNaturalWeapons = 0
             self.pack += 2
@@ -1481,7 +1463,7 @@ class Aquatic(Animal):
 
         # Roll for a behavior.
         behaviorRoll = roll_xdy(1, 6)
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 1
@@ -1499,7 +1481,7 @@ class Aquatic(Animal):
             else:
                 self.behaviors.add(behavior.Chaser)
                 self.reactionModifier -= 2
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Filter)
                 self.reactionModifier -= 1
@@ -1540,10 +1522,10 @@ class Aquatic(Animal):
         if quirk3 and self.pack < 1:
             self.pack = 1
 
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -1589,7 +1571,7 @@ class Avian(Animal):
 
     def __init__(self, planet, terrain):
         super(Avian, self).__init__(planet, terrain)
-        self.animalClass = "Avian"
+        self.animalClass = animalClass.Avian
 
         # Skills this class innately has.
         self.athletics = 0
@@ -1607,20 +1589,20 @@ class Avian(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 2:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous avians tend to be larger than other avian species and have a tendency toward cannibalism. Those avians that do not eat others of their kind prefer small, easily caught game and may even be suited to hunting for shallow water aquatic animals."
             self.meleeNaturalWeapons = 0
             self.dexterity += 2
             evolutionRollModifier += 1
             physicalSkillRolls += 1
         elif dietRoll <= 4:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Herbivorous avians typically survive on seeds and fruit, soft palate fare that can be easily crushed or swallowed and digested before excretion. Very few herbivores of this class are hostile."
             self.endurance += 2
             self.pack += 2
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "The most common form of omnivorous avian is the seed eating variety that has extended its diet to worms and insects. Scavengers are also common, eating stray fruit and picking clean the kills of other, larger creatures."
             self.meleeNaturalWeapons = 0
             self.pack += 2
@@ -1777,7 +1759,7 @@ class Avian(Animal):
 
         # Roll for a behavior.
         behaviorRoll = roll_xdy(1, 6)
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Hunter)
                 self.reactionModifier -= 1
@@ -1793,7 +1775,7 @@ class Avian(Animal):
             else:
                 self.behaviors.add(behavior.Pouncer)
                 self.reactionModifier -= 2
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Intimidator)
                 self.reactionModifier -= 1
@@ -1830,10 +1812,10 @@ class Avian(Animal):
                 self.reactionModifier -= 2
 
         self.behavior_effects()
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -1870,7 +1852,7 @@ class Fungal(Animal):
 
     def __init__(self, planet, terrain):
         super(Fungal, self).__init__(planet, terrain)
-        self.animalClass = "Fungal"
+        self.animalClass = animalClass.Fungal
 
         # Skills this class innately has.
         self.athletics = 0
@@ -1888,20 +1870,20 @@ class Fungal(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll == 1:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous fungals usually lure food to them, engulfing their prey and dissolving them. Fungal creatures are rarely dense or resilient enough to be combative."
             self.meleeNaturalWeapons = 0
             self.strength += 2
             evolutionRollModifier += 1
             physicalSkillRolls += 1
         elif dietRoll == 2:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Very few fungal life forms subsist solely on other play matter but those few that do tend to be very small so as not to need much nourishment or extremely large and located in heavily vegetated areas."
             self.endurance += 2
             self.pack += 2
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "The most common form of fungal life is omnivorous, eating whatever and whenever opportunity affords. They also tend to be the most mobile, often travelling great distances to remain where they can have access to nourishment."
             evolutionRollModifier += 1
             physicalSkillRolls += 1
@@ -2060,7 +2042,7 @@ class Fungal(Animal):
         # Roll for a behavior.
         if not quirk5:
             behaviorRoll = roll_xdy(1, 6)
-            if self.diet == "Carnivore":
+            if self.diet == diet.Carnivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Hunter)
                     self.reactionModifier -= 2
@@ -2076,7 +2058,7 @@ class Fungal(Animal):
                     self.reactionModifier += 1
                 else:
                     self.behaviors.add(behavior.Killer)
-            elif self.diet == "Herbivore":
+            elif self.diet == diet.Herbivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Intermittent)
                     self.reactionModifier -= 2
@@ -2115,10 +2097,10 @@ class Fungal(Animal):
             self.stealth = -99
 
         self.behavior_effects()
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -2148,7 +2130,7 @@ class Insect(Animal):
 
     def __init__(self, planet, terrain):
         super(Insect, self).__init__(planet, terrain)
-        self.animalClass = "Insect"
+        self.animalClass = animalClass.Insect
 
         # Skills this class innately has.
         self.athletics = 0
@@ -2166,19 +2148,19 @@ class Insect(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 3:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = " Most insects are carnivorous by the strictest definition of the term, with weaker insects normally being their food, and many are also cannibalistic. Insects often have a modified diet, consuming liquids from their prey as opposed to devouring flesh."
             self.meleeNaturalWeapons += 1
             self.strength += roll_xdy(1, 6)
             physicalSkillRolls += 1
         elif dietRoll == 4:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Herbivorous forms often dominate their ecosystems through a mix of physical strength, tenacity and sheer numbers."
             self.endurance += 2
             self.pack += 2
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "Most insects are carnivorous by the strictest definition of the term, with weaker insects normally being their food, and many are also cannibalistic. Insects often have a modified diet, consuming liquids from their prey as opposed to devouring flesh."
             self.meleeNaturalWeapons += 1
             evolutionRollModifier += 1
@@ -2345,7 +2327,7 @@ class Insect(Animal):
 
         # Roll for a behavior.
         behaviorRoll = roll_xdy(1, 6)
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Pouncer)
             elif behaviorRoll == 2:
@@ -2361,7 +2343,7 @@ class Insect(Animal):
                 self.reactionModifier -= 1
             else:
                 self.behaviors.add(behavior.Chaser)
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 2
@@ -2396,10 +2378,10 @@ class Insect(Animal):
                 self.reactionModifier -= 2
 
         self.behavior_effects()
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -2437,7 +2419,7 @@ class Mammal(Animal):
 
     def __init__(self, planet, terrain):
         super(Mammal, self).__init__(planet, terrain)
-        self.animalClass = "Mammal"
+        self.animalClass = animalClass.Mammal
 
         # Skills this class innately has.
         self.athletics = 0
@@ -2455,19 +2437,19 @@ class Mammal(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 2:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Predatory mammals are generally the strongest of their kind and occupy a middle strata between their prey (often herbivorous mammals) and more intelligent omnivorous mammals above them."
             self.strength += 1
             self.dexterity += 1
             physicalSkillRolls += 1
         elif dietRoll <= 4:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Pack oriented and capable of reaching impressive sizes, herbivorous mammals can be quite fierce in defence of their territories and family units but are otherwise very docile. On worlds with intelligent life, these animals are the ones most often domesticated."
             self.endurance += 2
             self.pack += 2
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
+            self.diet = diet.Omnivore
             self.dietDescription = "Their varied diet, survival ability and dedication to pack structures all lend themselves to elevate omnivorous mammals to a position of evolutionary dominance on many worlds. Sentient races often come from this stock, though some show a tendency toward carnivorous appetites."
             evolutionRollModifier += 1
             self.intelligence += 1
@@ -2547,7 +2529,7 @@ class Mammal(Animal):
                 quirk8 = True
                 self.quirks.append(
                     "These animals have prodigious horns and know how to use them in combat.")
-                self.weapons.add("Horns")
+                self.weapons.add(weapon.Horns)
             if quirkRoll == 9:
                 self.quirks.append(
                     "Unusually vicious, these mammals are hostile to any species but their own.")
@@ -2629,7 +2611,7 @@ class Mammal(Animal):
 
         # Roll for a behavior.
         behaviorRoll = roll_xdy(1, 6)
-        if self.diet == "Carnivore":
+        if self.diet == diet.Carnivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Pouncer)
             elif behaviorRoll == 2:
@@ -2644,7 +2626,7 @@ class Mammal(Animal):
                 self.reactionModifier -= 1
             else:
                 self.behaviors.add(behavior.Hijacker)
-        elif self.diet == "Herbivore":
+        elif self.diet == diet.Herbivore:
             if behaviorRoll == 1:
                 self.behaviors.add(behavior.Eater)
                 self.reactionModifier -= 2
@@ -2679,7 +2661,7 @@ class Mammal(Animal):
 
         if extraBehaviorRoll:
             behaviorRoll = roll_xdy(1, 6)
-            if self.diet == "Carnivore":
+            if self.diet == diet.Carnivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Pouncer)
                 elif behaviorRoll == 2:
@@ -2692,7 +2674,7 @@ class Mammal(Animal):
                     self.behaviors.add(behavior.Hunter)
                 else:
                     self.behaviors.add(behavior.Hijacker)
-            elif self.diet == "Herbivore":
+            elif self.diet == diet.Herbivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Eater)
                 elif behaviorRoll == 2:
@@ -2726,10 +2708,10 @@ class Mammal(Animal):
         if "Herd-oriented and nomadic, these are mostly peaceful mammals." in self.quirks and self.pack < 2:
             self.pack = 2
 
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()
@@ -2775,7 +2757,7 @@ class Reptile(Animal):
 
     def __init__(self, planet, terrain):
         super(Reptile, self).__init__(planet, terrain)
-        self.animalClass = "Reptile"
+        self.animalClass = animalClass.Reptile
         self.armor += 1
 
         # Skills this class innately has.
@@ -2793,21 +2775,21 @@ class Reptile(Animal):
         # Determine the diet and modify attributes.
         dietRoll = roll_xdy(1, 6)
         if dietRoll <= 4:
-            self.diet = "Carnivore"
+            self.diet = diet.Carnivore
             self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
             self.strength += 1
             self.dexterity += 1
             self.athletics = 0
             physicalSkillRolls += 1
         elif dietRoll == 5:
-            self.diet = "Herbivore"
+            self.diet = diet.Herbivore
             self.dietDescription = "Typically slow and ponderous, plant-eating reptiles survive primarily through their size and resilience."
             self.endurance += 2
             self.pack += 1
             socialSkillRolls += 1
         else:
-            self.diet = "Omnivore"
-            self.dietDescription = "These animals have an uncommon trait for their kind – a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
+            self.diet = diet.Omnivore
+            self.dietDescription = "These animals have an uncommon trait for their kind - a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
             evolutionRollModifier += 1
             self.endurance += 1
             physicalSkillRolls += 1
@@ -2878,10 +2860,10 @@ class Reptile(Animal):
                     "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare.")
                 dietRoll = roll_xdy(1, 5)
                 if dietRoll == 5:
-                    self.diet = "Carnivore"
+                    self.diet = diet.Carnivore
                     self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
                 else:
-                    self.diet = "Omnivore"
+                    self.diet = diet.Omnivore
                     self.dietDescription = "These animals have an uncommon trait for their kind – a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
                 self.behaviors.add(behavior.Trapper)
                 self.raise_skill_level("stealth", 1)
@@ -2968,7 +2950,7 @@ class Reptile(Animal):
         # Roll for a behavior.
         if not quirk6:
             behaviorRoll = roll_xdy(1, 6)
-            if self.diet == "Carnivore":
+            if self.diet == diet.Carnivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Pouncer)
                 elif behaviorRoll == 2:
@@ -2984,7 +2966,7 @@ class Reptile(Animal):
                     self.reactionModifier += 1
                 else:
                     self.behaviors.add(behavior.Hijacker)
-            elif self.diet == "Herbivore":
+            elif self.diet == diet.Herbivore:
                 if behaviorRoll == 1:
                     self.behaviors.add(behavior.Gatherer)
                     self.reactionModifier -= 1
@@ -3019,10 +3001,10 @@ class Reptile(Animal):
                     self.behaviors.add(behavior.Reducer)
 
         self.behavior_effects()
-        self.set_size(self.sizeRoll, self.sizeRollModifier)
-        self.set_strength(self.sizeRoll)
-        self.set_endurance(self.sizeRoll)
-        self.set_dexterity(self.sizeRoll)
+        self.set_size()
+        self.set_strength()
+        self.set_endurance()
+        self.set_dexterity()
         self.set_exotic_weapons(exoticWeaponRolls)
         self.set_weapon_and_damage_modifier()
         self.set_weapon_damage()

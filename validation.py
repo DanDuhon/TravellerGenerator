@@ -2,9 +2,10 @@ import inspect
 
 import systemhex
 import star
-import planet
+import orbitalbody
 import animal
 import alien
+import globalstuff
 
 
 def get_info(object):
@@ -36,7 +37,7 @@ def validation(maxTechLevel):
         #     get_info(sys)
         #     raise ValueError("Duplicate name found: " + sys.name)
 
-        # if [p.name for p in planet.allPlanets].count(sys.name) > 1:
+        # if [p.name for p in orbitalbody.allBodies].count(sys.name) > 1:
         #     get_info(sys)
         #     raise ValueError("Duplicate name found: " + sys.name)
 
@@ -53,107 +54,107 @@ def validation(maxTechLevel):
         #     get_info(s.systemHex)
         #     for st in s.systemHex.stars:
         #         if st != s:
-        #             get_info(star)
+        #             get_info(st)
         #     get_info(s)
         #     raise ValueError("Duplicate name found: " + s.name)
 
         if s in s.systemHex.stars[1:]:
-            if ((s.systemHex.stars[0].spectralType == "F" and s.spectralType == "A")
-                or (s.systemHex.stars[0].spectralType == "G" and s.spectralType in ["F", "A"])
-                or (s.systemHex.stars[0].spectralType == "K" and s.spectralType in ["G", "F", "A"])
-                or (s.systemHex.stars[0].spectralType == "M" and s.spectralType in ["K", "G", "F", "A"])
-                    or (s.systemHex.stars[0].spectralType == "L" and s.spectralType != "L")):
+            if ((s.systemHex.stars[0].spectralType == globalstuff.spectralType.F and s.spectralType == globalstuff.spectralType.A)
+                or (s.systemHex.stars[0].spectralType == globalstuff.spectralType.G and s.spectralType in [globalstuff.spectralType.F, globalstuff.spectralType.A])
+                or (s.systemHex.stars[0].spectralType == globalstuff.spectralType.K and s.spectralType in [globalstuff.spectralType.G, globalstuff.spectralType.F, globalstuff.spectralType.A])
+                or (s.systemHex.stars[0].spectralType == globalstuff.spectralType.M and s.spectralType in [globalstuff.spectralType.K, globalstuff.spectralType.G, globalstuff.spectralType.F, globalstuff.spectralType.A])
+                    or (s.systemHex.stars[0].spectralType == globalstuff.spectralType.L and s.spectralType != globalstuff.spectralType.L)):
                 get_info(s.systemHex)
                 for st in s.systemHex.stars:
                     if st != s:
-                        get_info(star)
+                        get_info(st)
                     get_info(s)
                 raise ValueError(
                     "Companion star has a \"lower\" spectral type than the primary star.")
 
-        if ((s.spectralType == "A" and s.systemHex.age <= 2 and s.luminosityClass != "A-V")
-            or (s.spectralType == "A" and s.systemHex.age == 3 and s.luminosityClass not in ["F-IV", "K-III", "D"])
-            or (s.spectralType == "A" and s.systemHex.age >= 4 and s.luminosityClass != "D")
-            or (s.spectralType == "F" and s.systemHex.age <= 5 and s.luminosityClass != "F-V")
-            or (s.spectralType == "F" and s.systemHex.age == 6 and s.luminosityClass not in ["G-IV", "M-III"])
-            or (s.spectralType == "F" and s.systemHex.age >= 7 and s.luminosityClass != "D")
-            or (s.spectralType == "G" and s.systemHex.age <= 11 and s.luminosityClass != "G-V")
-            or (s.spectralType == "G" and 12 <= s.systemHex.age <= 13 and s.luminosityClass not in ["K-IV", "M-III"])
-            or (s.spectralType == "G" and s.systemHex.age >= 14 and s.luminosityClass != "D")
-            or (s.spectralType == "K" and s.luminosityClass != "K-V")
-            or (s.spectralType == "M" and s.luminosityClass not in ["M-V", "M-Ve", "L"])
-                or (s.spectralType == "L" and s.luminosityClass != "L")):
+        if ((s.spectralType == globalstuff.spectralType.A and s.systemHex.age <= 2 and s.luminosityClass != globalstuff.luminosityClass.A_V)
+            or (s.spectralType == globalstuff.spectralType.A and s.systemHex.age == 3 and s.luminosityClass not in [globalstuff.luminosityClass.F_IV, globalstuff.luminosityClass.K_III, globalstuff.luminosityClass.D])
+            or (s.spectralType == globalstuff.spectralType.A and s.systemHex.age >= 4 and s.luminosityClass != globalstuff.luminosityClass.D)
+            or (s.spectralType == globalstuff.spectralType.F and s.systemHex.age <= 5 and s.luminosityClass != globalstuff.luminosityClass.F_V)
+            or (s.spectralType == globalstuff.spectralType.F and s.systemHex.age == 6 and s.luminosityClass not in [globalstuff.luminosityClass.G_IV, globalstuff.luminosityClass.M_III])
+            or (s.spectralType == globalstuff.spectralType.F and s.systemHex.age >= 7 and s.luminosityClass != globalstuff.luminosityClass.D)
+            or (s.spectralType == globalstuff.spectralType.G and s.systemHex.age <= 11 and s.luminosityClass != globalstuff.luminosityClass.G_V)
+            or (s.spectralType == globalstuff.spectralType.G and 12 <= s.systemHex.age <= 13 and s.luminosityClass not in [globalstuff.luminosityClass.K_IV, globalstuff.luminosityClass.M_III])
+            or (s.spectralType == globalstuff.spectralType.G and s.systemHex.age >= 14 and s.luminosityClass != globalstuff.luminosityClass.D)
+            or (s.spectralType == globalstuff.spectralType.K and s.luminosityClass != globalstuff.luminosityClass.K_V)
+            or (s.spectralType == globalstuff.spectralType.M and s.luminosityClass not in [globalstuff.luminosityClass.M_V, globalstuff.luminosityClass.M_Ve, globalstuff.spectralType.L])
+                or (s.spectralType == globalstuff.spectralType.L and s.luminosityClass != globalstuff.spectralType.L)):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Invalid luminosity class")
 
         if s in s.systemHex.stars[1:] and (
-                s.primaryOrbit is None or s.primaryOrbit == "Distant") and len(s.systemHex.stars[0].planets) > 0 and len(s.planets) > 0 and s.systemHex.stars[0].planets == s.planets:
+                s.primaryOrbit is None or s.primaryOrbit == globalstuff.companionOrbit.Distant) and len(s.systemHex.stars[0].planets) > 0 and len(s.planets) > 0 and s.systemHex.stars[0].planets == s.planets:
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError(
                 "Distant or brown dwarf star has the same planets as the primary star.")
 
-        if ((s.luminosityClass in ["D", "L", "K-III", "M-III"] and (s.epistellarOrbits > 0 or sum(
-                [1 for p in s.planets if p.orbitType == "Epistellar"]))) or s.epistellarOrbits > 2):
+        if ((s.luminosityClass in [globalstuff.luminosityClass.D, globalstuff.spectralType.L, globalstuff.luminosityClass.K_III, globalstuff.luminosityClass.M_III] and (s.epistellarOrbits > 0 or sum(
+                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.Epistellar]))) or s.epistellarOrbits > 2):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of epistellar orbits.")
 
-        if (("Close" in s.companionOrbits and s.innerZoneOrbits > 0)
-            or (s.luminosityClass == "M-V" and s.innerZoneOrbits > 4)
-            or (s.luminosityClass == "L" and s.innerZoneOrbits > 2)
+        if ((globalstuff.companionOrbit.Close in s.companionOrbits and s.innerZoneOrbits > 0)
+            or (s.luminosityClass == globalstuff.luminosityClass.M_V and s.innerZoneOrbits > 4)
+            or (s.luminosityClass == globalstuff.spectralType.L and s.innerZoneOrbits > 2)
                 or s.innerZoneOrbits > 5):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of inner zone orbits.")
 
-        if (("Moderate" in s.companionOrbits and s.outerZoneOrbits > 0)
-            or (s.luminosityClass in ["M-V", "L"] and s.outerZoneOrbits > 4)
+        if ((globalstuff.companionOrbit.Moderate in s.companionOrbits and s.outerZoneOrbits > 0)
+            or (s.luminosityClass in [globalstuff.luminosityClass.M_V, globalstuff.spectralType.L] and s.outerZoneOrbits > 4)
                 or s.outerZoneOrbits > 5):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of outer zone orbits.")
 
         if s.epistellarOrbits != sum(
-                [1 for p in s.planets if p.orbitType == "Epistellar" and p.parentObject == s]):
+                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.Epistellar and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of epistellar planets.")
 
         if s.innerZoneOrbits != sum(
-                [1 for p in s.planets if p.orbitType == "Inner Zone" and p.parentObject == s]):
+                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.InnerZone and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of inner zone planets.")
 
         if s.outerZoneOrbits != sum(
-                [1 for p in s.planets if p.orbitType == "Outer Zone" and p.parentObject == s]):
+                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.OuterZone and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
-                    get_info(star)
+                    get_info(st)
             get_info(s)
             raise ValueError("Wrong number of outer zone planets.")
 
@@ -161,440 +162,438 @@ def validation(maxTechLevel):
     # These validations cannot currently deal with terraforming, so planets that have been
     # terraformed may look invalid here. I think it was thoroughly tested prior to
     # implementing terraforming so we're probably ok.
-    for p in planet.allPlanets:
-        # if [pl.name for pl in planet.allPlanets].count(p.name) > 1:
+    for p in orbitalbody.allBodies:
+        # if [pl.name for pl in orbitalbody.allBodies].count(p.name) > 1:
         #     get_info(p.systemHex)
         #     for st in s.systemHex.stars:
-        #         if star != p.star:
-        #             get_info(star)
+        #         if st != p.star:
+        #             get_info(st)
         #     get_info(p.star)
         #     get_info(p)
         #     raise ValueError("Duplicate name found: " + p.name)
 
-        if p.groupName == "Asteroid Belt" and sum(
+        if p.group == globalstuff.group.AsteroidBelt and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Asteroid belt has too many satellites.")
 
-        if p.groupName == "Dwarf" and sum(
+        if p.group == globalstuff.group.DwarfPlanet and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Dwarf has too many satellites.")
 
-        if p.groupName == "Terrestrial" and sum(
+        if p.group == globalstuff.group.TerrestrialPlanet and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 1:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Terrestrial has too many satellites.")
 
-        if p.groupName == "Helian" and sum(
+        if p.group == globalstuff.group.HelianPlanet and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 3:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Helian has too many satellites.")
 
-        if p.groupName == "Jovian" and sum(
+        if p.group == globalstuff.group.JovianPlanet and sum(
                 [1 for s in p.satellites if s.parentObject == p]) > 6:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Jovian has too many satellites.")
 
         if p.star.luminosityClass in [
-            "D",
-            "K-III",
-                "M-III"] and p.order <= p.star.expansionAffectedOrbits:
-            if (p.groupName == "Dwarf" and p.category != "Stygian"
-                or p.groupName == "Terrestrial" and p.category != "Acheronian"
-                or p.groupName == "Helian" and p.category != "Asphodelian"
-                or p.groupName == "Jovian" and p.category != "Chthonian"):
+            globalstuff.luminosityClass.D, globalstuff.luminosityClass.K_III, globalstuff.luminosityClass.M_III] and p.order <= p.star.expansionAffectedOrbits:
+            if (p.group == globalstuff.group.DwarfPlanet and p.category != globalstuff.category.Stygian
+                or p.group == globalstuff.group.TerrestrialPlanet and p.category != globalstuff.category.Acheronian
+                or p.group == globalstuff.group.HelianPlanet and p.category != globalstuff.category.Asphodelian
+                or p.group == globalstuff.group.JovianPlanet and p.category != globalstuff.category.Chthonian):
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError(
                     "Planet should have category determined by star, but category is wrong.")
 
         if p.star.luminosityClass not in [
-                "D", "K-III", "M-III"] or p.order > p.star.expansionAffectedOrbits:
-            if ((p.groupName == "Dwarf" and p.category == "Stygian")
-                or (p.groupName == "Terrestrial" and p.category == "Acheronian")
-                or (p.groupName == "Helian" and p.orbitType != "Epistellar" and p.category == "Asphodelian")
-                or (p.groupName == "Jovian" and p.orbitType != "Epistellar" and p.category == "Chthonian")):
+                globalstuff.luminosityClass.D, globalstuff.luminosityClass.K_III, globalstuff.luminosityClass.M_III] or p.order > p.star.expansionAffectedOrbits:
+            if ((p.group == globalstuff.group.DwarfPlanet and p.category == globalstuff.category.Stygian)
+                or (p.group == globalstuff.group.TerrestrialPlanet and p.category == globalstuff.category.Acheronian)
+                or (p.group == globalstuff.group.HelianPlanet and p.orbitType != globalstuff.orbitType.Epistellar and p.category == globalstuff.category.Asphodelian)
+                or (p.group == globalstuff.group.JovianPlanet and p.orbitType != globalstuff.orbitType.Epistellar and p.category == globalstuff.category.Chthonian)):
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError(
                     "Planet should NOT have category determined by star, but category is wrong.")
 
-            if p.groupName == "Dwarf":
-                if p.orbitType == "Epistellar":
-                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
-                        if p.category in ["Hebean", "Promethean"]:
+            if p.group == globalstuff.group.DwarfPlanet:
+                if p.orbitType == globalstuff.orbitType.Epistellar:
+                    if p.parentObject != p.star and p.parentObject.group == globalstuff.group.AsteroidBelt:
+                        if p.category in [globalstuff.category.Hebean, globalstuff.category.Promethean]:
                             get_info(p.systemHex)
                             for st in s.systemHex.stars:
-                                if star != p.star:
-                                    get_info(star)
+                                if st != p.star:
+                                    get_info(st)
                             get_info(p.star)
                             get_info(p)
                             raise ValueError(
                                 "Epistellar dwarf planet in an asteroid belt has an invalid category.")
 
                     if p.category not in [
-                            "Rockball", "Meltball", "Hebean", "Promethean"]:
+                            globalstuff.category.Rockball, globalstuff.category.Meltball, globalstuff.category.Hebean, globalstuff.category.Promethean]:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError(
                             "Epistellar dwarf planet has an invalid category.")
-                elif p.orbitType == "Inner Zone":
-                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
-                        if p.category in ["Hebean", "Promethean"]:
+                elif p.orbitType == globalstuff.orbitType.InnerZone:
+                    if p.parentObject != p.star and p.parentObject.group == globalstuff.group.AsteroidBelt:
+                        if p.category in [globalstuff.category.Hebean, globalstuff.category.Promethean]:
                             get_info(p.systemHex)
                             for st in s.systemHex.stars:
-                                if star != p.star:
-                                    get_info(star)
+                                if st != p.star:
+                                    get_info(st)
                             get_info(p.star)
                             get_info(p)
                             raise ValueError(
                                 "Inner zone dwarf planet in an asteroid belt has an invalid category.")
 
                     if p.category not in [
-                        "Rockball",
-                        "Meltball",
-                        "Hebean",
-                        "Promethean",
-                        "Arean"]:
+                        globalstuff.category.Rockball,
+                        globalstuff.category.Meltball,
+                        globalstuff.category.Hebean,
+                        globalstuff.category.Promethean,
+                        globalstuff.category.Arean]:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError(
                             "Inner zone dwarf planet has an invalid category.")
-                elif p.orbitType == "Outer Zone":
-                    if p.parentObject != p.star and p.parentObject.groupName == "Asteroid Belt":
+                elif p.orbitType == globalstuff.orbitType.OuterZone:
+                    if p.parentObject != p.star and p.parentObject.group == globalstuff.group.AsteroidBelt:
                         if p.category in [
-                                "Hebean", "Promethean", "Arean", "Meltball"]:
+                                globalstuff.category.Hebean, globalstuff.category.Promethean, globalstuff.category.Arean, globalstuff.category.Meltball]:
                             get_info(p.systemHex)
                             for st in s.systemHex.stars:
-                                if star != p.star:
-                                    get_info(star)
+                                if st != p.star:
+                                    get_info(st)
                             get_info(p.star)
                             get_info(p)
                             raise ValueError(
                                 "Outer zone dwarf planet in an asteroid belt has an invalid category.")
 
                     if p.category not in [
-                        "Rockball",
-                        "Meltball",
-                        "Hebean",
-                        "Promethean",
-                        "Arean",
-                        "Snowball"]:
+                        globalstuff.category.Rockball,
+                        globalstuff.category.Meltball,
+                        globalstuff.category.Hebean,
+                        globalstuff.category.Promethean,
+                        globalstuff.category.Arean,
+                        globalstuff.category.Snowball]:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError(
                             "Outer zone dwarf planet has an invalid category.")
 
-            if p.groupName == "Terrestrial":
-                if p.orbitType == "Epistellar" and p.category not in [
-                        "Jani-Lithic", "Vesperian", "Telluric"]:
+            if p.group == globalstuff.group.TerrestrialPlanet:
+                if p.orbitType == globalstuff.orbitType.Epistellar and p.category not in [
+                        globalstuff.category.JaniLithic, globalstuff.category.Vesperian, globalstuff.category.Telluric]:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Epistellar terrestrial planet has an invalid category.")
-                if p.orbitType == "Inner Zone" and p.category not in [
-                        "Telluric", "Arid", "Tectonic", "Oceanic"]:
+                if p.orbitType == globalstuff.orbitType.InnerZone and p.category not in [
+                        globalstuff.category.Telluric, globalstuff.category.Arid, globalstuff.category.Tectonic, globalstuff.category.Oceanic]:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Inner zone terrestiral planet has an invalid category.")
-                if p.orbitType == "Outer Zone":
+                if p.orbitType == globalstuff.orbitType.OuterZone:
                     if p.parentObject == p.star:
-                        if p.category not in ["Arid", "Tectonic"]:
+                        if p.category not in [globalstuff.category.Arid, globalstuff.category.Tectonic]:
                             get_info(p.systemHex)
                             for st in s.systemHex.stars:
-                                if star != p.star:
-                                    get_info(star)
+                                if st != p.star:
+                                    get_info(st)
                             get_info(p.star)
                             get_info(p)
                             raise ValueError(
                                 "Outer zone terrestrial planet has an invalid category.")
                     else:
-                        if p.category not in ["Arid", "Tectonic", "Oceanic"]:
+                        if p.category not in [globalstuff.category.Arid, globalstuff.category.Tectonic, globalstuff.category.Oceanic]:
                             get_info(p.systemHex)
                             for st in s.systemHex.stars:
-                                if star != p.star:
-                                    get_info(star)
+                                if st != p.star:
+                                    get_info(st)
                             get_info(p.star)
                             get_info(p)
                             raise ValueError(
                                 "Outer zone terrestrial planet has an invalid category.")
 
-            if p.groupName == "Helian":
-                if p.orbitType == "Epistellar" and p.category not in [
-                        "Helian", "Asphodelian"]:
+            if p.group == globalstuff.group.HelianPlanet:
+                if p.orbitType == globalstuff.orbitType.Epistellar and p.category not in [
+                        globalstuff.category.Helian, globalstuff.category.Asphodelian]:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Epistellar helian planet has an invalid category.")
-                if p.orbitType == "Inner Zone" and p.category not in [
-                        "Helian", "Panthalassic"]:
+                if p.orbitType == globalstuff.orbitType.InnerZone and p.category not in [
+                        globalstuff.category.Helian, globalstuff.category.Panthalassic]:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Inner zone helian planet has an invalid category.")
-                if p.orbitType == "Outer Zone" and p.category != "Helian":
+                if p.orbitType == globalstuff.orbitType.OuterZone and p.category != globalstuff.category.Helian:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Outer zone helian planet has an invalid category.")
 
-            if p.groupName == "Jovian":
-                if p.orbitType == "Epistellar" and p.category not in [
-                        "Jovian", "Chthonian"]:
+            if p.group == globalstuff.group.JovianPlanet:
+                if p.orbitType == globalstuff.orbitType.Epistellar and p.category not in [
+                        globalstuff.category.Jovian, globalstuff.category.Chthonian]:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Epistellar jovian planet has an invalid category.")
-                if p.orbitType == "Inner Zone" and p.category != "Jovian":
+                if p.orbitType == globalstuff.orbitType.InnerZone and p.category != globalstuff.category.Jovian:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Inner zone jovian planet has an invalid category.")
-                if p.orbitType == "Outer Zone" and p.category != "Jovian":
+                if p.orbitType == globalstuff.orbitType.OuterZone and p.category != globalstuff.category.Jovian:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError(
                         "Outer zone jovian planet has an invalid category.")
 
         # Animals on planets
-        if p.biosphere >= 9 and len(p.animals) == 0:
+        if p.group != globalstuff.group.JovianPlanet and p.biosphere >= 9 and len(p.animals) == 0:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Planet should have animals but doesn't.")
 
         # Aliens on planets
-        if p.biosphere == 12 and p.alien is None:
+        if p.group != globalstuff.group.JovianPlanet and p.biosphere == 12 and p.homeAlien is None:
             get_info(p.systemHex)
             for st in s.systemHex.stars:
-                if star != p.star:
-                    get_info(star)
+                if st != p.star:
+                    get_info(st)
             get_info(p.star)
             get_info(p)
             raise ValueError("Planet should have alien but doesn't.")
 
         # Acheronian
-        if p.category == "Acheronian":
+        if p.category == globalstuff.category.Acheronian:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 1:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.biosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Arean
-        elif p.category == "Arean":
+        elif p.category == globalstuff.category.Arean:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere not in [1, 10] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 4 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.atmosphere == 1 and p.hydrosphere > 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", "Methane"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.orbitType == "Outer Zone" and p.star.luminosityClass == "L" and p.chemistry == "Water":
+            if p.orbitType == globalstuff.orbitType.OuterZone and p.star.luminosityClass == globalstuff.spectralType.L and p.chemistry == globalstuff.chemistry.Water:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.orbitType != "Outer Zone" and p.star.luminosityClass != "L" and p.chemistry == "Methane":
+            if p.orbitType != globalstuff.orbitType.OuterZone and p.star.luminosityClass != globalstuff.spectralType.L and p.chemistry == globalstuff.chemistry.Methane:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.atmosphere == 1 and (p.biosphere < 0 or p.biosphere > 2) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Arid
-        elif p.category == "Arid":
+        elif p.category == globalstuff.category.Arid:
             if p.size < 0 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
-            if p.biosphere >= 3 and p.chemistry == "Water":
+            if p.biosphere >= 3 and p.chemistry == globalstuff.chemistry.Water:
                 if (p.atmosphere < 2 or p.atmosphere > 9) and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
@@ -602,55 +601,55 @@ def validation(maxTechLevel):
                 if p.atmosphere != 10 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 1 or p.hydrosphere > 3 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", "Methane"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.chemistry != "Water" and (
-                p.orbitType != "Outer Zone" and p.star.luminosityClass not in [
-                    "K-V", "M-V", "L"]):
+            if p.chemistry != globalstuff.chemistry.Water and (
+                p.orbitType != globalstuff.orbitType.OuterZone and p.star.luminosityClass not in [
+                    globalstuff.luminosityClass.K_V, globalstuff.luminosityClass.M_V, globalstuff.spectralType.L]):
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.chemistry == "Methane" and p.star.luminosityClass not in [
-                "M-V",
-                "L"] and (
-                (p.star.luminosityClass != "K-V" and p.orbitType == "Outer Zone") or (
-                    p.star.luminosityClass == "K-V" and p.orbitType != "Outer Zone")) and p.terraformingPointsUsed == 0:
+            if p.chemistry == globalstuff.chemistry.Methane and p.star.luminosityClass not in [
+                globalstuff.luminosityClass.M_V,
+                globalstuff.spectralType.L] and (
+                (p.star.luminosityClass != globalstuff.luminosityClass.K_V and p.orbitType == globalstuff.orbitType.OuterZone) or (
+                    p.star.luminosityClass == globalstuff.luminosityClass.K_V and p.orbitType != globalstuff.orbitType.OuterZone)) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.star.luminosityClass == "D":
+            if p.star.luminosityClass == globalstuff.luminosityClass.D:
                 if p.biosphere < 0 or p.biosphere > 9 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
@@ -658,184 +657,184 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 12 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Asphodelian
-        elif p.category == "Asphodelian":
+        elif p.category == globalstuff.category.Asphodelian:
             if p.size < 10 or p.size > 15:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 1:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Chthonian
-        elif p.category == "Chthonian":
+        elif p.category == globalstuff.category.Chthonian:
             if p.size != 16:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 1:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Hebean
-        elif p.category == "Hebean":
+        elif p.category == globalstuff.category.Hebean:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere not in [0, 1, 10] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 6 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Helian
-        elif p.category == "Helian":
+        elif p.category == globalstuff.group.HelianPlanet:
             if p.size < 10 or p.size > 15:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 13 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
@@ -843,151 +842,151 @@ def validation(maxTechLevel):
                     12, 13, 14] or p.hydrosphere > 15) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Jani-Lithic
-        elif p.category == "Jani-Lithic":
+        elif p.category == globalstuff.category.JaniLithic:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere not in [1, 10] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Jovian
-        elif p.category == "Jovian":
+        elif p.category == globalstuff.group.JovianPlanet:
             if p.size != 16:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 16:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 16:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", None]:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, None]:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.biosphere > 0 and p.chemistry not in ["Water", "Ammonia"]:
+            if p.biosphere > 0 and p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia]:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere in [0, None] and p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age > 6:
-                if p.star.luminosityClass == "D" and (
+                if p.star.luminosityClass == globalstuff.luminosityClass.D and (
                         p.biosphere < 0 or p.biosphere > 9):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
-                if p.star.luminosityClass != "D" and (
+                if p.star.luminosityClass != globalstuff.luminosityClass.D and (
                         p.biosphere < 0 or p.biosphere > 12):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
@@ -995,85 +994,85 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Meltball
-        elif p.category == "Meltball":
+        elif p.category == globalstuff.category.Meltball:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 1:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 15:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Oceanic
-        elif p.category == "Oceanic":
+        elif p.category == globalstuff.category.Oceanic:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
-            if p.chemistry == "Water":
+            if p.chemistry == globalstuff.chemistry.Water:
                 if p.atmosphere < 0 or p.atmosphere > 12 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
@@ -1081,77 +1080,77 @@ def validation(maxTechLevel):
                 if p.atmosphere not in [1, 10, 12] and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 11 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", "Methane"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.luminosityClass in [
-                    "M-V", "L"] and p.orbitType == "Outer Zone" and p.chemistry == "Water" and p.terraformingPointsUsed == 0:
+                    globalstuff.luminosityClass.M_V, globalstuff.spectralType.L] and p.orbitType == globalstuff.orbitType.OuterZone and p.chemistry == globalstuff.chemistry.Water and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.luminosityClass not in [
-                    "K-V",
-                    "M-V",
-                    "L"] and p.orbitType != "Outer Zone" and p.chemistry in [
-                    "Ammonia",
-                    "Methane"] and p.terraformingPointsUsed == 0:
+                    globalstuff.luminosityClass.K_V,
+                    globalstuff.luminosityClass.M_V,
+                    globalstuff.spectralType.L] and p.orbitType != globalstuff.orbitType.OuterZone and p.chemistry in [
+                    globalstuff.chemistry.Ammonia,
+                    globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.chemistry == "Methane" and (
+            if p.chemistry == globalstuff.chemistry.Methane and (
                 p.star.luminosityClass not in [
-                    "M-V",
-                    "L"] and (
-                    p.star.luminosityClass != "K-V" or p.orbitType != "Outer Zone")) and p.terraformingPointsUsed == 0:
+                    globalstuff.luminosityClass.M_V,
+                    globalstuff.spectralType.L] and (
+                    p.star.luminosityClass != globalstuff.luminosityClass.K_V or p.orbitType != globalstuff.orbitType.OuterZone)) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             elif p.star.systemHex.age >= 4 + p.ageModifier:
-                if p.star.luminosityClass == "D":
+                if p.star.luminosityClass == globalstuff.luminosityClass.D:
                     if p.biosphere < 0 or p.biosphere > 9 and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
+                    if globalstuff.luminosityClass.M_Ve not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
@@ -1159,77 +1158,77 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
         # Panthalassic
-        elif p.category == "Panthalassic":
+        elif p.category == globalstuff.category.Panthalassic:
             if p.size < 10 or p.size > 15:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if (p.atmosphere < 9 or p.atmosphere > 13) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 11 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry not in [
-                "Water",
-                "Ammonia",
-                "Methane",
-                "Sulfur",
-                "Chlorine"]:
+                globalstuff.chemistry.Water,
+                globalstuff.chemistry.Ammonia,
+                globalstuff.chemistry.Methane,
+                globalstuff.chemistry.Sulfur,
+                globalstuff.chemistry.Chlorine]:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.luminosityClass not in [
-                    "K-V",
-                    "M-V",
-                    "L"] and (
-                    p.chemistry == "Methane" or p.ageModifier != 0) and p.terraformingPointsUsed == 0:
+                    globalstuff.luminosityClass.K_V,
+                    globalstuff.luminosityClass.M_V,
+                    globalstuff.spectralType.L] and (
+                    p.chemistry == globalstuff.chemistry.Methane or p.ageModifier != 0) and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.luminosityClass not in [
-                    "M-V", "L"] and p.ageModifier == 3:
+                    globalstuff.luminosityClass.M_V, globalstuff.spectralType.L] and p.ageModifier == 3:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age >= 4 + p.ageModifier:
-                if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
+                if globalstuff.luminosityClass.M_Ve not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
@@ -1237,35 +1236,35 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Promethean
-        elif p.category == "Promethean":
+        elif p.category == globalstuff.category.Promethean:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
-            if p.biosphere >= 3 and p.chemistry == "Water":
+            if p.biosphere >= 3 and p.chemistry == globalstuff.chemistry.Water:
                 if p.atmosphere < 2 or p.atmosphere > 9 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
@@ -1273,59 +1272,59 @@ def validation(maxTechLevel):
                 if p.atmosphere != 10 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 10 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", "Methane"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.star.luminosityClass != "L" and p.orbitType == "Epistellar" and p.chemistry != "Water":
+            if p.star.luminosityClass != globalstuff.spectralType.L and p.orbitType == globalstuff.orbitType.Epistellar and p.chemistry != globalstuff.chemistry.Water:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.star.luminosityClass != "L" and p.orbitType != "Outer Zone" and p.chemistry == "Methane" and p.terraformingPointsUsed == 0:
+            if p.star.luminosityClass != globalstuff.spectralType.L and p.orbitType != globalstuff.orbitType.OuterZone and p.chemistry == globalstuff.chemistry.Methane and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             elif p.star.systemHex.age >= 4 + p.ageModifier:
-                if p.star.luminosityClass == "D":
+                if p.star.luminosityClass == globalstuff.luminosityClass.D:
                     if p.biosphere < 0 or p.biosphere > 9 and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
+                    if globalstuff.luminosityClass.M_Ve not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
@@ -1333,144 +1332,144 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Rockball
-        elif p.category == "Rockball":
+        elif p.category == globalstuff.category.Rockball:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
-            if p.star.luminosityClass == "L":
-                if p.orbitType == "Epistellar" and (
+            if p.star.luminosityClass == globalstuff.spectralType.L:
+                if p.orbitType == globalstuff.orbitType.Epistellar and (
                         p.hydrosphere < 0 or p.hydrosphere > 5):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid hydrosphere.")
-                elif p.orbitType == "Outer Zone" and (p.hydrosphere < 0 or p.hydrosphere > 9):
+                elif p.orbitType == globalstuff.orbitType.OuterZone and (p.hydrosphere < 0 or p.hydrosphere > 9):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid hydrosphere.")
             else:
-                if p.orbitType == "Epistellar" and (
+                if p.orbitType == globalstuff.orbitType.Epistellar and (
                         p.hydrosphere < 0 or p.hydrosphere > 4):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid hydrosphere.")
-                elif p.orbitType == "Outer Zone" and (p.hydrosphere < 0 or p.hydrosphere > 8):
+                elif p.orbitType == globalstuff.orbitType.OuterZone and (p.hydrosphere < 0 or p.hydrosphere > 8):
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Snowball
-        elif p.category == "Snowball":
+        elif p.category == globalstuff.category.Snowball:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere not in [0, 1] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 10 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Ammonia", "Methane"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Ammonia, globalstuff.chemistry.Methane] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
-            if p.orbitType != "Outer Zone" and p.star.luminosityClass != "L" and p.chemistry == "Methane" and p.terraformingPointsUsed == 0:
+            if p.orbitType != globalstuff.orbitType.OuterZone and p.star.luminosityClass != globalstuff.spectralType.L and p.chemistry == globalstuff.chemistry.Methane and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if not p.subsurfaceOceans and p.biosphere > 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
@@ -1478,8 +1477,8 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 9 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
@@ -1487,143 +1486,134 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
         # Stygian
-        elif p.category == "Stygian":
+        elif p.category == globalstuff.category.Stygian:
             if p.size < 0 or p.size > 5:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Tectonic
-        elif p.category == "Tectonic":
+        elif p.category == globalstuff.category.Tectonic:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
-            if p.biosphere >= 3 and p.chemistry == "Water":
+            if p.biosphere >= 3 and p.chemistry == globalstuff.chemistry.Water:
                 if p.atmosphere < 2 or p.atmosphere > 9 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
-            elif p.biosphere >= 3 and p.chemistry in ["Sulfur", "Chlorine"] and p.atmosphere != 11 and p.terraformingPointsUsed == 0:
+            elif p.biosphere >= 3 and p.chemistry in [globalstuff.chemistry.Sulfur, globalstuff.chemistry.Chlorine] and p.atmosphere != 11 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
-            elif (p.biosphere < 3 or p.chemistry != "Water") and (p.biosphere < 3 or p.chemistry not in ["Sulfur", "Chlorine"]) and p.terraformingPointsUsed == 0:
+            elif (p.biosphere < 3 or p.chemistry != globalstuff.chemistry.Water) and (p.biosphere < 3 or p.chemistry not in [globalstuff.chemistry.Sulfur, globalstuff.chemistry.Chlorine]) and p.terraformingPointsUsed == 0:
                 if p.atmosphere != 10:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 10 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry not in [
-                "Water",
-                "Ammonia",
-                "Methane",
-                "Sulfur",
-                "Chlorine"]:
+                globalstuff.chemistry.Water,
+                globalstuff.chemistry.Ammonia,
+                globalstuff.chemistry.Methane,
+                globalstuff.chemistry.Sulfur,
+                globalstuff.chemistry.Chlorine]:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
-                get_info(p.star)
-                get_info(p)
-                raise ValueError("Invalid chemistry.")
-            if p.orbitType == "Outer Zone" and p.star.luminosityClass in [
-                    "L", "M-V"] and p.chemistry not in ["Ammonia", "Methane"]:
-                get_info(p.systemHex)
-                for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age >= 4 + p.ageModifier:
-                if p.star.luminosityClass == "D":
+                if p.star.luminosityClass == globalstuff.luminosityClass.D:
                     if p.biosphere < 0 or p.biosphere > 9 and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
                 else:
-                    if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
+                    if globalstuff.luminosityClass.M_Ve not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
                         get_info(p.systemHex)
                         for st in s.systemHex.stars:
-                            if star != p.star:
-                                get_info(star)
+                            if st != p.star:
+                                get_info(st)
                         get_info(p.star)
                         get_info(p)
                         raise ValueError("Invalid biosphere.")
@@ -1631,127 +1621,127 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Telluric
-        elif p.category == "Telluric":
+        elif p.category == globalstuff.category.Telluric:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
             if p.atmosphere != 12 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
             if p.hydrosphere not in [0, 15] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
             if p.chemistry is not None and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.biosphere != 0 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
         # Vesperian
-        elif p.category == "Vesperian":
+        elif p.category == globalstuff.category.Vesperian:
             if p.size < 5 or p.size > 10:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid size.")
-            if p.biosphere >= 3 and p.chemistry == "Water":
+            if p.biosphere >= 3 and p.chemistry == globalstuff.chemistry.Water:
                 if p.atmosphere < 2 or p.atmosphere > 9 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
-            elif p.biosphere >= 3 and p.chemistry == "Chlorine" and p.atmosphere != 11 and p.terraformingPointsUsed == 0:
+            elif p.biosphere >= 3 and p.chemistry == globalstuff.chemistry.Chlorine and p.atmosphere != 11 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid atmosphere.")
-            elif p.biosphere < 3 or p.chemistry not in ["Water", "Chlorine"] and p.terraformingPointsUsed == 0:
+            elif p.biosphere < 3 or p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Chlorine] and p.terraformingPointsUsed == 0:
                 if p.atmosphere != 10:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid atmosphere.")
             if p.hydrosphere < 0 or p.hydrosphere > 10 and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid hydrosphere.")
-            if p.chemistry not in ["Water", "Chlorine"] and p.terraformingPointsUsed == 0:
+            if p.chemistry not in [globalstuff.chemistry.Water, globalstuff.chemistry.Chlorine] and p.terraformingPointsUsed == 0:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid chemistry.")
             if p.star.systemHex.age >= 4:
-                if "M-Ve" not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
+                if globalstuff.luminosityClass.M_Ve not in [s.luminosityClass for s in p.star.systemHex.stars] and p.hydrosphere > 0 and (p.atmosphere > 0 or p.subsurfaceOceans) and (p.biosphere < 2 or p.biosphere > 12) and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
@@ -1759,16 +1749,16 @@ def validation(maxTechLevel):
                 if p.biosphere < 0 or p.biosphere > 3 and p.terraformingPointsUsed == 0:
                     get_info(p.systemHex)
                     for st in s.systemHex.stars:
-                        if star != p.star:
-                            get_info(star)
+                        if st != p.star:
+                            get_info(st)
                     get_info(p.star)
                     get_info(p)
                     raise ValueError("Invalid biosphere.")
             if p.subsurfaceOceans:
                 get_info(p.systemHex)
                 for st in s.systemHex.stars:
-                    if star != p.star:
-                        get_info(star)
+                    if st != p.star:
+                        get_info(st)
                 get_info(p.star)
                 get_info(p)
                 raise ValueError("Invalid subsurface oceans.")
@@ -1809,39 +1799,39 @@ def validation(maxTechLevel):
             get_info(a)
             raise ValueError("Invalid pack.")
 
-        if ("Open Ocean" in a.terrain or "Deep Ocean" in a.terrain) and a.primaryMovement != "Swim":
+        if (globalstuff.terrain.OpenOcean in a.terrain or globalstuff.terrain.DeepOcean in a.terrain) and a.primaryMovement != globalstuff.movement.Swim:
             get_info(a.planet)
             get_info(a)
             raise ValueError("Non-swimmer in the ocean.")
 
         # Amphibian
-        if a.animalClass == "Amphibian":
-            if a.diet == "Carnivore":
-                validBehaviors = ["Pouncer", "Trapper", "Hunter", "Chaser"]
+        if a.animalClass == globalstuff.animalClass.Amphibian:
+            if a.diet == globalstuff.diet.Carnivore:
+                validBehaviors = [globalstuff.behavior.Pouncer, globalstuff.behavior.Trapper, globalstuff.behavior.Hunter, globalstuff.behavior.Chaser]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
-                validBehaviors = ["Filter", "Intermittent", "Grazer"]
+            elif a.diet == globalstuff.diet.Herbivore:
+                validBehaviors = [globalstuff.behavior.Filter, globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
+            elif a.diet == globalstuff.diet.Omnivore:
                 validBehaviors = [
-                    "Carrion-Eater",
-                    "Gatherer",
-                    "Eater",
-                    "Hunter",
-                    "Intermittent",
-                    "Reducer"]
+                    globalstuff.behavior.CarrionEater,
+                    globalstuff.behavior.Gatherer,
+                    globalstuff.behavior.Eater,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Intermittent,
+                    globalstuff.behavior.Reducer]
                 if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
@@ -1855,41 +1845,41 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Amphibian survival invalid due to quirk.")
-            if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks and "Siren" not in a.behaviors:
+            if "These amphibians emit a natural pheromone that other animals find highly attractive." in a.quirks and globalstuff.behavior.Siren not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Amphibian Siren behavior missing.")
         # Aquatic
-        if a.animalClass == "Aquatic":
-            if a.diet == "Carnivore":
-                validBehaviors = ["Eater", "Hunter", "Killer", "Chaser"]
+        if a.animalClass == globalstuff.animalClass.Aquatic:
+            if a.diet == globalstuff.diet.Carnivore:
+                validBehaviors = [globalstuff.behavior.Eater, globalstuff.behavior.Hunter, globalstuff.behavior.Killer, globalstuff.behavior.Chaser]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if not all(
                         b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
-                validBehaviors = ["Filter", "Intermittent", "Grazer"]
+            elif a.diet == globalstuff.diet.Herbivore:
+                validBehaviors = [globalstuff.behavior.Filter, globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if not all(
                         b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
-                validBehaviors = ["Carrion-Eater", "Eater", "Reducer"]
+            elif a.diet == globalstuff.diet.Omnivore:
+                validBehaviors = [globalstuff.behavior.CarrionEater, globalstuff.behavior.Eater, globalstuff.behavior.Reducer]
                 if "Posseses a frail physique and has the ability to engage in extremely swift movement." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if not all(
                         b in validBehaviors for b in a.behaviors) and "Posseses a frail physique and has the ability to engage in extremely swift movement." not in a.quirks:
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
 
-            if a.primaryMovement != "Swim":
+            if a.primaryMovement != globalstuff.movement.Swim:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
@@ -1900,7 +1890,7 @@ def validation(maxTechLevel):
                 get_info(a)
                 raise ValueError("Aquatic invalid pack because of quirk.")
             if "Posseses a frail physique and has the ability to engage in extremely swift movement" in a.quirks and (
-                    "Pouncer" not in a.behaviors or a.armor > 0):
+                    globalstuff.behavior.Pouncer not in a.behaviors or a.armor > 0):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
@@ -1916,37 +1906,37 @@ def validation(maxTechLevel):
                 raise ValueError(
                     "Aquatic instinct or intelligence is too low.")
         # Avian
-        if a.animalClass == "Avian":
-            if a.diet == "Carnivore":
-                validBehaviors = ["Hunter", "Chaser", "Killer", "Pouncer"]
+        if a.animalClass == globalstuff.animalClass.Avian:
+            if a.diet == globalstuff.diet.Carnivore:
+                validBehaviors = [globalstuff.behavior.Hunter, globalstuff.behavior.Chaser, globalstuff.behavior.Killer, globalstuff.behavior.Pouncer]
                 if "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
-                    validBehaviors.append("Chaser")
+                    validBehaviors.append(globalstuff.behavior.Chaser)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
-                validBehaviors = ["Intimidator", "Intermittent", "Grazer"]
+            elif a.diet == globalstuff.diet.Herbivore:
+                validBehaviors = [globalstuff.behavior.Intimidator, globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer]
                 if "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
-                    validBehaviors.append("Chaser")
+                    validBehaviors.append(globalstuff.behavior.Chaser)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
+            elif a.diet == globalstuff.diet.Omnivore:
                 validBehaviors = [
-                    "Carrion-Eater",
-                    "Eater",
-                    "Intimidator",
-                    "Reducer"]
+                    globalstuff.behavior.CarrionEater,
+                    globalstuff.behavior.Eater,
+                    globalstuff.behavior.Intimidator,
+                    globalstuff.behavior.Reducer]
                 if "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey, using these to lure meals closer." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Not just ground bound, this flightless species thrives because of it." in a.quirks:
-                    validBehaviors.append("Chaser")
+                    validBehaviors.append(globalstuff.behavior.Chaser)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
@@ -1956,7 +1946,7 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Avian pack too low.")
-            if ("Quite at home on the ground, this species has evolved away from flight." in a.quirks or "Not just ground bound, this flightless species has no F movement rate and thrives because of it." in a.quirks) and a.primaryMovement != "Walk":
+            if ("Quite at home on the ground, this species has evolved away from flight." in a.quirks or "Not just ground bound, this flightless species has no F movement rate and thrives because of it." in a.quirks) and a.primaryMovement != globalstuff.movement.Walk:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Avian that needs to walk.")
@@ -1965,7 +1955,7 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Avian missing exotic weapon.")
-            if "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey." in a.quirks and "Siren" not in a.behaviors:
+            if "These avians have developed a way to emit calls that sound exactly like the cries of wounded prey." in a.quirks and globalstuff.behavior.Siren not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Avian missing Siren.")
@@ -1974,39 +1964,39 @@ def validation(maxTechLevel):
                 get_info(a)
                 raise ValueError("Avian missing armor.")
         # Fungal
-        if a.animalClass == "Fungal":
-            if a.diet == "Carnivore":
-                validBehaviors = ["Hunter", "Siren", "Killer"]
+        if a.animalClass == globalstuff.animalClass.Fungal:
+            if a.diet == globalstuff.diet.Carnivore:
+                validBehaviors = [globalstuff.behavior.Hunter, globalstuff.behavior.Siren, globalstuff.behavior.Killer]
                 if "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
-                    validBehaviors.append("Hijacker")
+                    validBehaviors.append(globalstuff.behavior.Hijacker)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
-                validBehaviors = ["Intermittent", "Grazer"]
+            elif a.diet == globalstuff.diet.Herbivore:
+                validBehaviors = [globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer]
                 if "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
-                    validBehaviors.append("Hijacker")
+                    validBehaviors.append(globalstuff.behavior.Hijacker)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
-                validBehaviors = ["Carrion-Eater", "Eater", "Reducer"]
+            elif a.diet == globalstuff.diet.Omnivore:
+                validBehaviors = [globalstuff.behavior.CarrionEater, globalstuff.behavior.Eater, globalstuff.behavior.Reducer]
                 if "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "The scent and outlandish appearance of this fungal terrifies other animals." in a.quirks:
-                    validBehaviors.append("Hijacker")
+                    validBehaviors.append(globalstuff.behavior.Hijacker)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
@@ -2017,12 +2007,12 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Funal missing exotic weapon.")
-            if "The Fungal can inflate itself with a light gas, allowing for a slow form of flight." in a.quirks and a.primaryMovement != "Fly":
+            if "The Fungal can inflate itself with a light gas, allowing for a slow form of flight." in a.quirks and a.primaryMovement != globalstuff.movement.Fly:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Fungal should fly.")
             if "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location." in a.quirks and (
-                    "Siren" not in a.behaviors or a.primaryMovement != "Stationary"):
+                    globalstuff.behavior.Siren not in a.behaviors or a.primaryMovement != globalstuff.movement.Stationary):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
@@ -2035,48 +2025,48 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Fungal shouldn't have armor.")
-            if "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts." in a.quirks and "Pouncer" not in a.behaviors:
+            if "Almost liquid in structure, this extremely slimy fungal moves at normal speed and is capable of extremely rapid motion when it hunts." in a.quirks and globalstuff.behavior.Pouncer not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Fungal missing Pouncer.")
         # Insect
-        if a.animalClass == "Insect":
-            if a.diet == "Carnivore":
+        if a.animalClass == globalstuff.animalClass.Insect:
+            if a.diet == globalstuff.diet.Carnivore:
                 validBehaviors = [
-                    "Pouncer",
-                    "Hunter",
-                    "Killer",
-                    "Trapper",
-                    "Chaser"]
+                    globalstuff.behavior.Pouncer,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Killer,
+                    globalstuff.behavior.Trapper,
+                    globalstuff.behavior.Chaser]
                 if "The insect can generate a hypnotic drone." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
-                    validBehaviors.extend(["Pouncer", "Trapper"])
+                    validBehaviors.extend([globalstuff.behavior.Pouncer, globalstuff.behavior.Trapper])
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
+            elif a.diet == globalstuff.diet.Herbivore:
                 validBehaviors = [
-                    "Eater",
-                    "Intermittent",
-                    "Filter",
-                    "Gatherer",
-                    "Grazer"]
+                    globalstuff.behavior.Eater,
+                    globalstuff.behavior.Intermittent,
+                    globalstuff.behavior.Filter,
+                    globalstuff.behavior.Gatherer,
+                    globalstuff.behavior.Grazer]
                 if "The insect can generate a hypnotic drone." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
-                    validBehaviors.extend(["Pouncer", "Trapper"])
+                    validBehaviors.extend([globalstuff.behavior.Pouncer, globalstuff.behavior.Trapper])
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
-                validBehaviors = ["Carrion-Eater", "Eater", "Reducer"]
+            elif a.diet == globalstuff.diet.Omnivore:
+                validBehaviors = [globalstuff.behavior.CarrionEater, globalstuff.behavior.Eater, globalstuff.behavior.Reducer]
                 if "The insect can generate a hypnotic drone." in a.quirks:
-                    validBehaviors.append("Siren")
+                    validBehaviors.append(globalstuff.behavior.Siren)
                 if "Solitary by nature. If the insects are herbivores, they just leave their prey to rot and eat the resulting fungus." in a.quirks:
-                    validBehaviors.extend(["Pouncer", "Trapper"])
+                    validBehaviors.extend([globalstuff.behavior.Pouncer, globalstuff.behavior.Trapper])
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
@@ -2092,8 +2082,8 @@ def validation(maxTechLevel):
                 raise ValueError("Insect pack too low.")
             if "Solitary by nature." in a.quirks and (
                 a.pack > 0 or (
-                    (a.primaryMovement == "Walk" and "Trapper" not in a.behaviors) or (
-                        a.primaryMovement == "Fly" and "Pouncer" not in a.behaviors))):
+                    (a.primaryMovement == globalstuff.movement.Walk and globalstuff.behavior.Trapper not in a.behaviors) or (
+                        a.primaryMovement == globalstuff.movement.Fly and globalstuff.behavior.Pouncer not in a.behaviors))):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
@@ -2113,56 +2103,56 @@ def validation(maxTechLevel):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Insect missing exotic weapon.")
-            if "The insect can generate a hypnotic drone." in a.quirks and "Siren" not in a.behaviors:
+            if "The insect can generate a hypnotic drone." in a.quirks and globalstuff.behavior.Siren not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Insect missing Siren.")
         # Mammal
-        if a.animalClass == "Mammal":
-            if a.diet == "Carnivore":
+        if a.animalClass == globalstuff.animalClass.Mammal:
+            if a.diet == globalstuff.diet.Carnivore:
                 validBehaviors = [
-                    "Pouncer",
-                    "Killer",
-                    "Trapper",
-                    "Chaser",
-                    "Hunter",
-                    "Hijacker"]
+                    globalstuff.behavior.Pouncer,
+                    globalstuff.behavior.Killer,
+                    globalstuff.behavior.Trapper,
+                    globalstuff.behavior.Chaser,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Hijacker]
                 if "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
-                    validBehaviors.append("Killer")
+                    validBehaviors.append(globalstuff.behavior.Killer)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
+            elif a.diet == globalstuff.diet.Herbivore:
                 validBehaviors = [
-                    "Eater", "Intermittent", "Grazer", "Gatherer"]
+                    globalstuff.behavior.Eater, globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer, globalstuff.behavior.Gatherer]
                 if "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
-                    validBehaviors.append("Killer")
+                    validBehaviors.append(globalstuff.behavior.Killer)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
+            elif a.diet == globalstuff.diet.Omnivore:
                 validBehaviors = [
-                    "Carrion-Eater",
-                    "Gatherer",
-                    "Hunter",
-                    "Intimidator",
-                    "Reducer"]
+                    globalstuff.behavior.CarrionEater,
+                    globalstuff.behavior.Gatherer,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Intimidator,
+                    globalstuff.behavior.Reducer]
                 if "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment." in a.quirks:
-                    validBehaviors.append("Pouncer")
+                    validBehaviors.append(globalstuff.behavior.Pouncer)
                 if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks:
-                    validBehaviors.append("Killer")
+                    validBehaviors.append(globalstuff.behavior.Killer)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
 
-            if "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment." in a.quirks and a.diet == "Omnivore" and "Pouncer" not in a.behaviors:
+            if "This mammal has an unusual mode of travel, be it gliding or swinging between trees in its home environment." in a.quirks and a.diet == globalstuff.diet.Omnivore and globalstuff.behavior.Pouncer not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Mammal missing Pouncer.")
@@ -2184,13 +2174,13 @@ def validation(maxTechLevel):
                 raise ValueError("Mammal pack is too low.")
 
             if "These animals have prodigious horns and know how to use them in combat." in a.quirks and (
-                    "Horns" not in a.weapons or a.meleeNaturalWeapons == -3):
+                    globalstuff.weapon.Horns not in a.weapons or a.meleeNaturalWeapons == -3):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
                     "Mammal should have horns and a rank in melee natural weapons.")
 
-            if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks and "Killer" not in a.behaviors:
+            if "Unusually vicious, these mammals are hostile to any species but their own." in a.quirks and globalstuff.behavior.Killer not in a.behaviors:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Mammal missing Killer.")
@@ -2201,37 +2191,37 @@ def validation(maxTechLevel):
                 get_info(a)
                 raise ValueError("Mammal intelligence or instinct too low.")
         # Reptile
-        if a.animalClass == "Reptile":
-            if a.diet == "Carnivore":
+        if a.animalClass == globalstuff.animalClass.Reptile:
+            if a.diet == globalstuff.diet.Carnivore:
                 validBehaviors = [
-                    "Pouncer",
-                    "Killer",
-                    "Intimidator",
-                    "Hunter",
-                    "Hijacker"]
+                    globalstuff.behavior.Pouncer,
+                    globalstuff.behavior.Killer,
+                    globalstuff.behavior.Intimidator,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Hijacker]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
-                    validBehaviors.append("Trapper")
+                    validBehaviors.append(globalstuff.behavior.Trapper)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Herbivore":
-                validBehaviors = ["Gatherer", "Intermittent", "Grazer"]
+            elif a.diet == globalstuff.diet.Herbivore:
+                validBehaviors = [globalstuff.behavior.Gatherer, globalstuff.behavior.Intermittent, globalstuff.behavior.Grazer]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
-                    validBehaviors.append("Trapper")
+                    validBehaviors.append(globalstuff.behavior.Trapper)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Invalid behavior.")
-            elif a.diet == "Omnivore":
+            elif a.diet == globalstuff.diet.Omnivore:
                 validBehaviors = [
-                    "Carrion-Eater",
-                    "Gatherer",
-                    "Hijacker",
-                    "Hunter",
-                    "Reducer"]
+                    globalstuff.behavior.CarrionEater,
+                    globalstuff.behavior.Gatherer,
+                    globalstuff.behavior.Hijacker,
+                    globalstuff.behavior.Hunter,
+                    globalstuff.behavior.Reducer]
                 if "This reptile buries itself in its terrain, blending in and waiting for prey to ensnare." in a.quirks:
-                    validBehaviors.append("Trapper")
+                    validBehaviors.append(globalstuff.behavior.Trapper)
                 if not all(b in validBehaviors for b in a.behaviors):
                     get_info(a.planet)
                     get_info(a)

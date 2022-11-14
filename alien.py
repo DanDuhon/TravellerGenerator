@@ -5,7 +5,7 @@ import animal
 import orbitalbody
 import namegenerator
 import globalstuff
-from globalstuff import roll_xdy, coin_flip, habitation
+from globalstuff import roll_xdy, coin_flip, habitation, behavior, animalClass, movement
 
 allAliens = []
 
@@ -146,7 +146,7 @@ class Alien():
         else:
             self.relativePopulation = 30
 
-        if animalClass == "Insect" and pack > 2 and "Acutely self-aware" not in quirks:
+        if animalClass == animalClass.Insect and pack > 2 and "Acutely self-aware" not in quirks:
             if "These insects form veritable swarms." in quirks:
                 self.relativePopulation *= 4
             else:
@@ -174,21 +174,21 @@ def create_terra_luna_humans(star):
     if len([alien.techLevelScore for alien in allAliens if not alien.extinct]) > 0:
         avgTechLevelScore = round(statistics.mean(
             [alien.techLevelScore for alien in allAliens if not alien.extinct]), 0)
-        terra.alien = Alien(terra, None, "Mammal",
+        terra.homeAlien = Alien(terra, None, animalClass.Mammal,
                 7, 7, 7, 11, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
                 set(), False, 0, 0, avgTechLevelScore + roll_xdy(1, 6))
     else:
-        terra.alien = Alien(terra, None, "Mammal",
+        terra.homeAlien = Alien(terra, None, animalClass.Mammal,
                 7, 7, 7, 11, 6, 0, 0, 0, 0, 0, 0, 0,
                 set(), set(), 1, 0, 0,
                 set(), False, 0, 0, 10)
 
-    terra.alien.name = "Terran"
-    terra.habitation[terra.alien] = habitation.Homeworld
-    terra.terraformingAlien = terra.alien
+    terra.homeAlien.name = "Terran"
+    terra.habitation[terra.homeAlien] = habitation.Homeworld
+    terra.terraformingAlien = terra.homeAlien
     terra.terraformingDone = True
-    terra.alien.planets[terra] = {"outpostRoll": None,
+    terra.homeAlien.planets[terra] = {"outpostRoll": None,
                                   "colonyRoll": None,
                                   "desirability": 8,
                                   "habitation": habitation.Homeworld}
@@ -197,7 +197,7 @@ def create_terra_luna_humans(star):
 
 def create_alien(alienPlanet, alienSurvivalPercent):
     """
-    Returns an Alien class instance to be added to a planet.
+    Creates an Alien class instance to be added to a planet.
 
     Parameters:
         alienPlanet: OrbitalBody subclass instance
@@ -209,19 +209,19 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     # Build a list of animal classes and terrains that are possible for this
     # planet, then pick one at random.
     possibleAliens = list(set([(animal.animalClass, animal.terrain) for animal in alienPlanet.animals if animal.animalClass in [
-        "Amphibian", "Aquatic", "Insect", "Mammal", "Reptile"]]))
+        animalClass.Amphibian, animalClass.Aquatic, animalClass.Insect, animalClass.Mammal, animalClass.Reptile]]))
 
     alienClass, alienTerrain = random.choice(possibleAliens)
 
-    if alienClass == "Amphibian":
+    if alienClass == animalClass.Amphibian:
         animalToConvert = animal.Amphibian(planet=alienPlanet, terrain=alienTerrain)
-    elif alienClass == "Aquatic":
+    elif alienClass == animalClass.Aquatic:
         animalToConvert = animal.Aquatic(planet=alienPlanet, terrain=alienTerrain)
-    elif alienClass == "Insect":
+    elif alienClass == animalClass.Insect:
         animalToConvert = animal.Insect(planet=alienPlanet, terrain=alienTerrain)
-    elif alienClass == "Mammal":
+    elif alienClass == animalClass.Mammal:
         animalToConvert = animal.Mammal(planet=alienPlanet, terrain=alienTerrain)
-    elif alienClass == "Reptile":
+    elif alienClass == animalClass.Reptile:
         animalToConvert = animal.Reptile(planet=alienPlanet, terrain=alienTerrain)
         # This particular quirk does not seem suitable to intelligent species
         # that have to construct things.
@@ -230,7 +230,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         if "Capable of flying, these reptiles have adapted body structures that generate heat through wind friction, allowing them to stay warm during flight. They do not sleep, they never land intentionally and will die within 1d6 hours if grounded." in animalToConvert.quirks:
             animalToConvert.quirks.remove(
                 "Capable of flying, these reptiles have adapted body structures that generate heat through wind friction, allowing them to stay warm during flight. They do not sleep, they never land intentionally and will die within 1d6 hours if grounded.")
-            animalToConvert.primaryMovement = "Walk"
+            animalToConvert.primaryMovement = movement.Walk
 
     # Chimpanzees (the existing animal closest to us, genetically) are about
     # 35% stronger than humans, on average. I'm going to say that we traded
@@ -243,19 +243,19 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     # a species explores outwards from colonized planets.
     behaviorAggressionNumbers = []
     for behavior in animalToConvert.behaviors:
-        if behavior == "Carrion-Eater":
+        if behavior == behavior.CarrionEater:
             behaviorAggressionNumbers.append(11)
-        elif behavior in ["Filter", "Intermittent", "Reducer"]:
+        elif behavior in [behavior.Filter, behavior.Intermittent, behavior.Reducer]:
             behaviorAggressionNumbers.append(10)
-        elif behavior == "Gatherer":
+        elif behavior == behavior.Gatherer:
             behaviorAggressionNumbers.append(9)
-        elif behavior in ["Grazer", "Hunter", "Intimidator"]:
+        elif behavior in [behavior.Grazer, behavior.Hunter, behavior.Intimidator]:
             behaviorAggressionNumbers.append(8)
-        elif behavior in ["Pouncer", "Chaser", "Trapper", "Siren", "Hijacker"]:
+        elif behavior in [behavior.Pouncer, behavior.Chaser, behavior.Trapper, behavior.Siren, behavior.Hijacker]:
             behaviorAggressionNumbers.append(7)
-        elif behavior == "Killer":
+        elif behavior == behavior.Killer:
             behaviorAggressionNumbers.append(6)
-        elif behavior == "Eater":
+        elif behavior == behavior.Eater:
             behaviorAggressionNumbers.append(5)
 
     aggressionModifier = int(
@@ -273,7 +273,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         extinct = True
         techLevelScore = 0
 
-    alienPlanet.alien = Alien(
+    alienPlanet.homeAlien = Alien(
         homePlanet=alienPlanet,
         animalBasis=animalToConvert,
         animalClass=animalToConvert.animalClass,
@@ -299,16 +299,16 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         reactionModifier=animalToConvert.reactionModifier,
         aggressionModifier=aggressionModifier,
         techLevelScore=techLevelScore)
-    alienPlanet.habitation[alienPlanet.alien] = "Homeworld"
-    alienPlanet.terraformingAlien = alienPlanet.alien
+    alienPlanet.habitation[alienPlanet.homeAlien] = habitation.Homeworld
+    alienPlanet.terraformingAlien = alienPlanet.homeAlien
     alienPlanet.terraformingDone = True
-    alienPlanet.alien.planets[alienPlanet] = {"outpostRoll": None,
+    alienPlanet.homeAlien.planets[alienPlanet] = {"outpostRoll": None,
         "colonyRoll": None,
         "desirability": 8,
-        "habitation": "Homeworld"}
+        "habitation": habitation.Homeworld}
 
     if extinct:
-        alienPlanet.ruins.add(alienPlanet.alien)
+        alienPlanet.ruins.add(alienPlanet.homeAlien)
     else:
         alienPlanet.settlement = 100
 
