@@ -297,6 +297,15 @@ class exoticWeapon(StrEnum):
     ConcealingMist = auto()
     Ranged = auto()
 
+class skill(StrEnum):
+    Athletics = auto()
+    Deception = auto()
+    MeleeNaturalWeapons = auto()
+    Persuade = auto()
+    Recon = auto()
+    Stealth = auto()
+    Survival = auto()
+
 
 weight = {
     1: "1 kg",

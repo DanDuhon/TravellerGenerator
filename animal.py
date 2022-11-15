@@ -1,25 +1,27 @@
 import namegenerator
-from globalstuff import roll_xdy, terrain, animalClass, movement, behavior, diet, weapon, exoticWeapon
+from globalstuff import roll_xdy, terrain, animalClass, movement, behavior, diet, weapon, exoticWeapon, skill
 
 
 allAnimals = []
 
 
-behaviorDescriptions = {behavior.CarrionEater: "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
-                        behavior.Chaser: "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
-                        behavior.Eater: "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
-                        behavior.Filter: "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
-                        behavior.Gatherer: "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
-                        behavior.Grazer: "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
-                        behavior.Hijacker: "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
-                        behavior.Hunter: "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
-                        behavior.Intermittent: "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
-                        behavior.Intimidator: "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
-                        behavior.Killer: "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
-                        behavior.Pouncer: "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
-                        behavior.Reducer: "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or ‘bottom feeders’, Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
-                        behavior.Siren: "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
-                        behavior.Trapper: "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"}
+behaviorDescriptions = {
+    behavior.CarrionEater: "Scavengers that eat the prey and leavings of other animals. Carrion-Eaters are usually quite resilient to disease and often carry it in their flesh, transmitting contagion in their attacks on other creatures. Often small and almost always voracious, these scavengers should never be underestimated. Terran Examples: Vultures, Jackals, Crows",
+    behavior.Chaser: "Typically predators, these animals chase down and overbear prey to survive. Chasers are seldom as large as the prey they hunt, often working in packs to bring down much larger and stronger animals. When Chasers are larger than their prey, they tend to stalk herds of animals, using brute force to down several at once. Both sorts of Chaser have a tendency to gorge on its meals, feasting when it can in preparation for famine later. Terran Examples: Wolves, Cheetahs, Falcons",
+    behavior.Eater: "Voracious animals that will consume anything in their path, Eaters can be extremely dangerous to encounter because any such meeting is an opportunity for the animals to feed. Eaters usually have very high metabolisms, requiring them to eat far more often than other animals of their size and class. Terran Examples: Army Ants, Piranhas, Locusts",
+    behavior.Filter: "These animals pass their environment through themselves as they move, feeding from absorbed nutrients. The most common forms of Filters are burrowers and swimmers, creatures that move through environments rich in minerals and suspended nutrients. Filters are very rarely hostile in any capacity, fighting only to defend themselves and then only infrequently. Terran Examples: Earthworms, Sponges, Whales",
+    behavior.Gatherer: "Usually omnivores, these animals collect sustenance and hide it within their habitats for later consumption. Gatherers are often very intelligent creatures, having developed this method of behaviour as a survival trait to overcome diminishing food supplies or inefficiencies in their own digestive systems. Gatherers are not commonly hostile but can be provoked if their food stockpiles are threatened. Terran Examples: Squirrels, Chimpanzees, Leafcutter Ants",
+    behavior.Grazer: "Almost always herbivores, these animals feed off growth in their terrain across very large territories. Grazers typically form large herds and travel constantly to maintain themselves and their food supply. In a healthy environment, the ecosystem is in balance with its Grazers. They feed and grow while simultaneously keeping vegetation in their territory from becoming rampant. Terran Examples: Antelope, Bison, Horses",
+    behavior.Hijacker: "These animals seize and steal the sustenance of other, weaker animals. They use force or cunning to clear a kill, usually preferring fresh meat, and then either glut on the carcass where it lies or pull it a safe distance away before doing so. Hijackers develop from species suited to fight or outwit other predators but not their chosen prey. This forces them to adapt to a behaviour of interfering with other hunts for their own gain. Terran Examples: Lions, Bears, Harrier Hawks",
+    behavior.Hunter: "Hunters stalk and kill their prey, tending toward easily killed animals in quantity over harder, larger kills. They are by definition at least primarily carnivores but do occasionally include omnivores able to supplement their diets through either need or capability. Hunters prefer speed over strength and can maintain a hunt for very long periods of time, striking only when the odds are in their favour. Terran Examples: Baboons, Tigers, Gar",
+    behavior.Intermittent: "These animals are typically peaceful herbivores and spend most of their time wandering their territories caring for their families. Intermittent animals are pack-oriented and often slow moving, unhurried and large enough not to be concerned by predators except on rare occasions. Intermittent animals always have some method of driving off attack; this is why they do not fear predation. Terran Examples: Elephants, Brontosaurs",
+    behavior.Intimidator: "Using guile and fear, these creatures dominate their territories without direct force. Much like Hijackers, Intimidators steal kills but their dominant behaviour goes far deeper. Intimidators maintain control over their habitats at all times, not just while they feed. Intimidators rule their territory, driving out rivals and subjugating other species as they can. Terran Examples: Coyotes, Wasps, Jays",
+    behavior.Killer: "Aggressive at all times and physically capable of great violence, these creatures are a danger to any in their path. Killer animals are similar to Eaters but are not as constant in their attacks. Killers usually stake out a small territory and ruthlessly patrol it, fighting anything it comes in contact with and devouring whatever it kills. Killers have, on average, small family units and rarely shelter their young. Terran Examples: Sharks, Badgers, Vipers",
+    behavior.Pouncer: "Deadly by design, these creatures ambush their meals. Usually hunting through speed and stealth, Pouncers are not built to fight for long periods of time and will often break off attack if their first strikes do not result in a kill or significant damage. Pouncers are usually swift, cautious and only attack if it seems apparent that they will be victorious. Terran Examples: Panthers, Asps, Wolf Spiders",
+    behavior.Reducer: "Opportunistic omnivores, these animals feed on the waste from all other forms of life. Also called vermin or 'bottom feeders', Reducers are a vital part of the food chain. They ensure that nothing is lost during the hunting process of other animals. Reducers differ from Carrion-Eaters in that they rarely wait for meals and often begin eating as soon as sustenance becomes available. Some Reducers are parasitic in nature, feeding from living hosts instead of waste products. Terran Examples: Rats, Scarab Beetles, Remoras",
+    behavior.Siren: "Creatures like these often remain stationary for long periods of time. They bring their prey to them through some kind of lure or attractive bait. Some use pheromones and other chemicals while others hide in trafficked areas or seem completely harmless until they strike. Siren creatures can be extremely insidious, remaining motionless and inoffensive until their prey is so far gone that there is no chance of escape. Terran Examples: Anglerfish, Trapdoor Spiders, Venus Flytraps",
+    behavior.Trapper: "Animals of this nature imprison and immobilise prey, generally by surprise. Trappers differ from Sirens in that they rarely use a lure or convenient placement and instead just subsist on whatever they catch over long periods of time. Trappers are patient animals and, like Sirens, often remain in one place and let their prey come to them. When possible, Trappers blend into their surroundings and can be quite difficult to find. Terran Examples: Web-weaving Spiders, Ant Lions, Octopi"
+    }
 
 
 sizeModDict = {
@@ -149,11 +151,9 @@ class Animal():
     """
 
     def __init__(self, planet, terrain):
-        # Animal naming disabled for now to increase testing speed.
-        # Animal names should probably be done on demand anyway so you don't waste time
-        # naming things that may never be seen.
+        # Animal names to be generated on demand.
         allAnimals.append(self)
-        self.name = None#namegenerator.animalNGrams.generate_name()
+        self.name = None
         self.planet = planet
         self.terrain = terrain
         self.animalClass = None
@@ -171,13 +171,17 @@ class Animal():
         self.sizeRoll = roll_xdy(2, 6)
         self.sizeRollModifier = 0
         self.armor = 0
-        self.athletics = -3
-        self.deception = -3
-        self.meleeNaturalWeapons = -3
-        self.persuade = -3
-        self.recon = -3
-        self.stealth = -3
-        self.survival = -3
+
+        self.skills = {
+            skill.Athletics: -3,
+            skill.Deception: -3,
+            skill.MeleeNaturalWeapons: -3,
+            skill.Persuade: -3,
+            skill.Recon: -3,
+            skill.Stealth: -3,
+            skill.Survival: -3
+        }
+
         self.exoticWeapons = set()
         self.quirks = []
         self.behaviors = set()
@@ -202,7 +206,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -212,7 +216,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -222,7 +226,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -232,7 +236,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -242,7 +246,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -252,7 +256,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -262,7 +266,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -272,7 +276,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -282,7 +286,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -292,7 +296,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -304,7 +308,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -316,7 +320,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -328,7 +332,7 @@ class Animal():
             else:
                 if burrowRoll >= 10:
                     self.primaryMovement = movement.Burrow
-                    self.stealth += 1
+                    self.skills[skill.Stealth] += 1
                     self.instinct += 2
                 else:
                     self.primaryMovement = movement.Fly
@@ -345,6 +349,12 @@ class Animal():
         elif terrain == terrain.DeepOcean:
             self.primaryMovmement = movement.Swim
 
+    def name_animal(self):
+        """
+        Generates a name for the animal.
+        """
+        self.name = namegenerator.animalNGrams.generate_name()
+
     def raise_skill_level(self, skill, points):
         """
         Raises the skill level of the given skill by one rank.
@@ -358,10 +368,10 @@ class Animal():
                 The number of ranks by which to raise the skill.
         """
         while points > 0:
-            if getattr(self, skill) == -3:
-                setattr(self, skill, 0)
+            if self.skills[skill] == -3:
+                self.skills[skill] = 0
             else:
-                setattr(self, skill, getattr(self, skill) + 1)
+                self.skills[skill] += 1
             points -= 1
 
     def behavior_effects(self):
@@ -387,7 +397,7 @@ class Animal():
                 else:
                     self.pack -= 2
             elif behavior == behavior.Gatherer:
-                self.stealth += 1
+                self.skills[skill.Stealth] += 1
                 self.pack += 2
                 self.instinct += 1
             elif behavior == behavior.Grazer:
@@ -395,16 +405,16 @@ class Animal():
                 self.pack += 4
             elif behavior == behavior.Hunter:
                 self.instinct += 2
-                self.survival += 1
-                self.recon += 1
+                self.skills[skill.Stealth] += 1
+                self.skills[skill.Recon] += 1
             elif behavior == behavior.Hijacker:
                 self.strength += 2
                 self.pack += 2
             elif behavior == behavior.Intimidator:
                 self.instinct += 1
-                self.persuade += 1
+                self.skills[skill.Persuade] += 1
             elif behavior == behavior.Killer:
-                self.meleeNaturalWeapons += 1
+                self.skills[skill.MeleeNaturalWeapons] += 1
                 self.instinct += 4
                 if self.pack - 2 < 0:
                     self.pack = 0
@@ -415,26 +425,26 @@ class Animal():
                 else:
                     self.dexterity += 4
             elif behavior == behavior.Intermittent:
-                self.survival += 1
+                self.skills[skill.Survival] += 1
                 self.pack += 4
                 self.sizeRollModifier += 2
             elif behavior == behavior.Pouncer:
-                self.stealth += 1
-                self.recon += 1
-                self.athletics += 1
+                self.skills[skill.Stealth] += 1
+                self.skills[skill.Recon] += 1
+                self.skills[skill.Athletics] += 1
                 self.dexterity += 2
                 self.instinct += 2
             elif behavior == behavior.Reducer:
                 self.endurance += 2
                 self.pack += 4
             elif behavior == behavior.Siren:
-                self.deception += 1
+                self.skills[skill.Deception] += 1
                 if self.pack - 4 < 0:
                     self.pack = 0
                 else:
                     self.pack -= 4
             elif behavior == behavior.Trapper:
-                self.stealth += 1
+                self.skills[skill.Stealth] += 1
                 self.endurance += 1
                 if self.pack - 2 < 0:
                     self.pack = 0
@@ -603,9 +613,9 @@ class Animal():
             elif self.diet == diet.Omnivore:
                 roll += 4
 
-        if (self.meleeNaturalWeapons == -3 and
+        if (self.skills[skill.MeleeNaturalWeapons] == -3 and
                 (roll >= 2 or len(self.exoticWeapons) > 0)):
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
 
         if 7 <= roll <= 9:
             self.weaponDamageModifier += 1
@@ -868,7 +878,7 @@ class Animal():
         else:
             self.numberEncountered = "5d6"
 
-        if self.animalClass == "Insect" and self.pack > 2 and "Acutely self-aware" not in self.quirks:
+        if self.animalClass == animalClass.Insect and self.pack > 2 and "Acutely self-aware" not in self.quirks:
             if "These insects form veritable swarms." in self.quirks:
                 self.numberEncountered += " * 4"
             else:
@@ -1014,9 +1024,9 @@ class Amphibian(Animal):
         self.animalClass = animalClass.Amphibian
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1031,7 +1041,7 @@ class Amphibian(Animal):
             self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous amphibians usually feed off the young of other amphibious species or smaller aquatic life. Insects may also comprise a large part of their diet."
             self.strength += 1
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             evolutionRollModifier += 1
             physicalSkillRolls += 1
         elif dietRoll == 3:
@@ -1099,21 +1109,21 @@ class Amphibian(Animal):
                 quirk3 = True
                 self.quirks.append(
                     "Apparently blind, these amphibians have no visible eyes or means of sight.")
-                self.recon -= 1
+                self.skills[skill.Recon] -= 1
             if quirkRoll == 4 and not quirk4:
                 quirk4 = True
                 self.quirks.append(
                     "These animals make no sound at all, even when they move in natural surroundings.")
-                if self.stealth < 1:
-                    self.stealth = 1
+                if self.skills[skill.Stealth] < 1:
+                    self.skills[skill.Stealth] = 1
             if quirkRoll == 5 and not quirk5:
                 quirk5 = True
                 self.quirks.append(
-                    "The colours of this amphibian’s hide are vivid and clashing, a sort of natural reverse camouflage. Natural predators dislike this display and leave it alone.")
+                    "The colours of this amphibian's hide are vivid and clashing, a sort of natural reverse camouflage. Natural predators dislike this display and leave it alone.")
             if quirkRoll == 6:
                 self.quirks.append(
                     "Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world.")
-                self.raise_skill_level("survival", 1)
+                self.raise_skill_level(skill.Survival, 1)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append(
@@ -1165,13 +1175,13 @@ class Amphibian(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("deception", 1)
+                self.raise_skill_level(skill.Deception, 1)
             elif socialSkillRoll == 4:
                 self.instinct += 1
             elif socialSkillRoll == 5:
-                self.raise_skill_level("deception", 1)
+                self.raise_skill_level(skill.Deception, 1)
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -1189,7 +1199,7 @@ class Amphibian(Animal):
             elif physicalSkillRoll == 5:
                 self.dexterity += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -1283,9 +1293,9 @@ class Aquatic(Animal):
         self.animalClass = animalClass.Aquatic
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         self.primaryMovement = movement.Swim
         evolutionRollModifier = 0
@@ -1301,7 +1311,7 @@ class Aquatic(Animal):
         if dietRoll <= 3:
             self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous aquatics usually have large teeth, comparative to their size, and hunt by the scent of blood released into the water. They are very commonly opportunistic feeders, hunting and killing anything they come across."
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             self.dexterity += 1
             self.pack += 4
             physicalSkillRolls = 1
@@ -1313,7 +1323,7 @@ class Aquatic(Animal):
         else:
             self.diet = diet.Omnivore
             self.dietDescription = "Rare among aquatic life, omnivorous water dwellers are almost always scavengers and eat whatever they can find. It is a common adaptation of these life forms to be extremely foul tasting as a result of their diet and they are rarely considered prey by other aquatics."
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             self.pack += 2
             self.instinct += 1
             physicalSkillRolls += 1
@@ -1413,7 +1423,7 @@ class Aquatic(Animal):
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.instinct += 1
             elif evoSkillRoll == 4:
@@ -1433,13 +1443,13 @@ class Aquatic(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("deception", 1)
+                self.raise_skill_level(skill.Deception, 1)
             elif socialSkillRoll == 4:
                 self.instinct += 1
             elif socialSkillRoll == 5:
                 self.pack += 5
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -1457,7 +1467,7 @@ class Aquatic(Animal):
             elif physicalSkillRoll == 5:
                 self.dexterity += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -1574,9 +1584,9 @@ class Avian(Animal):
         self.animalClass = animalClass.Avian
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.recon = 1
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.Recon] = 1
+        self.skills[skill.Survival] = 0
 
         self.primaryMovement = movement.Fly
         evolutionRollModifier = 0
@@ -1591,7 +1601,7 @@ class Avian(Animal):
         if dietRoll <= 2:
             self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous avians tend to be larger than other avian species and have a tendency toward cannibalism. Those avians that do not eat others of their kind prefer small, easily caught game and may even be suited to hunting for shallow water aquatic animals."
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             self.dexterity += 2
             evolutionRollModifier += 1
             physicalSkillRolls += 1
@@ -1604,7 +1614,7 @@ class Avian(Animal):
         else:
             self.diet = diet.Omnivore
             self.dietDescription = "The most common form of omnivorous avian is the seed eating variety that has extended its diet to worms and insects. Scavengers are also common, eating stray fruit and picking clean the kills of other, larger creatures."
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             self.pack += 2
             evolutionSkillRolls += 1
             physicalSkillRolls += 1
@@ -1709,7 +1719,7 @@ class Avian(Animal):
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.instinct += 1
             elif evoSkillRoll == 4:
@@ -1717,7 +1727,7 @@ class Avian(Animal):
             elif evoSkillRoll == 5:
                 socialSkillRolls += 1
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             evolutionSkillRolls -= 1
 
@@ -1729,13 +1739,13 @@ class Avian(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("deception", 1)
+                self.raise_skill_level(skill.Deception, 1)
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
                 self.pack += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -1753,7 +1763,7 @@ class Avian(Animal):
             elif physicalSkillRoll == 5:
                 self.dexterity += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -1855,10 +1865,10 @@ class Fungal(Animal):
         self.animalClass = animalClass.Fungal
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.stealth = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.Stealth] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -1872,7 +1882,7 @@ class Fungal(Animal):
         if dietRoll == 1:
             self.diet = diet.Carnivore
             self.dietDescription = "Carnivorous fungals usually lure food to them, engulfing their prey and dissolving them. Fungal creatures are rarely dense or resilient enough to be combative."
-            self.meleeNaturalWeapons = 0
+            self.skills[skill.MeleeNaturalWeapons] = 0
             self.strength += 2
             evolutionRollModifier += 1
             physicalSkillRolls += 1
@@ -1953,7 +1963,7 @@ class Fungal(Animal):
                 self.quirks.append(
                     "Though capable of physical movement to attack or defend itself, this Fungal species is stationary and cannot change location. If the base species was herbivorous, it is now specialises in luring other fungals to their doom.")
                 self.behaviors.add(behavior.Siren)
-                self.primaryMovement = "Stationary"
+                self.primaryMovement = movement.Stationary
                 self.endurance += roll_xdy(1, 6)
             if quirkRoll == 6:
                 self.quirks.append(
@@ -1990,7 +2000,7 @@ class Fungal(Animal):
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.instinct += 1
             elif evoSkillRoll == 4:
@@ -2010,13 +2020,13 @@ class Fungal(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
                 self.pack += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -2035,7 +2045,7 @@ class Fungal(Animal):
                 self.endurance += roll_xdy(1, 6)
                 self.strength += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -2094,7 +2104,7 @@ class Fungal(Animal):
                     self.reactionModifier -= 2
 
         if quirk2:
-            self.stealth = -99
+            self.skills[skill.Stealth] = -99
 
         self.behavior_effects()
         self.set_size()
@@ -2133,10 +2143,10 @@ class Insect(Animal):
         self.animalClass = animalClass.Insect
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.meleeNaturalWeapons = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.MeleeNaturalWeapons] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -2150,7 +2160,7 @@ class Insect(Animal):
         if dietRoll <= 3:
             self.diet = diet.Carnivore
             self.dietDescription = " Most insects are carnivorous by the strictest definition of the term, with weaker insects normally being their food, and many are also cannibalistic. Insects often have a modified diet, consuming liquids from their prey as opposed to devouring flesh."
-            self.meleeNaturalWeapons += 1
+            self.skills[skill.MeleeNaturalWeapons] += 1
             self.strength += roll_xdy(1, 6)
             physicalSkillRolls += 1
         elif dietRoll == 4:
@@ -2162,7 +2172,7 @@ class Insect(Animal):
         else:
             self.diet = diet.Omnivore
             self.dietDescription = "Most insects are carnivorous by the strictest definition of the term, with weaker insects normally being their food, and many are also cannibalistic. Insects often have a modified diet, consuming liquids from their prey as opposed to devouring flesh."
-            self.meleeNaturalWeapons += 1
+            self.skills[skill.MeleeNaturalWeapons] += 1
             evolutionRollModifier += 1
             self.pack += 1
             physicalSkillRolls += 1
@@ -2274,7 +2284,7 @@ class Insect(Animal):
             if evoSkillRoll == 1:
                 self.weaponDice += 1
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.pack += 1
                 self.instinct += roll_xdy(1, 6)
@@ -2295,13 +2305,13 @@ class Insect(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             elif socialSkillRoll == 4:
                 self.instinct += 2
             elif socialSkillRoll == 5:
                 self.pack += roll_xdy(1, 6)
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -2321,7 +2331,7 @@ class Insect(Animal):
                 self.strength += roll_xdy(1, 6)
                 self.armor += 1
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -2422,10 +2432,10 @@ class Mammal(Animal):
         self.animalClass = animalClass.Mammal
 
         # Skills this class innately has.
-        self.athletics = 0
-        self.meleeNaturalWeapons = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.Athletics] = 0
+        self.skills[skill.MeleeNaturalWeapons] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -2515,12 +2525,12 @@ class Mammal(Animal):
             if quirkRoll == 5:
                 self.quirks.append(
                     "Bright even for its class, these mammals show a devious cunning that borders on compulsive mischief.")
-                self.raise_skill_level("stealth", 1)
-                self.raise_skill_level("deception", 1)
+                self.raise_skill_level(skill.Stealth, 1)
+                self.raise_skill_level(skill.Deception, 1)
             if quirkRoll == 6:
                 self.quirks.append(
                     "Profuse body hair marks this species as a sign of its innate adaptability.")
-                self.raise_skill_level("survival", 1)
+                self.raise_skill_level(skill.Survival, 1)
             if quirkRoll == 7:
                 self.quirks.append(
                     "Herd-oriented and nomadic, these are mostly peaceful mammals.")
@@ -2558,7 +2568,7 @@ class Mammal(Animal):
             if evoSkillRoll == 1:
                 extraBehaviorRoll = True
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.pack += 1
                 self.instinct += 1
@@ -2579,14 +2589,14 @@ class Mammal(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             elif socialSkillRoll == 4:
                 self.intelligence += 1
             elif socialSkillRoll == 5:
                 self.pack += 1
-                self.raise_skill_level("survival", 1)
+                self.raise_skill_level(skill.Survival, 1)
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -2605,7 +2615,7 @@ class Mammal(Animal):
                 self.strength += 2
                 self.endurance += 1
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 
@@ -2761,9 +2771,9 @@ class Reptile(Animal):
         self.armor += 1
 
         # Skills this class innately has.
-        self.meleeNaturalWeapons = 0
-        self.recon = 0
-        self.survival = 0
+        self.skills[skill.MeleeNaturalWeapons] = 0
+        self.skills[skill.Recon] = 0
+        self.skills[skill.Survival] = 0
 
         evolutionRollModifier = 0
         physicalSkillRolls = 0
@@ -2779,7 +2789,7 @@ class Reptile(Animal):
             self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
             self.strength += 1
             self.dexterity += 1
-            self.athletics = 0
+            self.skills[skill.Athletics] = 0
             physicalSkillRolls += 1
         elif dietRoll == 5:
             self.diet = diet.Herbivore
@@ -2845,7 +2855,7 @@ class Reptile(Animal):
             if quirkRoll == 3:
                 self.quirks.append(
                     "Mottled in appearance and adapted to its surroundings.")
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             if quirkRoll == 4:
                 quirk4 += 1
                 self.quirks.append(
@@ -2853,7 +2863,7 @@ class Reptile(Animal):
             if quirkRoll == 5:
                 self.quirks.append(
                     "Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals.")
-                self.raise_skill_level("survival", 1)
+                self.raise_skill_level(skill.Survival, 1)
             if quirkRoll == 6 and not quirk6:
                 quirk6 = True
                 self.quirks.append(
@@ -2864,9 +2874,9 @@ class Reptile(Animal):
                     self.dietDescription = "Deadly and merciless, carnivorous reptiles almost always bring their prey down through superior strength or speed and exhibit some of the most advanced venoms of the animal world. A bite from a reptile can be fatal due to their common use of poison."
                 else:
                     self.diet = diet.Omnivore
-                    self.dietDescription = "These animals have an uncommon trait for their kind – a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
+                    self.dietDescription = "These animals have an uncommon trait for their kind - a complex digestive system. While this makes them more adaptive than most of their class, it also has a tendency to limit their size and strength."
                 self.behaviors.add(behavior.Trapper)
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             if quirkRoll == 7 and not quirk7:
                 quirk7 = True
                 self.quirks.append(
@@ -2896,7 +2906,7 @@ class Reptile(Animal):
             if evoSkillRoll == 1:
                 exoticWeaponRolls += 1
             elif evoSkillRoll == 2:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
             elif evoSkillRoll == 3:
                 self.pack += 1
                 self.dexterity += 1
@@ -2917,14 +2927,14 @@ class Reptile(Animal):
             elif socialSkillRoll == 2:
                 self.instinct += 1
             elif socialSkillRoll == 3:
-                self.raise_skill_level("stealth", 1)
+                self.raise_skill_level(skill.Stealth, 1)
             elif socialSkillRoll == 4:
-                self.raise_skill_level("survival", 1)
+                self.raise_skill_level(skill.Survival, 1)
             elif socialSkillRoll == 5:
                 self.pack += 1
                 self.instinct += 1
             else:
-                self.raise_skill_level("recon", 1)
+                self.raise_skill_level(skill.Recon, 1)
 
             socialSkillRolls -= 1
 
@@ -2943,7 +2953,7 @@ class Reptile(Animal):
                 self.strength += 2
                 self.endurance += 1
             else:
-                self.raise_skill_level("meleeNaturalWeapons", 1)
+                self.raise_skill_level(skill.MeleeNaturalWeapons, 1)
 
             physicalSkillRolls -= 1
 

@@ -775,7 +775,7 @@ class OrbitalBody():
         
         if (max(1, self.terraformingAlien.homePlanet.size - 3) <= self.size <= min(15, self.terraformingAlien.homePlanet.size + 2)
                 and self.atmosphere in acceptableAtmospheres[self.terraformingAlien.homePlanet.atmosphere]
-                and max((5 if self.terraformingAlien.animalClass == animalClass.Aquatic else 2), self.terraformingAlien.homePlanet.hydrosphere - 3) <= self.hydrosphere <= min((11 if self.terraformingAlien.animalClass == "Aquatic" else 8), self.terraformingAlien.homePlanet.hydrosphere + 3)):
+                and max((5 if self.terraformingAlien.animalClass == animalClass.Aquatic else 2), self.terraformingAlien.homePlanet.hydrosphere - 3) <= self.hydrosphere <= min((11 if self.terraformingAlien.animalClass == animalClass.Aquatic else 8), self.terraformingAlien.homePlanet.hydrosphere + 3)):
             if tradeCode.Ga not in self.tradeCodes:
                 self.tradeCodes.add(tradeCode.Ga)
         else:

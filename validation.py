@@ -1837,11 +1837,11 @@ def validation(maxTechLevel):
                     get_info(a)
                     raise ValueError("Invalid behavior.")
 
-            if "These animals make no sound at all, even when they move in natural surroundings." in a.quirks and a.stealth < 0:
+            if "These animals make no sound at all, even when they move in natural surroundings." in a.quirks and a.skills[globalstuff.skill.Stealth] < 0:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Amphibian stealth invalid due to quirk.")
-            if "Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world." in a.quirks and a.survival < 1:
+            if "Seemingly everywhere, forms of this animal can be found in virtually every habitat type on their world." in a.quirks and a.skills[globalstuff.skill.Survival] < 1:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Amphibian survival invalid due to quirk.")
@@ -2158,12 +2158,12 @@ def validation(maxTechLevel):
                 raise ValueError("Mammal missing Pouncer.")
 
             if "Bright even for its class, these mammals show a devious cunning that borders on compulsive mischief." in a.quirks and (
-                    a.stealth == -3 or a.deception == -3):
+                    a.skills[globalstuff.skill.Stealth] == -3 or a.skills[globalstuff.skill.Deception] == -3):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Mammal should have stealth and deception.")
 
-            if "Profuse body hair marks this species as a sign of its innate adaptability." in a.quirks and a.survival < 1:
+            if "Profuse body hair marks this species as a sign of its innate adaptability." in a.quirks and a.skills[globalstuff.skill.Survival] < 1:
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError("Mammal should have survival of at least 1.")
@@ -2174,7 +2174,7 @@ def validation(maxTechLevel):
                 raise ValueError("Mammal pack is too low.")
 
             if "These animals have prodigious horns and know how to use them in combat." in a.quirks and (
-                    globalstuff.weapon.Horns not in a.weapons or a.meleeNaturalWeapons == -3):
+                    globalstuff.weapon.Horns not in a.weapons or a.skills[globalstuff.skill.MeleeNaturalWeapons] == -3):
                 get_info(a.planet)
                 get_info(a)
                 raise ValueError(
@@ -2227,12 +2227,12 @@ def validation(maxTechLevel):
                     get_info(a)
                     raise ValueError("Invalid behavior.")
 
-                if "Mottled in appearance and adapted to its surroundings." in a.quirks and a.stealth == -3:
+                if "Mottled in appearance and adapted to its surroundings." in a.quirks and a.skills[globalstuff.skill.Stealth] == -3:
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Reptile needs stealth.")
 
-                if "Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals." in a.quirks and a.survival < 1:
+                if "Able to go dormant for long periods of time, these reptiles may go for weeks or even months between meals." in a.quirks and a.skills[globalstuff.skill.Survival] < 1:
                     get_info(a.planet)
                     get_info(a)
                     raise ValueError("Reptile needs survival.")

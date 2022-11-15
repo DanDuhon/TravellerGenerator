@@ -5,7 +5,7 @@ import animal
 import orbitalbody
 import namegenerator
 import globalstuff
-from globalstuff import roll_xdy, coin_flip, habitation, behavior, animalClass, movement
+from globalstuff import roll_xdy, coin_flip, habitation, behavior, animalClass, movement, skill
 
 allAliens = []
 
@@ -282,13 +282,13 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         endurance=animalToConvert.endurance,
         pack=animalToConvert.pack,
         size=animalToConvert.size,
-        athletics=animalToConvert.athletics,
-        deception=animalToConvert.deception,
-        meleeNaturalWeapons=animalToConvert.meleeNaturalWeapons,
-        persuade=animalToConvert.persuade,
-        recon=animalToConvert.recon,
-        stealth=animalToConvert.stealth,
-        survival=animalToConvert.survival,
+        athletics=animalToConvert.skills[skill.Athletics],
+        deception=animalToConvert.skills[skill.Deception],
+        meleeNaturalWeapons=animalToConvert.skills[skill.MeleeNaturalWeapons],
+        persuade=animalToConvert.skills[skill.Persuade],
+        recon=animalToConvert.skills[skill.Recon],
+        stealth=animalToConvert.skills[skill.Stealth],
+        survival=animalToConvert.skills[skill.Survival],
         naturalWeapons=animalToConvert.weapons,
         exoticNaturalWeapons=animalToConvert.exoticWeapons,
         naturalWeaponDice=animalToConvert.weaponDice,

@@ -199,7 +199,7 @@ class Star():
         that orbit it. Sets the number of planets affected.
         """
 
-        if self.luminosityClass in ["D", "K-III", "M-III"]:
+        if self.luminosityClass in [luminosityClass.D, luminosityClass.K_III, luminosityClass.M_III]:
             self.expansionAffectedOrbits = roll_xdy(1, 6)
             return
         

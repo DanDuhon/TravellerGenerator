@@ -2,7 +2,7 @@ import star
 import orbitalbody
 import namegenerator
 import globalstuff
-from globalstuff import roll_xdy, coin_flip, LookupTable
+from globalstuff import roll_xdy, coin_flip, LookupTable, luminosityClass
 
 
 allSystems = []
@@ -254,7 +254,7 @@ class System():
         star in the system if there is one.
         """
         
-        self.flareStarDesirabilityPenalty = max([0] + [roll_xdy(1, 3) for s in self.stars if s.luminosityClass == "M-Ve"])
+        self.flareStarDesirabilityPenalty = max([0] + [roll_xdy(1, 3) for s in self.stars if s.luminosityClass == luminosityClass.M_Ve])
 
 
     def create_surrounding_systems(

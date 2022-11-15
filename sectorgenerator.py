@@ -163,62 +163,62 @@ def sectorgen():
             for p in [p for p in orbitalbody.allBodies if p.group != group.AsteroidBelt and {habitation.Outpost, habitation.Colony} & set(p.habitation.values())]:
                 p.settlement += 1
 
-                # terraformingOccurred = False
+                terraformingOccurred = False
                 
-                # if (not p.terraformingDone
-                #         and p.orbitType == orbitType.InnerZone
-                #         and 1 <= p.size <= 11
-                #         and 1 <= p.atmosphere <= 13
-                #         and p.hydrosphere < 15
-                #         and p.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
-                #     p.terraformingPoints = -15 + p.settlement + p.terraformingAlien.currentTechLevel
+                if (not p.terraformingDone
+                        and p.orbitType == orbitType.InnerZone
+                        and 1 <= p.size <= 11
+                        and 1 <= p.atmosphere <= 13
+                        and p.hydrosphere < 15
+                        and p.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
+                    p.terraformingPoints = -15 + p.settlement + p.terraformingAlien.currentTechLevel
 
-                # if (not p.terraformingDone
-                #         and p.terraformingPoints > p.terraformingPointsUsed >= groupTerraformingPoints[p.group]):
-                #     terraformingOccurred = p.terraform_planet(p.terraformingAlien)
-                #     if terraformingOccurred:
-                #         p.terraformingPointsUsed += groupTerraformingPoints[p.group]
-                #         p.set_terrain()
+                if (not p.terraformingDone
+                        and p.terraformingPoints > p.terraformingPointsUsed >= groupTerraformingPoints[p.group]):
+                    terraformingOccurred = p.terraform_planet(p.terraformingAlien)
+                    if terraformingOccurred:
+                        p.terraformingPointsUsed += groupTerraformingPoints[p.group]
+                        p.set_terrain()
 
-                #     if terraformingOccurred:
-                #         for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
-                #             if not a.planets.get(p) or not a.planets[p].get("habitation"):
-                #                 continue
+                    if terraformingOccurred:
+                        for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
+                            if not a.planets.get(p) or not a.planets[p].get("habitation"):
+                                continue
 
-                #             previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
-                #             d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
-                #             p.desirability[a] = d
-                #             a.planets[p]["desirability"] = d
-                #             h = p.calculate_habitation(
-                #                 a,
-                #                 maxReactionModifier,
-                #                 p.systemHex.alienNearbyColony.get(a))
-                #             p.habitation[a] = h
-                #             a.planets[p]["habitation"] = h
+                            previousHabitation = copy.deepcopy(a.planets.get(p).get("habitation")) if a.planets.get(p) else None
+                            d = p.calculate_desirability(a, p.systemHex.alienNearbyColony.get(a))
+                            p.desirability[a] = d
+                            a.planets[p]["desirability"] = d
+                            h = p.calculate_habitation(
+                                a,
+                                maxReactionModifier,
+                                p.systemHex.alienNearbyColony.get(a))
+                            p.habitation[a] = h
+                            a.planets[p]["habitation"] = h
 
-                #             # If an alien is in the process of terraforming and they
-                #             # have made the planet temporarily worse, they won't
-                #             # abandon it. Otherwise, a lower level of habitation
-                #             # causes ruins to be present on the planet.
-                #             if previousHabitation == habitation.Colony and a.planets[p]["habitation"] == habitation.Outpost:
-                #                 p.ruins.add(a)
-                #             elif previousHabitation == habitation.Colony and not a.planets[p]["habitation"]:
-                #                 p.ruins.add(a)
-                #             elif previousHabitation == habitation.Outpost and not a.planets[p]["habitation"]:
-                #                 p.ruins.add(a)
+                            # If an alien is in the process of terraforming and they
+                            # have made the planet temporarily worse, they won't
+                            # abandon it. Otherwise, a lower level of habitation
+                            # causes ruins to be present on the planet.
+                            if previousHabitation == habitation.Colony and a.planets[p]["habitation"] == habitation.Outpost:
+                                p.ruins.add(a)
+                            elif previousHabitation == habitation.Colony and not a.planets[p]["habitation"]:
+                                p.ruins.add(a)
+                            elif previousHabitation == habitation.Outpost and not a.planets[p]["habitation"]:
+                                p.ruins.add(a)
 
-                #             if previousHabitation and not a.planets[p]["habitation"] and p.terraformingAlien == a:
-                #                 p.terraformingAlien = None
+                            if previousHabitation and not a.planets[p]["habitation"] and p.terraformingAlien == a:
+                                p.terraformingAlien = None
                                 
-                # if (p.seedWithLife
-                #     and p.terraformingDone
-                #     and p.biosphere < 11
-                #     and 1 <= p.size <= 11
-                #     and 2 <= p.atmosphere <= 13
-                #     and p.hydrosphere < 15
-                #     and p.chemistry
-                #     and habitation.Colony in p.habitation.values()):
-                #     p.biosphere += 1
+                if (p.seedWithLife
+                    and p.terraformingDone
+                    and p.biosphere < 11
+                    and 1 <= p.size <= 11
+                    and 2 <= p.atmosphere <= 13
+                    and p.hydrosphere < 15
+                    and p.chemistry
+                    and habitation.Colony in p.habitation.values()):
+                    p.biosphere += 1
                         
 
             for a in [a for a in alien.allAliens if not a.extinct and a.currentTechLevel >= 9]:
