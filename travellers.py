@@ -4,13 +4,14 @@ import sectorgenerator
 import validation
 import tkhex
 import globalstuff
+import cProfile
 
 parser = argparse.ArgumentParser(
     description="Generates a sector of space for use in Traveller")
 parser.add_argument(
     "-x",
     dest='survival',
-    default=0,
+    default=10,
     type=int,
     help="alien survival percent (default=10)")
 parser.add_argument(
@@ -30,9 +31,10 @@ args = parser.parse_args()
 globalstuff.maxTechLevel = args.techlevel
 globalstuff.alienSurvivalPercent = args.survival
 
-sectorgenerator.sectorgen()
+cProfile.run("sectorgenerator.sectorgen()")
+#sectorgenerator.sectorgen()
 
 if args.validation:
     validation.validation(args.techlevel)
     
-tkhex.SystemDisplay()
+#tkhex.SystemDisplay()

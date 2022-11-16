@@ -374,8 +374,8 @@ def create_terra(star):
 def create_luna(star):
     newPlanet = Rockball(
         star,
-        star.planets[-1],
-        star.planets[-1].order,
+        star.orbitalBodies[-1],
+        star.orbitalBodies[-1].order,
         orbitType.InnerZone)
 
     newPlanet.group = group.DwarfPlanet
@@ -405,7 +405,7 @@ class OrbitalBody():
             Indicates that this is the nth orbit from the star (e.g. Earth
             would have a value of 3).
         orbitType: String
-            The type of orbit the planet is in (i.e. Epistellar, Inner Zone,
+            The type of orbit the OrbitalBody is in (i.e. Epistellar, Inner Zone,
             Outer Zone)
     """
 
@@ -417,9 +417,9 @@ class OrbitalBody():
             orbitType):
         allBodies.append(self)
         self.systemHex = star.systemHex
-        self.systemHex.planets.append(self)
+        self.systemHex.orbitalBodies.append(self)
         self.star = star
-        self.star.planets.append(self)
+        self.star.orbitalBodies.append(self)
         self.parentObject = parentObject
         self.order = order
         self.orbitType = orbitType
@@ -481,23 +481,25 @@ class OrbitalBody():
             maxReactionModifier,
             outpostPossible):
         """
-        Returns the type of Habitation an Alien will have on the planet.
+        Returns the type of Habitation an Alien will have on the orbital body.
 
         Required Parameters:
             alien: Alien class instance
-                The alien considering colonization of this planet.
+                The alien considering colonization of this orbital body.
             maxReactionModifier: Integer
                 The maximum Reaction Modifier across all non-extinct
                 aliens.
             outpostPossible: Boolean
                 Indicates where an Outpost can be created.
         """
-
+        if self.properName == "Terra" and alien.name != "Terran":
+            pass
         if self == alien.homePlanet:
             if not alien.extinct:
                 self.systemHex.create_surrounding_systems(maxReactionModifier)
             self.habitation[alien] = habitation.Homeworld
-            alien.planets[self]["habitation"] = habitation.Homeworld
+            alien.orbitalBodies[self]["habitation"] = habitation.Homeworld
+            self.terraformingAlien = self.homeAlien
             return
 
         homeSystem = alien.homePlanet.systemHex == self.systemHex
@@ -505,11 +507,13 @@ class OrbitalBody():
 
         if not self.homeAlien or not self.homeAlien.extinct:
             if alien.currentTechLevel >= 10 or (alien.currentTechLevel == 9 and homeSystem):
-                if alien.planets[self]["colonyRoll"] - 2 <= alien.planets[self]["desirability"]:
+                if alien.orbitalBodies[self]["colonyRoll"] - 2 <= alien.orbitalBodies[self]["desirability"]:
                     hab = habitation.Colony
+                    self.terraformingAlien = alien
                     self.systemHex.create_surrounding_systems(maxReactionModifier)
-                elif outpostPossible and alien.planets[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.planets[self]["desirability"] - 10:
+                elif outpostPossible and alien.orbitalBodies[self]["outpostRoll"] - (1 if homeSystem else 0) <= alien.currentTechLevel + alien.orbitalBodies[self]["desirability"] - 10:
                     hab = habitation.Outpost
+                    self.terraformingAlien = alien
                     self.systemHex.create_surrounding_systems(maxReactionModifier)
                 else:
                     hab = None
@@ -529,7 +533,7 @@ class OrbitalBody():
 
     def set_population(self):
         """
-        Sets the alien populations for the planet.
+        Sets the alien populations for the orbital body.
         This sets both the relative and actual population.
         Actual population modifies the relative population
         using the alien's Pack score from its animal base.
@@ -558,7 +562,7 @@ class OrbitalBody():
                 self.alienPopulation[alien]["actual"] = 0
                 continue
 
-            # If the alien has abandonded this planet but previously had a population
+            # If the alien has abandonded this orbital body but previously had a population
             # there, remove the population.
             if not self.habitation[alien] and (len(self.alienPopulation[alien]["relative"]) > 1 and self.alienPopulation[alien]["relative"][-1] != 0):
                 self.alienPopulation[alien]["relative"] = 0
@@ -579,17 +583,17 @@ class OrbitalBody():
             if self.habitation[alien] == habitation.Homeworld:
                 # This ensures the homeworld population changes a little over time.
                 homeworldPopRoll = roll_xdy(1, 3) - roll_xdy(1, 3)
-                if alien.planets[self]["desirability"] + homeworldPopRoll > self.alienPopulation[alien]["homeworldRoll"]:
-                    basePop = min(12, alien.planets[self]["desirability"] + homeworldPopRoll)
+                if alien.orbitalBodies[self]["desirability"] + homeworldPopRoll > self.alienPopulation[alien]["homeworldRoll"]:
+                    basePop = min(12, alien.orbitalBodies[self]["desirability"] + homeworldPopRoll)
                 else:
                     basePop = self.alienPopulation[alien]["homeworldRoll"]
             elif self.habitation[alien] == habitation.Colony:
-                if alien.currentTechLevel + self.settlement - 9 > alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]:
-                    basePop = max(4, min(12, alien.planets[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]))
+                if alien.currentTechLevel + self.settlement - 9 > alien.orbitalBodies[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]:
+                    basePop = max(4, min(12, alien.orbitalBodies[self]["desirability"] + self.alienPopulation[alien]["colonyRoll"]))
                 else:
                     basePop = max(4, alien.currentTechLevel + self.settlement - 9)
             elif self.habitation[alien] == habitation.Outpost:
-                basePop = max(1, min(4, alien.planets[self]["desirability"] + self.alienPopulation[alien]["outpostRoll"]))
+                basePop = max(1, min(4, alien.orbitalBodies[self]["desirability"] + self.alienPopulation[alien]["outpostRoll"]))
 
             # This is the first digit of the population number.
             popString = str(roll_xdy(1, 9))
@@ -601,10 +605,10 @@ class OrbitalBody():
 
             self.alienPopulation[alien]["relative"] = int(popString)
             self.alienPopulation[alien]["actual"] = int(int(popString) * alien.populationModifier)
-            alien.planets[self]["population"] = self.alienPopulation[alien]["actual"]
+            alien.orbitalBodies[self]["population"] = self.alienPopulation[alien]["actual"]
 
         # Sum up the population numbers so we can get a score and actual
-        # population number for the planet as a whole.
+        # population number for the orbital body as a whole.
         if self.alienPopulation:
             populationNumbers = []
             populationRelative = []
@@ -713,7 +717,7 @@ class OrbitalBody():
     def set_industry_effects(self):
         """
         Modifies the population based on Industry
-        and also sets whether the planet has industrial pollution
+        and also sets whether the orbital body has industrial pollution
         (does not apply to Asteroid Belts or Jovians).
         """
         
@@ -968,17 +972,17 @@ class AsteroidBelt(OrbitalBody):
 
     def calculate_desirability(self, alien, nearbyColony):
         """
-        Sets the planet's desirability score, which is used to determine
+        Sets the orbital body's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
         This version applies only to Jovians and Asteroid Belts as you
         don't live "on" them, but in stations.
 
         Required Parameters:
             alien: Alien class instance
-                The alien considering colonization of this planet.
+                The alien considering colonization of this orbital body.
             nearbyColony: Boolean
                 Indicates where there is a colony within one jump
-                of this planet's system.
+                of this orbital body's system.
         """
 
         desirability = self.baseDesirability
@@ -1002,8 +1006,8 @@ class AsteroidBelt(OrbitalBody):
         if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
-        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
-        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
+        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.orbitalBodies)
+        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.orbitalBodies)
 
         if not colonyInSystem and not outpostInSystem:
             desirability -= 3
@@ -1066,7 +1070,6 @@ class Planet(OrbitalBody):
                 Indicates where there is a colony within one jump
                 of this planet's system.
         """
-
         desirability = self.baseDesirability
 
         # If the distance from the alien home system hasn't been
@@ -1278,7 +1281,7 @@ class Planet(OrbitalBody):
 
     def set_terrain(self):
         """
-        Sets the list of terrains found on the planet.
+        Sets the list of terrains found on the orbital body.
         """
 
         t = []
@@ -1487,17 +1490,17 @@ class JovianPlanet(Planet):
 
     def calculate_desirability(self, alien, nearbyColony):
         """
-        Sets the planet's desirability score, which is used to determine
+        Sets the orbital body's desirability score, which is used to determine
         the extent of colonization. This can be different per Alien.
         This version applies only to Jovians and Asteroid Belts as you
         don't live "on" them, but in stations.
 
         Required Parameters:
             alien: Alien class instance
-                The alien considering colonization of this planet.
+                The alien considering colonization of this orbital body.
             nearbyColony: Boolean
                 Indicates where there is a colony within one jump
-                of this planet's system.
+                of this orbital body's system.
         """
 
         desirability = self.baseDesirability
@@ -1521,8 +1524,8 @@ class JovianPlanet(Planet):
         if not any([self.systemHex.fuelUnrefinedAvailable, self.systemHex.fuelRefinedAvailable]):
             desirability -= 1
 
-        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.planets)
-        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.planets)
+        colonyInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] in [habitation.Colony, habitation.Homeworld] for p in self.systemHex.orbitalBodies)
+        outpostInSystem = any(p.group not in [group.JovianPlanet, group.AsteroidBelt] and alien in p.habitation.keys() and p.habitation[alien] == habitation.Outpost for p in self.systemHex.orbitalBodies)
 
         if not colonyInSystem and not outpostInSystem:
             desirability -= 3

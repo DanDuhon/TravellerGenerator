@@ -1,5 +1,4 @@
 import star
-import orbitalbody
 import namegenerator
 import globalstuff
 from globalstuff import roll_xdy, coin_flip, LookupTable, luminosityClass
@@ -116,7 +115,7 @@ class System():
         self.fuelUnrefinedAvailable = False
         self.fuelRefinedAvailable = False
         self.stars = []
-        self.planets = []
+        self.orbitalBodies = []
         self.flareStarDesirabilityPenalty = 0
         self.systemsAtRange = {
             0: [self.coordinates],
@@ -143,15 +142,23 @@ class System():
 
         self.numberOfStars = numberOfStarsTable[roll_xdy(3, 6) + (3 if self.openCluster else 0)] + autoBrownDwarf
 
-    def create_stars(self):
+    def create_stars(self, createOrbitalBodies=True):
         """
         Creates the stars in the system and sets the desirability penalty
         for having a flare star in the system, if there is one.
+
+        Optional Parameters:
+            createOrbitalBodies: Boolean
+                Whether to create the orbital bodies at this time.
+                Default: True
         """
         self.create_primary_star_in_system()
         self.create_companion_stars_in_system()
         self.create_automatic_brown_dwarf()
         self.set_flare_star_desirability_penalty()
+        if createOrbitalBodies:
+            for s in self.stars:
+                s.create_orbital_bodies()
 
 
     def create_new_open_cluster(self):

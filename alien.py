@@ -129,7 +129,7 @@ class Alien():
         self.maxTechLevel = 0
         self.currentTechLevel = 0
         self.exploredSystems = set()
-        self.planets = dict()
+        self.orbitalBodies = dict()
 
         if pack == 0:
             self.relativePopulation = 1
@@ -164,8 +164,7 @@ def create_terra_luna_humans(star):
     """
     # Terra
     orbitalbody.create_terra(star)
-
-    terra = star.planets[-1]
+    terra = star.orbitalBodies[-1]
 
     # Luna
     orbitalbody.create_luna(star)
@@ -188,10 +187,12 @@ def create_terra_luna_humans(star):
     terra.habitation[terra.homeAlien] = habitation.Homeworld
     terra.terraformingAlien = terra.homeAlien
     terra.terraformingDone = True
-    terra.homeAlien.planets[terra] = {"outpostRoll": None,
-                                  "colonyRoll": None,
-                                  "desirability": 8,
-                                  "habitation": habitation.Homeworld}
+    terra.homeAlien.orbitalBodies[terra] = {
+        "outpostRoll": None,
+        "colonyRoll": None,
+        "desirability": 8,
+        "habitation": habitation.Homeworld
+        }
     terra.settlement = 100
 
 
@@ -240,7 +241,7 @@ def create_alien(alienPlanet, alienSurvivalPercent):
 
     # This is intended to give an edge to species that are aggressive, but not
     # too aggressive. This will be used to determine tech level and how quickly
-    # a species explores outwards from colonized planets.
+    # a species explores outwards from colonized orbital bodies.
     behaviorAggressionNumbers = []
     for behavior in animalToConvert.behaviors:
         if behavior == behavior.CarrionEater:
@@ -302,10 +303,12 @@ def create_alien(alienPlanet, alienSurvivalPercent):
     alienPlanet.habitation[alienPlanet.homeAlien] = habitation.Homeworld
     alienPlanet.terraformingAlien = alienPlanet.homeAlien
     alienPlanet.terraformingDone = True
-    alienPlanet.homeAlien.planets[alienPlanet] = {"outpostRoll": None,
+    alienPlanet.homeAlien.orbitalBodies[alienPlanet] = {
+        "outpostRoll": None,
         "colonyRoll": None,
         "desirability": 8,
-        "habitation": habitation.Homeworld}
+        "habitation": habitation.Homeworld
+        }
 
     if extinct:
         alienPlanet.ruins.add(alienPlanet.homeAlien)
@@ -340,7 +343,7 @@ def set_tech_level():
         # equation will always result in at least a 10.
         # This way there are intelligent species out there that are
         # not extinct but have also not developed the technology
-        # to colonize other planets (aside from perhaps generational colony ships).
+        # to colonize other orbital bodies (aside from perhaps generational colony ships).
         if alien.name == "Terran" or coin_flip():
             alien.maxTechLevel = int(round((((((alien.techLevelScore / maxTechLevelScore) * globalstuff.maxTechLevel) + (
                 (1 - (alien.techLevelScore / maxTechLevelScore)) * 10)) / 2) / divisor) * globalstuff.maxTechLevel, 0))

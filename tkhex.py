@@ -10,7 +10,7 @@ from globalstuff import group, orbitType
 # TODO: Avoid double line drawing - not sure this is possible while using built-in methods
 
 
-planetDisplaySize = {
+orbitalBodyDisplaySize = {
     group.AsteroidBelt: 5,
     group.JovianPlanet: 25,
     group.HelianPlanet: 20,
@@ -18,7 +18,7 @@ planetDisplaySize = {
     group.DwarfPlanet: 10
 }
 
-planetDisplayOffset = {
+orbitalBodyDisplayOffset = {
     0: 38.5,
     1: 37.5,
     2: 35.0,
@@ -44,7 +44,7 @@ class Colors:
     star2 = "Yellow3"
     systembackground = "black"
     hexhover = "#53e2a1"
-    planet = 'brown'
+    orbitalBody = 'brown'
     luminosity = {
             "A": ("#CDDBFF", "#A4B0CD"),
             "F": ("#EFEFFD", "#C1C1CD"),
@@ -65,7 +65,7 @@ class SystemDisplay:
         self.starlist = {}
         self.selected = None
         self.selectmarks = []
-        self.planet_selectmarks = []
+        self.orbitalbody_selectmarks = []
 
         tk = tkinter.Tk()
 
@@ -138,19 +138,19 @@ class SystemDisplay:
         self.starInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
         self.starInfo.grid(row=3, column=2)
 
-        # Planet Label
-        self.planetlabel = tkinter.Label(tk, width=40, height=1, anchor="n")
-        self.planetlabel.grid(row=4, column=1)
+        # Orbital Body Label
+        self.orbitalBodyLabel = tkinter.Label(tk, width=40, height=1, anchor="n")
+        self.orbitalBodyLabel.grid(row=4, column=1)
 
-        # Planet Screen
-        self.planet = tkinter.Canvas(tk,
+        # Orbital Body Screen
+        self.orbitalBody = tkinter.Canvas(tk,
                 background='black',
                 width=550, height=300)
-        self.planet.grid(row=5, column=1, sticky='n')
+        self.orbitalBody.grid(row=5, column=1, sticky='n')
 
-        # Planet Info Panel
-        self.planetInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
-        self.planetInfo.grid(row=5, column=2)
+        # Orbital Body Info Panel
+        self.orbitalBodyInfo = tkinter.Label(tk, width=40, justify="left", wraplength=250, anchor="nw")
+        self.orbitalBodyInfo.grid(row=5, column=2)
 
         self.zoomInLimit = 1000
         self.zoomOutLimit = -2400
@@ -394,7 +394,7 @@ class SystemDisplay:
                 width = 10)
         
         for orbit in [orbitType.Epistellar, orbitType.InnerZone, orbitType.OuterZone]:
-            for x in range(orbitRangeOffset[orbit], sum([1 for planet in selectedStar.planets if planet.orbitType == orbit and planet.parentObject == selectedStar]) + orbitRangeOffset[orbit]):
+            for x in range(orbitRangeOffset[orbit], sum([1 for orbitalBody in selectedStar.orbitalBodies if orbitalBody.orbitType == orbit and orbitalBody.parentObject == selectedStar]) + orbitRangeOffset[orbit]):
                 self.star.create_oval(
                     overhang * (x * 1.3) - size, 100 - size / 2,
                     overhang * (x * 1.3), 150 + size / 2,
@@ -403,59 +403,59 @@ class SystemDisplay:
                     width=1
                 )
 
-        def clickstar_create(planet):
+        def clickstar_create(orbitalBody):
             def clickstar(event):
-                self.selectplanet(planet, selectedStar)
+                self.selectorbitalbody(orbitalBody, selectedStar)
             return clickstar
             
-        for planet in selectedStar.planets:
-            size = planetDisplaySize[planet.group]
+        for orbitalBody in selectedStar.orbitalBodies:
+            size = orbitalBodyDisplaySize[orbitalBody.group]
 
-            if isinstance(planet.parentObject, star.Star):
+            if isinstance(orbitalBody.parentObject, star.Star):
                 satelliteNum = 0
             else:
-                satelliteNum = int(planet.name[-1])
+                satelliteNum = int(orbitalBody.name[-1])
 
-            if planet.orbitType == orbitType.Epistellar:
-                planetOrder = planet.order
-            elif planet.orbitType == orbitType.InnerZone:
-                planetOrder = planet.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
-            elif planet.orbitType == orbitType.OuterZone:
-                planetOrder = planet.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
+            if orbitalBody.orbitType == orbitType.Epistellar:
+                orbitalBodyOrder = orbitalBody.order
+            elif orbitalBody.orbitType == orbitType.InnerZone:
+                orbitalBodyOrder = orbitalBody.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
+            elif orbitalBody.orbitType == orbitType.OuterZone:
+                orbitalBodyOrder = orbitalBody.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
 
-            x_center_mod = planetDisplayOffset[satelliteNum] + (planetOrder / 2)
+            x_center_mod = orbitalBodyDisplayOffset[satelliteNum] + (orbitalBodyOrder / 2)
 
-            row, column = satelliteNum, planetOrder
+            row, column = satelliteNum, orbitalBodyOrder
             x_center = (38.5 * column) + x_center_mod
             y_center = (11 * row) + 124 + (15 * satelliteNum)
-            planet_id = self.star.create_oval(
+            orbitalBody_id = self.star.create_oval(
                     x_center + size / 2, y_center + size / 2,
                     x_center - size / 2, y_center - size / 2,
-                    fill=Colors.planet)
-            self.star.tag_bind(planet_id, '<Button-1>', clickstar_create(planet))
+                    fill=Colors.orbitalBody)
+            self.star.tag_bind(orbitalBody_id, '<Button-1>', clickstar_create(orbitalBody))
 
         self.starInfo.config(text="\n".join(self.set_info(selectedStar)))
 
-    def selectplanet(self, planet, selectedStar):
-        for id in self.planet_selectmarks:
+    def selectorbitalbody(self, orbitalBody, selectedStar):
+        for id in self.orbitalbody_selectmarks:
             self.star.delete(id)
-        self.planet_selectmarks = []
+        self.orbitalbody_selectmarks = []
 
-        if isinstance(planet.parentObject, star.Star):
+        if isinstance(orbitalBody.parentObject, star.Star):
             satelliteNum = 0
         else:
-            satelliteNum = int(planet.name[-1])
+            satelliteNum = int(orbitalBody.name[-1])
 
-        if planet.orbitType == orbitType.Epistellar:
-            planetOrder = planet.order
-        elif planet.orbitType == orbitType.InnerZone:
-            planetOrder = planet.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
-        elif planet.orbitType == orbitType.OuterZone:
-            planetOrder = planet.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
+        if orbitalBody.orbitType == orbitType.Epistellar:
+            orbitalBodyOrder = orbitalBody.order
+        elif orbitalBody.orbitType == orbitType.InnerZone:
+            orbitalBodyOrder = orbitalBody.order - selectedStar.epistellarOrbits + orbitRangeOffset[orbitType.InnerZone] - 2
+        elif orbitalBody.orbitType == orbitType.OuterZone:
+            orbitalBodyOrder = orbitalBody.order - selectedStar.epistellarOrbits - selectedStar.innerZoneOrbits + orbitRangeOffset[orbitType.OuterZone] - 2
 
-        x_center_mod = planetDisplayOffset[satelliteNum] + (planetOrder / 2)
+        x_center_mod = orbitalBodyDisplayOffset[satelliteNum] + (orbitalBodyOrder / 2)
 
-        row, column = satelliteNum, planetOrder
+        row, column = satelliteNum, orbitalBodyOrder
         x_center = (38.5 * column) + x_center_mod
         y_center = (11 * row) + 124 + (15 * satelliteNum)
         outer = 11
@@ -467,10 +467,10 @@ class SystemDisplay:
                     (x_center + outer * adj_x, y_center + outer * adj_y),
                     (x_center + outer * adj_x, y_center + inner * adj_y),
                     fill="white", width=2)
-            self.planet_selectmarks.append(selectionmark_id)
+            self.orbitalbody_selectmarks.append(selectionmark_id)
 
-        self.planetInfo.config(text="\n".join(self.set_info(planet)))
-        self.planetlabel.config(text=(planet.properName + "(" + planet.name + ")" if planet.properName else planet.name))
+        self.orbitalBodyInfo.config(text="\n".join(self.set_info(orbitalBody)))
+        self.orbitalBodyLabel.config(text=(orbitalBody.properName + "(" + orbitalBody.name + ")" if orbitalBody.properName else orbitalBody.name))
 
     def clearsystem(self):
         self.systemlabel.config(text="")
@@ -485,6 +485,6 @@ class SystemDisplay:
         self.selectmarks = []
         self.starlabel.config(text="")
         self.star.delete("all")
-        self.planet_selectmarks = []
-        self.planetlabel.config(text="")
+        self.orbitalbody_selectmarks = []
+        self.orbitalBodyLabel.config(text="")
 

@@ -116,7 +116,7 @@ class Star():
     """
     Defines a star.  Primary stars, automatic brown dwarf stars, and
     companion stars that are "Distant" from the primary star generate
-    the planets that orbit them.
+    the orbital bodies that orbit them.
 
     Required Parameters:
         systemHex: System class instance
@@ -153,7 +153,7 @@ class Star():
         self.outerZoneOrbits = 0
         self.primaryOrbit = primaryOrbit
         self.companionOrbits = []
-        self.planets = []
+        self.orbitalBodies = []
 
         self.set_expansion_affected_orbits()
         self.set_companion_orbits()
@@ -195,8 +195,8 @@ class Star():
     def set_expansion_affected_orbits(self):
         """
         Stars of these luminosity classes expanded or are expanding into
-        supergiants. This has a detrimental effect on some of the planets
-        that orbit it. Sets the number of planets affected.
+        supergiants. This has a detrimental effect on some of the orbital bodies
+        that orbit it. Sets the number of orbital bodies affected.
         """
 
         if self.luminosityClass in [luminosityClass.D, luminosityClass.K_III, luminosityClass.M_III]:
@@ -217,15 +217,14 @@ class Star():
     def set_epistellar_orbits(self):
         """
         Sets the number of objects closely orbiting the star
-        based on the star's luminosity class. Planets orbiting
+        based on the star's luminosity class. Bodies orbiting
         a primary star with Close or Moderate companions orbit all
         such stars but are only listed under the primary star
         for simplicity.
 
         Value range is 0-2.
         """
-        
-        if (self.primaryOrbit != companionOrbit.Distant
+        if (self.primaryOrbit and self.primaryOrbit != companionOrbit.Distant
             or self.luminosityClass in [
                 luminosityClass.L,
                 luminosityClass.D,
@@ -242,14 +241,14 @@ class Star():
         """
         Sets the number of objects orbiting a star in the "inner zone",
         or "Goldilock's zone", based on the star's luminosity class.
-        Planets orbiting a primary star with Close or Moderate companions
+        Bodies orbiting a primary star with Close or Moderate companions
         orbit all such stars but are only listed under the primary star
         for simplicity.
 
         Value range is 0-5.
         """
 
-        if companionOrbit.Close in self.companionOrbits or self.primaryOrbit != companionOrbit.Distant:
+        if companionOrbit.Close in self.companionOrbits or (self.primaryOrbit and self.primaryOrbit != companionOrbit.Distant):
             self.innerZoneOrbits = 0
             return
         
@@ -259,14 +258,14 @@ class Star():
     def set_outer_zone_orbits(self):
         """
         Sets the number of objects orbiting a star in the outer zone
-        based on the star's luminosity class. Planets orbiting a primary
+        based on the star's luminosity class. Bodies orbiting a primary
         star with Close or Moderate companions orbit all such stars but
         are only listed under the primary star for simplicity.
 
         Value range is 0-5.
         """
         
-        if companionOrbit.Moderate in self.companionOrbits or self.primaryOrbit != companionOrbit.Distant:
+        if companionOrbit.Moderate in self.companionOrbits or (self.primaryOrbit and self.primaryOrbit != companionOrbit.Distant):
             self.outerZoneOrbits = 0
             return
 

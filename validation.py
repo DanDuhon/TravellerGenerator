@@ -92,17 +92,17 @@ def validation(maxTechLevel):
             raise ValueError("Invalid luminosity class")
 
         if s in s.systemHex.stars[1:] and (
-                s.primaryOrbit is None or s.primaryOrbit == globalstuff.companionOrbit.Distant) and len(s.systemHex.stars[0].planets) > 0 and len(s.planets) > 0 and s.systemHex.stars[0].planets == s.planets:
+                s.primaryOrbit is None or s.primaryOrbit == globalstuff.companionOrbit.Distant) and len(s.systemHex.stars[0].orbitalBodies) > 0 and len(s.orbitalBodies) > 0 and s.systemHex.stars[0].orbitalBodies == s.orbitalBodies:
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
                     get_info(st)
             get_info(s)
             raise ValueError(
-                "Distant or brown dwarf star has the same planets as the primary star.")
+                "Distant or brown dwarf star has the same orbital bodies as the primary star.")
 
         if ((s.luminosityClass in [globalstuff.luminosityClass.D, globalstuff.spectralType.L, globalstuff.luminosityClass.K_III, globalstuff.luminosityClass.M_III] and (s.epistellarOrbits > 0 or sum(
-                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.Epistellar]))) or s.epistellarOrbits > 2):
+                [1 for p in s.orbitalBodies if p.orbitType == globalstuff.orbitType.Epistellar]))) or s.epistellarOrbits > 2):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
@@ -132,34 +132,34 @@ def validation(maxTechLevel):
             raise ValueError("Wrong number of outer zone orbits.")
 
         if s.epistellarOrbits != sum(
-                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.Epistellar and p.parentObject == s]):
+                [1 for p in s.orbitalBodies if p.orbitType == globalstuff.orbitType.Epistellar and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
                     get_info(st)
             get_info(s)
-            raise ValueError("Wrong number of epistellar planets.")
+            raise ValueError("Wrong number of epistellar orbital bodies.")
 
         if s.innerZoneOrbits != sum(
-                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.InnerZone and p.parentObject == s]):
+                [1 for p in s.orbitalBodies if p.orbitType == globalstuff.orbitType.InnerZone and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
                     get_info(st)
             get_info(s)
-            raise ValueError("Wrong number of inner zone planets.")
+            raise ValueError("Wrong number of inner zone orbitalb odies.")
 
         if s.outerZoneOrbits != sum(
-                [1 for p in s.planets if p.orbitType == globalstuff.orbitType.OuterZone and p.parentObject == s]):
+                [1 for p in s.orbitalBodies if p.orbitType == globalstuff.orbitType.OuterZone and p.parentObject == s]):
             get_info(s.systemHex)
             for st in s.systemHex.stars:
                 if st != s:
                     get_info(st)
             get_info(s)
-            raise ValueError("Wrong number of outer zone planets.")
+            raise ValueError("Wrong number of outer zone orbitalb odies.")
 
-    # Planets
-    # These validations cannot currently deal with terraforming, so planets that have been
+    # Orbital Bodies
+    # These validations cannot currently deal with terraforming, so orbitalb odies that have been
     # terraformed may look invalid here. I think it was thoroughly tested prior to
     # implementing terraforming so we're probably ok.
     for p in orbitalbody.allBodies:
