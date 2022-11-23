@@ -32,6 +32,7 @@ def create_normal_system(
 
     system.create_new_open_cluster()
     system.set_number_of_stars()
+    system.create_stars()
 
 
 def create_cluster_system(
@@ -55,6 +56,7 @@ def create_cluster_system(
 
     system.create_new_open_cluster()
     system.set_number_of_stars()
+    system.create_stars()
 
 
 def distance_between_systems(system1, system2):

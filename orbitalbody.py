@@ -7,6 +7,7 @@ from globalstuff import habitation, tradeCode, maxTechLevel, alienSurvivalPercen
 
 
 allBodies = []
+terraformingPlanets = []
 
 chemistryArean = LookupTable(
     (4, (chemistry.Water, 0, className.Geocyclic, type.Arean)),
@@ -235,15 +236,21 @@ def create_epistellar_dwarf_planet(star, parentObject, order, orbitType, roll, r
 
 def create_inner_zone_dwarf_planet(star, parentObject, order, orbitType, roll, roll2):
     if roll <= 4:
-        Rockball(star, parentObject, order, orbitType)
+        newPlanet = Rockball(star, parentObject, order, orbitType)
     elif roll <= 6:
-        Arean(star, parentObject, order, orbitType)
+        newPlanet = Arean(star, parentObject, order, orbitType)
     elif roll <= 7:
-        Meltball(star, parentObject, order, orbitType)
+        newPlanet = Meltball(star, parentObject, order, orbitType)
     elif roll2 <= 4:
-        Hebean(star, parentObject, order, orbitType)
+        newPlanet = Hebean(star, parentObject, order, orbitType)
     else:
-        Promethean(star, parentObject, order, orbitType)
+        newPlanet = Promethean(star, parentObject, order, orbitType)
+
+    if (1 <= newPlanet.size <= 11
+        and 1 <= newPlanet.atmosphere <= 13
+        and newPlanet.hydrosphere < 15
+        and newPlanet.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
+        terraformingPlanets.append(newPlanet)
 
 
 def create_outer_zone_dwarf_planet(star, parentObject, order, orbitType, roll, roll2):
@@ -274,17 +281,23 @@ def create_epistellar_terrestrial_planet(star, parentObject, order, orbitType, r
 
 def create_inner_zone_terrestrial_planet(star, parentObject, order, orbitType, roll):
     if roll <= 4:
-        Telluric(star, parentObject, order, orbitType)
+        newPlanet = Telluric(star, parentObject, order, orbitType)
     elif roll <= 6:
-        Arid(star, parentObject, order, orbitType)
+        newPlanet = Arid(star, parentObject, order, orbitType)
     elif roll <= 7:
-        Tectonic(star, parentObject, order, orbitType)
+        newPlanet = Tectonic(star, parentObject, order, orbitType)
     elif roll <= 9:
-        Oceanic(star, parentObject, order, orbitType)
+        newPlanet = Oceanic(star, parentObject, order, orbitType)
     elif roll <= 10:
-        Tectonic(star, parentObject, order, orbitType)
+        newPlanet = Tectonic(star, parentObject, order, orbitType)
     else:
-        Telluric(star, parentObject, order, orbitType)
+        newPlanet = Telluric(star, parentObject, order, orbitType)
+
+    if (1 <= newPlanet.size <= 11
+        and 1 <= newPlanet.atmosphere <= 13
+        and newPlanet.hydrosphere < 15
+        and newPlanet.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
+        terraformingPlanets.append(newPlanet)
 
 
 def create_outer_zone_terrestrial_planet(star, parentObject, order, orbitType, roll):
@@ -308,9 +321,15 @@ def create_epistellar_helian_planet(star, parentObject, order, orbitType, roll):
 
 def create_inner_zone_helian_planet(star, parentObject, order, orbitType, roll):
     if roll <= 4:
-        Helian(star, parentObject, order, orbitType)
+        newPlanet = Helian(star, parentObject, order, orbitType)
     else:
-        Panthalassic(star, parentObject, order, orbitType)
+        newPlanet = Panthalassic(star, parentObject, order, orbitType)
+
+    if (1 <= newPlanet.size <= 11
+        and 1 <= newPlanet.atmosphere <= 13
+        and newPlanet.hydrosphere < 15
+        and newPlanet.category not in [category.Stygian, category.Acheronian, category.Asphodelian]):
+        terraformingPlanets.append(newPlanet)
 
 
 def create_outer_zone_helian_planet(star, parentObject, order, orbitType):
@@ -1155,6 +1174,10 @@ class Planet(OrbitalBody):
             desirability += 1
 
         return desirability
+
+
+    def set_terraforming_points(self):
+        self.terraformingPoints = -15 + self.settlement + self.terraformingAlien.currentTechLevel
         
 
     def terraform_planet(self, alien):

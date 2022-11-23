@@ -311,6 +311,9 @@ def create_alien(alienPlanet, alienSurvivalPercent):
         }
 
     if extinct:
+        alienPlanet.homeAlien.orbitalBodies[alienPlanet]["habitation"] = None
+        alienPlanet.habitation[alienPlanet.homeAlien] = None
+        alienPlanet.terraformingAlien = None
         alienPlanet.ruins.add(alienPlanet.homeAlien)
     else:
         alienPlanet.settlement = 100
