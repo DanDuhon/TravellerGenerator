@@ -1,4 +1,9 @@
 __pycache__/
 *.py[cod]
 Traveller performance testing.ipynb
-.vscode/settings.json
+.vscode/
+
+# Rust
+/scifi_gen/target/
+**/*.rs.bk
+*.pdb
