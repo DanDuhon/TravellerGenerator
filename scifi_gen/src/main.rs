@@ -152,14 +152,7 @@ mod tests {
             out.push_str(&format!("{coord:?} {} age={}\n", sys.designation(), sys.age));
             for sub in &sys.subsystems {
                 for ob in sub.all_bodies() {
-                    match &ob.body {
-                        Body::AsteroidBelt => {
-                            fingerprint_body(&mut out, ob, 0)
-                        }
-                        Body::Planet(p) => {
-                            fingerprint_body(&mut out, ob, 0)
-                        }
-                    }
+                    fingerprint_body(&mut out, ob, 0);
                 }
             }
         }
@@ -351,6 +344,223 @@ mod structure_tests {
             "seed {seed} {coord:?}: duplicate designation {}", b.designation);
         for s in &b.satellites {
             collect_designations(s, seen, seed, coord);
+        }
+    }
+}
+
+mod value_tests {
+    #[cfg(test)]
+    mod planet_values {
+        use crate::orbital_body::{category_group, Body, Category, Group, OrbitalBody};
+        use crate::sector_for;
+
+        /// Highest legal value for atmosphere, hydrosphere and biosphere.
+        ///
+        /// Only jovians reach 16, and only for atmosphere and hydrosphere, where it
+        /// stands for "no surface, just envelope". Everything else tops out at 15.
+        const ABSOLUTE_MAX: u8 = 16;
+        const NON_JOVIAN_MAX: u8 = 15;
+
+        /// Every planetary value must be inside the scale the rest of the code
+        /// reads it on.
+        ///
+        /// This is also the test that catches the `99` sentinels left behind by
+        /// unimplemented match arms. A 99 is not a value — it is a category that
+        /// was never written, and it will silently produce a world with no terrain
+        /// rather than an error.
+        #[test]
+        fn planet_values_are_within_scale() {
+            for seed in 0..15 {
+                for (coord, system) in sector_for(seed) {
+                    for subsystem in &system.subsystems {
+                        for body in subsystem.all_bodies() {
+                            check_values(body, seed, coord);
+                        }
+                    }
+                }
+            }
+        }
+
+        fn check_values(body: &OrbitalBody, seed: u64, coord: (i16, i16, i16)) {
+            if let Body::Planet(planet) = &body.body {
+                let ceiling = if category_group(planet.category) == Group::Jovian {
+                    ABSOLUTE_MAX
+                } else {
+                    NON_JOVIAN_MAX
+                };
+
+                for (field, value) in [
+                    ("atmosphere", planet.atmosphere),
+                    ("hydrosphere", planet.hydrosphere),
+                    ("biosphere", planet.biosphere),
+                ] {
+                    assert!(
+                        value <= ceiling,
+                        "seed {seed} {coord:?}: {} ({:?}) has {field} {value}, max is {ceiling}",
+                        body.designation, planet.category,
+                    );
+                }
+
+                // Biosphere is on the 0-15 scale for every group, jovians included.
+                assert!(
+                    planet.biosphere <= NON_JOVIAN_MAX,
+                    "seed {seed} {coord:?}: {} ({:?}) has biosphere {}",
+                    body.designation, planet.category, planet.biosphere,
+                );
+            }
+
+            for satellite in &body.satellites {
+                check_values(satellite, seed, coord);
+            }
+        }
+
+        /// Categories that pin a field to a constant, as a guard against a
+        /// refactor quietly making one of them variable.
+        ///
+        /// `None` means "this category varies that field, don't check it" - a
+        /// deliberate choice over a sentinel number, since sentinel numbers in
+        /// planetary fields are exactly what the test above exists to catch.
+        fn fixed_values(category: Category) -> (Option<u8>, Option<u8>, Option<u8>) {
+            match category {
+                Category::Rockball | Category::Stygian => (Some(0), Some(0), Some(0)),
+                Category::Meltball => (Some(1), Some(15), Some(0)),
+                Category::Acheronian | Category::Asphodelian | Category::Chthonian => (Some(1), Some(0), Some(0)),
+                Category::Telluric => (Some(12), None, Some(0)),
+                Category::JaniLithic => (None, Some(0), Some(0)),
+                Category::Helian => (Some(13), None, Some(0)),
+                Category::Oceanic | Category::Panthalassic => (None, Some(11), None),
+                Category::Jovian => (Some(16), Some(16), None),
+                Category::Hebean => (None, None, Some(0)),
+                _ => (None, None, None),
+            }
+        }
+
+        #[test]
+        fn fixed_category_values_stay_fixed() {
+            for seed in 0..10 {
+                for (coord, system) in sector_for(seed) {
+                    for subsystem in &system.subsystems {
+                        for body in subsystem.all_bodies() {
+                            check_fixed(body, seed, coord);
+                        }
+                    }
+                }
+            }
+        }
+
+        fn check_fixed(body: &OrbitalBody, seed: u64, coord: (i16, i16, i16)) {
+            if let Body::Planet(p) = &body.body {
+                let (atm, hyd, bio) = fixed_values(p.category);
+                for (name, expected, actual) in [
+                    ("atmosphere", atm, p.atmosphere),
+                    ("hydrosphere", hyd, p.hydrosphere),
+                    ("biosphere", bio, p.biosphere),
+                ] {
+                    if let Some(expected) = expected {
+                        assert_eq!(actual, expected,
+                            "seed {seed} {coord:?}: {} ({:?}) {name}",
+                            body.designation, p.category);
+                    }
+                }
+            }
+            for s in &body.satellites {
+                check_fixed(s, seed, coord);
+            }
+        }
+    }
+
+    #[cfg(test)]
+    mod satellite_rates {
+        use crate::orbital_body::{category_group, Body, Group, OrbitalBody};
+        use crate::sector_for;
+
+        /// How often each kind of parent should end up with at least one satellite.
+        ///
+        /// The existing `satellite_structure_follows_rules` test only bounds the
+        /// count from above, so an implementation that generates satellites far too
+        /// rarely — or never — passes it. This bounds the rate from both sides.
+        ///
+        /// Fixed seeds make this a deterministic computation, not a flaky
+        /// statistical one: it either passes or it does not, every run.
+        ///
+        /// Dwarfs are the awkward case. A dwarf's binary companion is created with
+        /// `is_binary_companion`, so it can never have satellites of its own.
+        /// Companions are 1/6 as numerous as the dwarfs that spawn them, so they
+        /// are 1/7 of all dwarfs, and a naive "1/6 of dwarfs have a satellite"
+        /// check fails against a correct implementation. They are excluded below.
+        fn expected_rate(group: Group) -> f64 {
+            match group {
+                Group::AsteroidBelt => 2.0 / 6.0,  // 1d6 > 4
+                Group::Dwarf => 1.0 / 6.0,         // 1d6 == 6
+                Group::Terrestrial => 2.0 / 6.0,   // 1d6 >= 5
+                Group::Helian => 3.0 / 6.0,        // max(0, 1d6 - 3) >= 1
+                Group::Jovian => 1.0,              // 1d6 >= 1 always
+            }
+        }
+
+        const TOLERANCE: f64 = 0.03;
+
+        const GROUPS: [Group; 5] = [
+            Group::AsteroidBelt, Group::Dwarf, Group::Terrestrial, Group::Helian, Group::Jovian,
+        ];
+
+        /// Index into the tally array. Group has no `Ord`, so a fixed array beats a
+        /// map here and avoids adding derives just to support a test.
+        fn slot(group: Group) -> usize {
+            GROUPS.iter().position(|&g| g == group).expect("every group is listed")
+        }
+
+        #[test]
+        fn satellites_are_generated_at_the_intended_rate() {
+            // (parents with at least one satellite, parents total), per group.
+            let mut tally = [(0usize, 0usize); GROUPS.len()];
+
+            for seed in 0..15 {
+                for (_, system) in sector_for(seed) {
+                    for subsystem in &system.subsystems {
+                        for body in subsystem.all_bodies() {
+                            tally_body(body, &mut tally);
+                        }
+                    }
+                }
+            }
+
+            for (i, &(with_satellites, total)) in tally.iter().enumerate() {
+                let group = GROUPS[i];
+                assert!(total > 1_000, "{group:?}: only {total} samples, too few to judge");
+                let observed = with_satellites as f64 / total as f64;
+                let expected = expected_rate(group);
+                assert!(
+                    (observed - expected).abs() < TOLERANCE,
+                    "{group:?}: {with_satellites}/{total} = {observed:.4} have satellites, \
+                    expected {expected:.4}",
+                );
+            }
+        }
+
+        fn tally_body(body: &OrbitalBody, tally: &mut [(usize, usize); GROUPS.len()]) {
+            let group = match &body.body {
+                Body::AsteroidBelt => Group::AsteroidBelt,
+                Body::Planet(p) => category_group(p.category),
+            };
+
+            // A dwarf binary companion is generated with satellites suppressed, so
+            // counting it would drag the dwarf rate down. Identified by the naming
+            // convention, which is fragile - an explicit flag on OrbitalBody would
+            // be better once there is a reason to add one.
+            let is_binary_companion = group == Group::Dwarf && body.designation.ends_with('b');
+
+            if !is_binary_companion {
+                let entry = &mut tally[slot(group)];
+                entry.1 += 1;
+                if !body.satellites.is_empty() {
+                    entry.0 += 1;
+                }
+            }
+
+            for satellite in &body.satellites {
+                tally_body(satellite, tally);
+            }
         }
     }
 }
