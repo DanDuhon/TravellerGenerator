@@ -9,10 +9,13 @@ use crate::Namer;
 use crate::star::create_star;
 use crate::star::create_brown_dwarf;
 use crate::orbital_body::OrbitalBody;
+use crate::orbital_body::OrbitalData;
 use crate::orbital_body::OrbitType;
 use crate::orbital_body::Group;
+use crate::orbital_body::Placement;
 use crate::orbital_body::to_roman;
 use crate::orbital_body::create_orbital_body;
+use std::cmp::max;
 
 const ORDINAL: [&str; 4] = [" Alpha", " Beta", " Gamma", " Delta"];
 
@@ -47,7 +50,7 @@ impl Subsystem {
             Subsystem::Binary { primary, companion, .. } => [Some(primary), Some(companion)],
         };
         group.into_iter().flatten()   // flatten drops the Nones
-}
+    }
 }
 
 pub struct System {
@@ -105,10 +108,10 @@ fn lookup_companion_orbit(roll: u8) -> CompanionOrbit {
     }
 }
 
-fn zone_counts(rng: &mut ChaCha8Rng, lum: &LuminosityClass) -> [u8; 3] {
-    let mv = if *lum == LuminosityClass::MV { 1 } else { 0 };
-    let mv_or_l = if *lum == LuminosityClass::MV || *lum == LuminosityClass::L { 1 } else { 0 };
-    let inner_die = if *lum == LuminosityClass::L { 3 } else { 6 };
+fn zone_counts(rng: &mut ChaCha8Rng, lum: LuminosityClass) -> [u8; 3] {
+    let mv = if lum == LuminosityClass::MV { 1 } else { 0 };
+    let mv_or_l = if lum == LuminosityClass::MV || lum == LuminosityClass::L { 1 } else { 0 };
+    let inner_die = if lum == LuminosityClass::L { 3 } else { 6 };
 
     let epistellar = (roll_xdy(rng, 1, 6) as i8 - 3 - mv).clamp(0, 2) as u8;
     let inner      = (roll_xdy(rng, 1, inner_die) as i8 - 1 - mv).clamp(0, 5) as u8;
@@ -119,16 +122,15 @@ fn zone_counts(rng: &mut ChaCha8Rng, lum: &LuminosityClass) -> [u8; 3] {
 fn fill_zone(
     rng: &mut ChaCha8Rng,
     zone: OrbitType,
-    lum: &LuminosityClass,
-    name_base: &str,
     dest: &mut Vec<OrbitalBody>,
     order: &mut u8,
-    age: u8,
     count: u8,
+    orbital_data: OrbitalData
 ) {
     for _ in 0..count {
-        let designation = format!("{name_base} {}", to_roman(*order));
-        let roll = (roll_xdy(rng, 1, 6) as i8 - if *lum == LuminosityClass::L { 1 } else { 0 }).max(0) as u8;
+        let name = orbital_data.name;
+        let designation = format!("{name} {}", to_roman(*order));
+        let roll = (roll_xdy(rng, 1, 6) as i8 - if orbital_data.luminosity_class == LuminosityClass::L { 1 } else { 0 }).max(0) as u8;
         let group = match roll {
             ..=1 => Group::AsteroidBelt,
             2 => Group::Dwarf,
@@ -141,12 +143,11 @@ fn fill_zone(
             *order,
             zone,
             designation,
-            name_base,
-            lum,
-            age,
             group,
             None,
             false,
+            orbital_data,
+            Placement::Stellar
         ));
         *order += 1;
     }
@@ -214,18 +215,36 @@ pub fn create_system(rng: &mut ChaCha8Rng, namer: &mut Namer, h: i16, v: i16, op
     for subsystem in &mut subsystems {
         match subsystem {
             Subsystem::Single { star, bodies } => {
-                let [epi, inner, outer] = zone_counts(rng, &star.luminosity_class);
+                let orbital_data = OrbitalData {
+                    name: &star.name,
+                    luminosity_class: star.luminosity_class,
+                    system_age: age,
+                    expansion_affected_orbits: star.expansion_affected_orbits
+                };
+                let [epi, inner, outer] = zone_counts(rng, orbital_data.luminosity_class);
                 let mut order: u8 = 1;
-                fill_zone(rng, OrbitType::Epistellar, &star.luminosity_class, &star.name, bodies, &mut order, age, epi);
-                fill_zone(rng, OrbitType::InnerZone, &star.luminosity_class, &star.name, bodies, &mut order, age, inner);
-                fill_zone(rng, OrbitType::OuterZone, &star.luminosity_class, &star.name, bodies, &mut order, age, outer);
+                fill_zone(rng, OrbitType::Epistellar, bodies, &mut order, epi, orbital_data);
+                fill_zone(rng, OrbitType::InnerZone, bodies, &mut order, inner, orbital_data);
+                fill_zone(rng, OrbitType::OuterZone, bodies, &mut order, outer, orbital_data);
             },
             Subsystem::Binary { primary, companion, primary_bodies, companion_bodies, shared_bodies } => {
-                let primary_counts = zone_counts(rng, &primary.luminosity_class);
+                let orbital_data_primary = OrbitalData {
+                    name: &primary.name,
+                    luminosity_class: primary.luminosity_class,
+                    system_age: age,
+                    expansion_affected_orbits: primary.expansion_affected_orbits
+                };
+                let orbital_data_companion = OrbitalData {
+                    name: &companion.name,
+                    luminosity_class: companion.luminosity_class,
+                    system_age: age,
+                    expansion_affected_orbits: companion.expansion_affected_orbits
+                };
+                let primary_counts = zone_counts(rng, orbital_data_primary.luminosity_class);
                 let p_epi = primary_counts[0];
                 let p_inner = primary_counts[1];
                 let p_outer = primary_counts[2];
-                let companion_counts = zone_counts(rng, &companion.luminosity_class);
+                let companion_counts = zone_counts(rng, orbital_data_companion.luminosity_class);
                 let c_epi = companion_counts[0];
                 let c_inner = companion_counts[1];
                 let mut primary_order: u8 = 1;
@@ -241,23 +260,32 @@ pub fn create_system(rng: &mut ChaCha8Rng, namer: &mut Namer, h: i16, v: i16, op
                 // In other configurations each star has its own epistellar orbits
                 match companion_orbit {
                     CompanionOrbit::Close | CompanionOrbit::Moderate => {
-                        fill_zone(rng, OrbitType::Epistellar, &primary.luminosity_class, &primary.name, primary_bodies, &mut primary_order, age, p_epi);
-                        fill_zone(rng, OrbitType::Epistellar, &companion.luminosity_class, &companion.name, companion_bodies, &mut companion_order, age, c_epi);
+                        fill_zone(rng, OrbitType::Epistellar, primary_bodies, &mut primary_order, p_epi, orbital_data_primary);
+                        fill_zone(rng, OrbitType::Epistellar, companion_bodies, &mut companion_order, c_epi, orbital_data_companion);
                     },
                     CompanionOrbit::Tight => {}, // No epistellar orbits here
                     CompanionOrbit::Distant => unreachable!("Distant is a separate Single")
                 }
+
+                let orbital_data_shared = OrbitalData {
+                    name: &shared_base,
+                    luminosity_class: primary.luminosity_class,
+                    system_age: age,
+                    expansion_affected_orbits: max(
+                        primary.expansion_affected_orbits.saturating_sub(primary_bodies.len() as u8),
+                        companion.expansion_affected_orbits.saturating_sub(companion_bodies.len() as u8))
+                };
 
                 // No inner zone orbits if the Companion is Close
                 // If Tight, inner zone planets orbit both
                 // If Moderate, inner zone planets orbit one star
                 match companion_orbit {
                     CompanionOrbit::Tight => {
-                        fill_zone(rng, OrbitType::InnerZone, &primary.luminosity_class, &shared_base, shared_bodies, &mut shared_order, age, p_inner);
+                        fill_zone(rng, OrbitType::InnerZone, shared_bodies, &mut shared_order, p_inner, orbital_data_shared);
                     }
                     CompanionOrbit::Moderate => {
-                        fill_zone(rng, OrbitType::InnerZone, &primary.luminosity_class, &primary.name, primary_bodies, &mut primary_order, age, p_inner);
-                        fill_zone(rng, OrbitType::InnerZone, &companion.luminosity_class, &companion.name, companion_bodies, &mut companion_order, age, c_inner);
+                        fill_zone(rng, OrbitType::InnerZone, primary_bodies, &mut primary_order, p_inner, orbital_data_primary);
+                        fill_zone(rng, OrbitType::InnerZone, companion_bodies, &mut companion_order, c_inner, orbital_data_companion);
                     },
                     CompanionOrbit::Close => {} // No inner zone orbits here
                     CompanionOrbit::Distant => unreachable!("Distant is a separate Single")
@@ -267,7 +295,7 @@ pub fn create_system(rng: &mut ChaCha8Rng, namer: &mut Namer, h: i16, v: i16, op
                 // If Tight or Close, outer zone planets orbit both
                 match companion_orbit {
                     CompanionOrbit::Tight | CompanionOrbit::Close => {
-                        fill_zone(rng, OrbitType::OuterZone, &primary.luminosity_class, &shared_base, shared_bodies, &mut shared_order, age, p_outer);
+                        fill_zone(rng, OrbitType::OuterZone, shared_bodies, &mut shared_order, p_outer, orbital_data_shared);
                     },
                     CompanionOrbit::Distant => unreachable!("Distant is a separate Single"),
                     CompanionOrbit::Moderate => {} // No outer zone orbits here

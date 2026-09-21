@@ -21,6 +21,20 @@ impl OrbitalBody {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct OrbitalData<'a> {
+    pub name: &'a str,
+    pub luminosity_class: LuminosityClass,
+    pub system_age: u8,
+    pub expansion_affected_orbits: u8
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Placement {
+    Stellar,
+    Satellite { parent_scorched: bool },
+}
+
 pub enum Body {
     AsteroidBelt,
     Planet(Planet),
@@ -102,16 +116,34 @@ pub fn describe(cat: Category) -> &'static str {
 
 pub fn create_orbital_body(
     rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, designation: String,
-    star_name: &str, luminosity_class: &LuminosityClass, system_age: u8,
-    group: Group, parent_group: Option<Group>, is_binary_companion: bool
+    group: Group, parent_group: Option<Group>, is_binary_companion: bool,
+    orbital_data: OrbitalData, placement: Placement
 ) -> OrbitalBody {
+    let scorched = match placement {
+        Placement::Stellar => order <= orbital_data.expansion_affected_orbits,
+        Placement::Satellite { parent_scorched } => parent_scorched,
+    };
     let (num_of_sats, body) = match group {
         Group::AsteroidBelt => {
             (if roll_xdy(rng, 1, 6) >= 5 { 1 } else { 0 } as usize,
             Body::AsteroidBelt)
         },
         Group::Dwarf => {
-            let planet = create_dwarf_planet(rng, order, orbit_type, luminosity_class, &system_age, parent_group);
+            let planet = if scorched {
+                Planet {
+                    order: order,
+                    category: Category::Stygian,
+                    size: planet_size(rng, &Group::Dwarf),
+                    chemistry: None,
+                    atmosphere: 0,
+                    hydrosphere: 0,
+                    biosphere: 0,
+                    rings: None,
+                    proper_name: None
+                }
+            } else {
+                create_dwarf_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age, parent_group)
+            };
             if is_binary_companion == false {
                 (if roll_xdy(rng, 1, 6) == 6 { 1 } else { 0 } as usize,
                 Body::Planet(planet))
@@ -121,24 +153,66 @@ pub fn create_orbital_body(
             }
         },
         Group::Terrestrial => {
-            let planet = create_terrestrial_planet(rng, order, orbit_type, luminosity_class, &system_age, parent_group);
+            let planet = if scorched {
+                Planet {
+                    order: order,
+                    category: Category::Acheronian,
+                    size: planet_size(rng, &Group::Terrestrial),
+                    chemistry: None,
+                    atmosphere: 1,
+                    hydrosphere: 0,
+                    biosphere: 0,
+                    rings: None,
+                    proper_name: None
+                }
+            } else {
+                create_terrestrial_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age, parent_group)
+            };
             (if roll_xdy(rng, 1, 6) >= 5 { 1 } else { 0 } as usize,
             Body::Planet(planet))
         }
         Group::Helian => {
-            let planet = create_helian_planet(rng, order, orbit_type, luminosity_class, &system_age);
+            let planet = if scorched {
+                Planet {
+                    order: order,
+                    category: Category::Asphodelian,
+                    size: planet_size(rng, &Group::Helian),
+                    chemistry: None,
+                    atmosphere: 1,
+                    hydrosphere: 0,
+                    biosphere: 0,
+                    rings: None,
+                    proper_name: None
+                }
+            } else {
+                create_helian_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age)
+            };
             (max(0, roll_xdy(rng, 1, 6) as i8 - 3) as usize,
             Body::Planet(planet))
         }
         Group::Jovian => {
-            let planet = create_jovian_planet(rng, order, orbit_type, luminosity_class, &system_age);
+            let planet = if scorched {
+                Planet {
+                    order: order,
+                    category: Category::Chthonian,
+                    size: planet_size(rng, &Group::Jovian),
+                    chemistry: None,
+                    atmosphere: 1,
+                    hydrosphere: 0,
+                    biosphere: 0,
+                    rings: None,
+                    proper_name: None
+                }
+            } else {
+                create_jovian_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age)
+            };
             (roll_xdy(rng, 1, 6) as usize,
             Body::Planet(planet))
         }
     };
 
     let satellites = if num_of_sats > 0 {
-        generate_satellites(rng, &body, orbit_type, &designation, star_name, luminosity_class, &system_age, parent_group, num_of_sats)
+        generate_satellites(rng, &body, orbit_type, &designation, parent_group, num_of_sats, orbital_data, scorched)
     } else { Vec::with_capacity(0) };
 
     OrbitalBody {
@@ -152,26 +226,25 @@ pub fn create_orbital_body(
 
 fn push_satellite(
     rng: &mut ChaCha8Rng, sats: &mut Vec<OrbitalBody>, orbit_type: OrbitType,
-    parent_designation: &str, star_name: &str, lum: &LuminosityClass, age: u8,
-    group: Group, parent_group: Option<Group>, is_companion: bool,
+    parent_designation: &str, group: Group, parent_group: Option<Group>,
+    is_companion: bool, orbital_data: OrbitalData, parent_scorched: bool
 ) {
     let index = (sats.len() + 1) as u8;
     let desig = format!("{parent_designation}-{index}");
-    sats.push(create_orbital_body(rng, index, orbit_type, desig, star_name, lum, age, group, parent_group, is_companion));
+    sats.push(create_orbital_body(rng, index, orbit_type, desig, group, parent_group, is_companion, orbital_data, Placement::Satellite { parent_scorched }));
 }
 
 fn generate_satellites(
     rng: &mut ChaCha8Rng, body: &Body, orbit_type: OrbitType,
-    parent_designation: &str, star_name: &str, lum: &LuminosityClass,
-    age: &u8, own_parent_group: Option<Group>, num_of_sats: usize
+    parent_designation: &str, own_parent_group: Option<Group>,
+    num_of_sats: usize, orbital_data: OrbitalData, scorched: bool
 ) -> Vec<OrbitalBody> {
     let mut sats = Vec::with_capacity(num_of_sats);
 
     match body {
         Body::AsteroidBelt => {
             push_satellite(
-                rng, &mut sats, orbit_type, parent_designation, star_name,
-                lum, *age, Group::Dwarf, Some(Group::AsteroidBelt), false,
+                rng, &mut sats, orbit_type, parent_designation, Group::Dwarf, Some(Group::AsteroidBelt), false, orbital_data, scorched
             );
         }
         Body::Planet(p) => match category_group(p.category) {
@@ -182,31 +255,30 @@ fn generate_satellites(
                     1,
                     orbit_type,
                     desig,
-                    star_name,
-                    lum,
-                    *age,
                     Group::Dwarf,
                     own_parent_group,
                     true, // This ensures a companion dwarf can't create more companions
+                    orbital_data,
+                    Placement::Satellite { parent_scorched: scorched }
                 ));
             },
             Group::Terrestrial => {
                 push_satellite(
-                rng, &mut sats, orbit_type, parent_designation, star_name,
-                lum, *age, Group::Dwarf, Some(Group::Terrestrial), false,
+                rng, &mut sats, orbit_type, parent_designation, Group::Dwarf, Some(Group::Terrestrial),
+                false, orbital_data, scorched
                 );
             },
             Group::Helian => {
                 for i in 0..num_of_sats {
                     if i == 0 && roll_xdy(rng, 1, 6) == 6 {
                         push_satellite(
-                            rng, &mut sats, orbit_type, parent_designation, star_name,
-                            lum, *age, Group::Terrestrial, Some(Group::Helian), false,
+                            rng, &mut sats, orbit_type, parent_designation, Group::Terrestrial, Some(Group::Helian),
+                            false, orbital_data, scorched
                         );
                     } else {
                         push_satellite(
-                            rng, &mut sats, orbit_type, parent_designation, star_name,
-                            lum, *age, Group::Dwarf, Some(Group::Helian), false,
+                            rng, &mut sats, orbit_type, parent_designation, Group::Dwarf, Some(Group::Helian),
+                            false, orbital_data, scorched
                         );
                     }
                 }
@@ -216,19 +288,19 @@ fn generate_satellites(
                     if i == 0 && roll_xdy(rng, 1, 6) == 6 {
                         if roll_xdy(rng, 1, 6) == 6 {
                             push_satellite(
-                                rng, &mut sats, orbit_type, parent_designation, star_name,
-                                lum, *age, Group::Helian, Some(Group::Jovian), false,
+                                rng, &mut sats, orbit_type, parent_designation, Group::Helian, Some(Group::Jovian),
+                                false, orbital_data, scorched
                             );
                         } else {
                             push_satellite(
-                                rng, &mut sats, orbit_type, parent_designation, star_name,
-                                lum, *age, Group::Terrestrial, Some(Group::Jovian), false,
+                                rng, &mut sats, orbit_type, parent_designation, Group::Terrestrial, Some(Group::Jovian),
+                                false, orbital_data, scorched
                             );
                         }
                     } else {
                         push_satellite(
-                            rng, &mut sats, orbit_type, parent_designation, star_name,
-                            lum, *age, Group::Dwarf, Some(Group::Jovian), false,
+                            rng, &mut sats, orbit_type, parent_designation, Group::Dwarf, Some(Group::Jovian),
+                            false, orbital_data, scorched
                         );
                     }
                 }
@@ -365,7 +437,7 @@ fn helian_hydrosphere (rng: &mut ChaCha8Rng, category: &Category, roll: i8) -> u
     }
 }
 
-fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: &LuminosityClass, system_age: &u8, parent_group: Option<Group>) -> Planet {
+fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: LuminosityClass, system_age: u8, parent_group: Option<Group>) -> Planet {
     // Size
     let size = planet_size(rng, &Group::Dwarf);
 
@@ -428,7 +500,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
         
     let (age_mod, chemistry) = match category {
         Category::Arean | Category::Promethean | Category::Snowball => {
-            let chem_roll: i8 = roll_xdy(rng, 1, 6) as i8 + dwarf_chem_dm(*luminosity_class, orbit_type, category);
+            let chem_roll: i8 = roll_xdy(rng, 1, 6) as i8 + dwarf_chem_dm(luminosity_class, orbit_type, category);
             dwarf_chemistry(chem_roll)
         },
         _ => { (0, None) } // Other dwarf planet Categories: Hebean, Meltball, Rockball, Stygian
@@ -436,16 +508,16 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
 
     let (atmosphere, hydrosphere, biosphere) = match category {
         Category::Arean => {
-            let atmo_roll: i8 = roll_xdy(rng, 1, 6) as i8 - if *luminosity_class == LuminosityClass::D { 2 } else { 0 };
+            let atmo_roll: i8 = roll_xdy(rng, 1, 6) as i8 - if luminosity_class == LuminosityClass::D { 2 } else { 0 };
             let atmosphere: u8 = dwarf_atmosphere(&category, atmo_roll);
             let hydro_roll: i8 = roll_xdy(rng, 2, 3) as i8 + size as i8 - 7 - if atmosphere == 1 { 4 } else { 0 };
             let hydrosphere: u8 = max(0, hydro_roll) as u8;
             let age_compare: u8 = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if atmosphere == 1 && *system_age >= age_compare + age_mod {
+            let biosphere: u8 = if atmosphere == 1 && system_age >= age_compare + age_mod {
                     max(0, roll_xdy(rng, 1, 6) as i8 - 4) as u8
-                } else if atmosphere == 10 && *system_age >= 4 + age_mod {
+                } else if atmosphere == 10 && system_age >= 4 + age_mod {
                     max(0, roll_xdy(rng, 1, 6) as i8 + size as i8 - 2) as u8
-                } else if atmosphere == 10 && *system_age >= age_compare + age_mod {
+                } else if atmosphere == 10 && system_age >= age_compare + age_mod {
                     roll_xdy(rng, 1, 3)
                 } else { 0 };
             (atmosphere, hydrosphere, biosphere)
@@ -469,9 +541,9 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
             let hydrosphere: u8 = max(0, hydro_roll) as u8;
             let age_compare: u8 = roll_xdy(rng, 1, 3);
             let biosphere_roll: i8 = roll_xdy(rng, 1, 6) as i8;
-            let biosphere: u8 = if *system_age >= 4 + age_mod {
-                    max(0, biosphere_roll + size as i8 - if *luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
-                } else if *system_age >= age_compare + age_mod {
+            let biosphere: u8 = if system_age >= 4 + age_mod {
+                    max(0, biosphere_roll + size as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
+                } else if system_age >= age_compare + age_mod {
                     roll_xdy(rng, 1, 3)
                 } else { 0 };
             let atmosphere: u8 = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
@@ -493,9 +565,9 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 _ => roll_xdy(rng, 2, 6) - 2
             };
             let age_compare: u8 = roll_xdy(rng, 1, 6);
-            let biosphere: u8 = if *system_age >= 6 + age_mod {
+            let biosphere: u8 = if system_age >= 6 + age_mod {
                     max(0, roll_xdy(rng, 1, 6) as i8 + size as i8 - 2) as u8
-                } else if *system_age >= age_compare {
+                } else if system_age >= age_compare {
                     max(0, roll_xdy(rng, 1, 6) as i8 -3) as u8
                 } else { 0 };
             (atmosphere, hydrosphere, biosphere)
@@ -522,7 +594,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
     }
 }
 
-fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: &LuminosityClass, system_age: &u8, parent_group: Option<Group>) -> Planet {
+fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: LuminosityClass, system_age: u8, parent_group: Option<Group>) -> Planet {
     // Size
     let size = planet_size(rng, &Group::Terrestrial);
 
@@ -560,7 +632,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         
     let (age_mod, chemistry) = match category {
         Category::Arid | Category::Oceanic | Category::Tectonic => {
-            let chem_roll = roll_xdy(rng, 1, 6) as i8 + terrestrial_chem_dm(*luminosity_class, orbit_type);
+            let chem_roll = roll_xdy(rng, 1, 6) as i8 + terrestrial_chem_dm(luminosity_class, orbit_type);
             terrestrial_chemistry(rng, chem_roll, &category)
         },
         Category::Vesperian => {
@@ -579,9 +651,9 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         }
         Category::Arid => {
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if *system_age >= 4 + age_mod {
-                max(0, roll_xdy(rng, 2, 6) as i8 - if *luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
-            } else if *system_age >= age_compare + age_mod {
+            let biosphere: u8 = if system_age >= 4 + age_mod {
+                max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
+            } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             let hydrosphere = roll_xdy(rng, 1, 3);
@@ -603,16 +675,16 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         Category::Oceanic => {
             let hydrosphere: u8 = 11;
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if *system_age >= 4 + age_mod {
-                max(0, roll_xdy(rng, 2, 6) as i8 - if *luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
-            } else if *system_age >= age_compare + age_mod {
+            let biosphere: u8 = if system_age >= 4 + age_mod {
+                max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
+            } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             let atmosphere = if chemistry == Some(Chemistry::Water) {
                 let atmo_roll = roll_xdy(rng, 2, 6) as i8
                     - 6
                     + size as i8
-                    - match *luminosity_class {
+                    - match luminosity_class {
                         LuminosityClass::L => { 3 },
                         LuminosityClass::MV => { 2 },
                         LuminosityClass::KV => { 1 },
@@ -634,9 +706,9 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         },
         Category::Tectonic => {
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if *system_age >= 4 + age_mod {
-                max(0, roll_xdy(rng, 2, 6) as i8 - if *luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
-            } else if *system_age >= age_compare + age_mod {
+            let biosphere: u8 = if system_age >= 4 + age_mod {
+                max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
+            } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             let hydrosphere = roll_xdy(rng, 2, 6) - 2;
@@ -655,9 +727,9 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         },
         Category::Vesperian => {
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if *system_age >= 4 {
+            let biosphere: u8 = if system_age >= 4 {
                 roll_xdy(rng, 2, 6)
-            } else if *system_age >= age_compare {
+            } else if system_age >= age_compare {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             let hydrosphere = roll_xdy(rng, 2, 6) - 2;
@@ -684,7 +756,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
     }
 }
 
-fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: &LuminosityClass, system_age: &u8) -> Planet {
+fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: LuminosityClass, system_age: u8) -> Planet {
     // Size
     let size = planet_size(rng, &Group::Helian);
 
@@ -709,7 +781,7 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
 
     let (age_mod, chemistry) = match category {
         Category::Panthalassic => {
-            let chem_roll = roll_xdy(rng, 1, 6) as i8 + helian_chem_dm(*luminosity_class);
+            let chem_roll = roll_xdy(rng, 1, 6) as i8 + helian_chem_dm(luminosity_class);
             match chem_roll {
                 ..=6 => {
                     let roll = roll_xdy(rng, 2, 6);
@@ -744,9 +816,9 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
             let atmosphere = min(13, roll_xdy(rng, 1, 6) + 8);
             let hydrosphere: u8 = 11;
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if *system_age >= 4 + age_mod {
+            let biosphere: u8 = if system_age >= 4 + age_mod {
                 roll_xdy(rng, 2, 6)
-            } else if *system_age >= age_compare + age_mod {
+            } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             (atmosphere, hydrosphere, biosphere)
@@ -767,7 +839,7 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
     }
 }
 
-fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: &LuminosityClass, system_age: &u8) -> Planet {
+fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, luminosity_class: LuminosityClass, system_age: u8) -> Planet {
     // Size
     let size = planet_size(rng, &Group::Jovian);
 
@@ -794,10 +866,10 @@ fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
                 ..=5 => 0,
                 _ => {
                     let age_compare = roll_xdy(rng, 1, 6);
-                    if *system_age >= 7 {
-                        let roll = roll_xdy(rng, 2, 6) as i8 - if *luminosity_class == LuminosityClass::D { 3 } else { 0 };
+                    if system_age >= 7 {
+                        let roll = roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 };
                         max(0, roll) as u8
-                    } else if *system_age >= age_compare { roll_xdy(rng, 1, 3) }
+                    } else if system_age >= age_compare { roll_xdy(rng, 1, 3) }
                     else { 0 }
                 }
             }
@@ -809,7 +881,7 @@ fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         Category::Chthonian => { None },
         _ => {
             if biosphere > 0 {
-                let chem_roll = roll_xdy(rng, 1, 6) as i8 + jovian_chem_dm(*luminosity_class, orbit_type);
+                let chem_roll = roll_xdy(rng, 1, 6) as i8 + jovian_chem_dm(luminosity_class, orbit_type);
                 match chem_roll {
                     ..=3 => Some(Chemistry::Water),
                     _ => Some(Chemistry::Ammonia)

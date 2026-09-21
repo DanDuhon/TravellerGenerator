@@ -135,17 +135,23 @@ pub struct Star {
     pub role: StarRole,
     pub spectral_type: SpectralType,
     pub luminosity_class: LuminosityClass,
-    pub name: String
+    pub name: String,
+    pub expansion_affected_orbits: u8
 }
 
 pub fn create_star(rng: &mut ChaCha8Rng, role: &StarRole, age: &u8, roll: &u8, name: String) -> Star {
     let spectral_type = spectral_type_lookup(*roll);
     let luminosity_class = luminosity_class_lookup(rng, *role, spectral_type, age);
+    let expansion_affected_orbits = match luminosity_class {
+        LuminosityClass::D | LuminosityClass::KIII | LuminosityClass::MIII => roll_xdy(rng, 1, 6),
+        _ => 0
+    };
     let s = Star {
         role: *role,
         spectral_type: spectral_type,
         luminosity_class: luminosity_class,
-        name: name
+        name: name,
+        expansion_affected_orbits: expansion_affected_orbits
     };
 
     return s
@@ -156,7 +162,8 @@ pub fn create_brown_dwarf(name: String) -> Star {
         role: StarRole::BrownDwarf,
         spectral_type: SpectralType::L,
         luminosity_class: LuminosityClass::L,
-        name: name
+        name: name,
+        expansion_affected_orbits: 0
     };
 
     return s

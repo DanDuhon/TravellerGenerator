@@ -564,3 +564,237 @@ mod value_tests {
         }
     }
 }
+
+// Tests for the stellar expansion rule.
+//
+// A star of luminosity class D, KIII or MIII expanded off the main sequence
+// and scorched its inner orbits. Every planet in a direct stellar orbit at or
+// below `expansion_affected_orbits` becomes the ruined variant of its group,
+// and its satellites go with it.
+//
+// These will not compile until `Star` carries `expansion_affected_orbits: u8`.
+
+#[cfg(test)]
+mod expansion {
+    use crate::orbital_body::{category_group, Body, Category, Group, OrbitalBody};
+    use crate::sector_for;
+    use crate::star::{LuminosityClass, Star};
+    use crate::system_hex::Subsystem;
+
+    /// What a group turns into when its orbit is scorched.
+    ///
+    /// Asteroid belts are exempt: there is nothing left to boil off.
+    fn scorched_form(group: Group) -> Option<Category> {
+        match group {
+            Group::Dwarf => Some(Category::Stygian),
+            Group::Terrestrial => Some(Category::Acheronian),
+            Group::Helian => Some(Category::Asphodelian),
+            Group::Jovian => Some(Category::Chthonian),
+            Group::AsteroidBelt => None,
+        }
+    }
+
+    /// Categories reachable *only* through expansion.
+    ///
+    /// Asphodelian and Chthonian are deliberately absent: an ordinary
+    /// epistellar roll produces them too, so finding one outside the scorched
+    /// range proves nothing. Stygian and Acheronian have no other path, which
+    /// is what makes them usable as evidence.
+    fn expansion_exclusive(category: Category) -> bool {
+        matches!(category, Category::Stygian | Category::Acheronian)
+    }
+
+    fn expands(lum: LuminosityClass) -> bool {
+        matches!(lum, LuminosityClass::D | LuminosityClass::KIII | LuminosityClass::MIII)
+    }
+
+    /// (governing star name, scorched range in this group's own numbering, bodies)
+    fn orbit_groups(subsystem: &Subsystem) -> Vec<(&str, u8, &Vec<OrbitalBody>)> {
+        match subsystem {
+            Subsystem::Single { star, bodies } =>
+                vec![(star.name.as_str(), star.expansion_affected_orbits, bodies)],
+            Subsystem::Binary { primary, companion, primary_bodies, companion_bodies, shared_bodies } => {
+                let shared_range = primary.expansion_affected_orbits
+                    .saturating_sub(primary_bodies.len() as u8)
+                    .max(companion.expansion_affected_orbits
+                        .saturating_sub(companion_bodies.len() as u8));
+                vec![
+                    (primary.name.as_str(), primary.expansion_affected_orbits, primary_bodies),
+                    (companion.name.as_str(), companion.expansion_affected_orbits, companion_bodies),
+                    ("circumbinary", shared_range, shared_bodies),
+                ]
+            }
+        }
+    }
+
+    /// Only post-main-sequence stars scorch anything, and never more than 1d6
+    /// orbits.
+    #[test]
+    fn only_expanded_stars_have_affected_orbits() {
+        for seed in 0..15 {
+            for (coord, system) in sector_for(seed) {
+                for subsystem in &system.subsystems {
+                    for star in subsystem.stars() {
+                        assert!(
+                            star.expansion_affected_orbits <= 6,
+                            "seed {seed} {coord:?}: {} claims {} affected orbits",
+                            star.name, star.expansion_affected_orbits,
+                        );
+                        if !expands(star.luminosity_class) {
+                            assert_eq!(
+                                star.expansion_affected_orbits, 0,
+                                "seed {seed} {coord:?}: {} is {:?} but scorched {} orbits",
+                                star.name, star.luminosity_class,
+                                star.expansion_affected_orbits,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Every stellar orbit inside the scorched range holds the ruined form of
+    /// its group, and nothing inside the range escaped.
+    #[test]
+    fn orbits_inside_the_scorched_range_are_ruined() {
+        for seed in 0..15 {
+            for (coord, system) in sector_for(seed) {
+                for subsystem in &system.subsystems {
+                    for (name, range, bodies) in orbit_groups(subsystem) {
+                        for body in bodies {
+                            if body.order > range {
+                                continue;
+                            }
+                            let Body::Planet(planet) = &body.body else {
+                                continue; // belts survive
+                            };
+                            let group = category_group(planet.category);
+                            let expected = scorched_form(group)
+                                .expect("a Planet is never in the asteroid belt group");
+                            assert_eq!(
+                                planet.category, expected,
+                                "seed {seed} {coord:?}: {} is in orbit {} of {} \
+                                 (scorched range {}) but is {:?}, not {:?}",
+                                body.designation, body.order, name,
+                                range, planet.category, expected,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// A scorched world takes its moons with it, and an intact world has no
+    /// scorched moons.
+    #[test]
+    fn satellites_inherit_the_scorched_state() {
+        for seed in 0..15 {
+            for (coord, system) in sector_for(seed) {
+                for subsystem in &system.subsystems {
+                    for (name, range, bodies) in orbit_groups(subsystem) {
+                        for body in bodies {
+                            let scorched = body.order <= range;
+                            for satellite in &body.satellites {
+                                check_inheritance(satellite, scorched, seed, coord);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn check_inheritance(
+        body: &OrbitalBody, parent_scorched: bool, seed: u64, coord: (i16, i16, i16),
+    ) {
+        if let Body::Planet(planet) = &body.body {
+            let group = category_group(planet.category);
+            let is_scorched = Some(planet.category) == scorched_form(group);
+            if parent_scorched {
+                assert!(
+                    is_scorched,
+                    "seed {seed} {coord:?}: {} orbits a scorched world but is {:?}",
+                    body.designation, planet.category,
+                );
+            } else {
+                assert!(
+                    !expansion_exclusive(planet.category),
+                    "seed {seed} {coord:?}: {} is {:?} but orbits an intact world",
+                    body.designation, planet.category,
+                );
+            }
+        }
+        for satellite in &body.satellites {
+            check_inheritance(satellite, parent_scorched, seed, coord);
+        }
+    }
+
+    /// Nothing outside a scorched range is a Stygian or an Acheronian.
+    ///
+    /// This is the one that catches an off-by-one in the `<=` comparison, or a
+    /// scorched check that accidentally reads a satellite's index-within-parent
+    /// instead of its stellar orbit.
+    #[test]
+    fn expansion_exclusive_categories_only_appear_when_scorched() {
+        for seed in 0..15 {
+            for (coord, system) in sector_for(seed) {
+                for subsystem in &system.subsystems {
+                    for (name, range, bodies) in orbit_groups(subsystem) {
+                        for body in bodies {
+                            let in_range = body.order <= range;
+                            if in_range {
+                                continue;
+                            }
+                            if let Body::Planet(planet) = &body.body {
+                                assert!(
+                                    !expansion_exclusive(planet.category),
+                                    "seed {seed} {coord:?}: {} is {:?} in orbit {} of {}, \
+                                     whose scorched range is {}",
+                                    body.designation, planet.category, body.order,
+                                    name, range,
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Nothing lives on a scorched world.
+    #[test]
+    fn scorched_worlds_are_dead() {
+        for seed in 0..15 {
+            for (coord, system) in sector_for(seed) {
+                for subsystem in &system.subsystems {
+                    for body in subsystem.all_bodies() {
+                        check_dead(body, seed, coord);
+                    }
+                }
+            }
+        }
+    }
+
+    fn check_dead(body: &OrbitalBody, seed: u64, coord: (i16, i16, i16)) {
+        if let Body::Planet(planet) = &body.body {
+            let group = category_group(planet.category);
+            if Some(planet.category) == scorched_form(group) {
+                assert_eq!(
+                    planet.biosphere, 0,
+                    "seed {seed} {coord:?}: scorched world {} ({:?}) has biosphere {}",
+                    body.designation, planet.category, planet.biosphere,
+                );
+                assert_eq!(
+                    planet.hydrosphere, 0,
+                    "seed {seed} {coord:?}: scorched world {} ({:?}) has hydrosphere {}",
+                    body.designation, planet.category, planet.hydrosphere,
+                );
+            }
+        }
+        for satellite in &body.satellites {
+            check_dead(satellite, seed, coord);
+        }
+    }
+}
