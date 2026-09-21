@@ -47,6 +47,7 @@ pub struct Planet {
     pub chemistry: Option<Chemistry>,
     pub atmosphere: u8,
     pub hydrosphere: u8,
+    pub subsurface_oceans: bool,
     pub biosphere: u8,
     pub rings: Option<RingsType>,
     pub proper_name: Option<String>
@@ -137,6 +138,7 @@ pub fn create_orbital_body(
                     chemistry: None,
                     atmosphere: 0,
                     hydrosphere: 0,
+                    subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
                     proper_name: None
@@ -161,6 +163,7 @@ pub fn create_orbital_body(
                     chemistry: None,
                     atmosphere: 1,
                     hydrosphere: 0,
+                    subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
                     proper_name: None
@@ -180,6 +183,7 @@ pub fn create_orbital_body(
                     chemistry: None,
                     atmosphere: 1,
                     hydrosphere: 0,
+                    subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
                     proper_name: None
@@ -199,6 +203,7 @@ pub fn create_orbital_body(
                     chemistry: None,
                     atmosphere: 1,
                     hydrosphere: 0,
+                    subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
                     proper_name: None
@@ -506,7 +511,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
         _ => { (0, None) } // Other dwarf planet Categories: Hebean, Meltball, Rockball, Stygian
     };
 
-    let (atmosphere, hydrosphere, biosphere) = match category {
+    let (atmosphere, hydrosphere, biosphere, subsurface_oceans) = match category {
         Category::Arean => {
             let atmo_roll: i8 = roll_xdy(rng, 1, 6) as i8 - if luminosity_class == LuminosityClass::D { 2 } else { 0 };
             let atmosphere: u8 = dwarf_atmosphere(&category, atmo_roll);
@@ -520,7 +525,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 } else if atmosphere == 10 && system_age >= age_compare + age_mod {
                     roll_xdy(rng, 1, 3)
                 } else { 0 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         }
         Category::Hebean => {
             let atmo_roll: i8 = roll_xdy(rng, 1, 6) as i8 + size as i8 - 6;
@@ -528,13 +533,13 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
             let hydro_roll: i8 = roll_xdy(rng, 2, 6) as i8 + size as i8 - 11;
             let hydrosphere: u8 = max(0, hydro_roll) as u8;
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Meltball => {
             let atmosphere: u8 = 1;
             let hydrosphere: u8 = 15;
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Promethean => {
             let hydro_roll: i8 = roll_xdy(rng, 2, 6) as i8 - 2;
@@ -549,20 +554,20 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
             let atmosphere: u8 = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 + size as i8 - 7).clamp(2, 9) as u8
             } else { 0 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Rockball => {
             let atmosphere: u8 = 0;
             let hydrosphere: u8 = 0;
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Snowball => {
             let atmosphere: u8 = dwarf_atmosphere(&category, roll_xdy(rng, 1, 6) as i8);
             let hydro_roll: i8 = roll_xdy(rng, 1, 6) as i8;
-            let hydrosphere: u8 = match hydro_roll {
-                ..=3 => 10,
-                _ => roll_xdy(rng, 2, 6) - 2
+            let (hydrosphere, subsurface_oceans) = match hydro_roll {
+                ..=3 => (10, false),
+                _ => (roll_xdy(rng, 2, 6) - 2, true)
             };
             let age_compare: u8 = roll_xdy(rng, 1, 6);
             let biosphere: u8 = if system_age >= 6 + age_mod {
@@ -570,13 +575,13 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 } else if system_age >= age_compare {
                     max(0, roll_xdy(rng, 1, 6) as i8 -3) as u8
                 } else { 0 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, subsurface_oceans)
         },
         Category::Stygian => {
             let atmosphere: u8 = 0;
             let hydrosphere: u8 = 0;
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         _ => unreachable!("create_dwarf_planet called for {category:?}")
     };
@@ -588,6 +593,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
         chemistry: chemistry,
         atmosphere: atmosphere,
         hydrosphere: hydrosphere,
+        subsurface_oceans: subsurface_oceans,
         biosphere: biosphere,
         rings: None,
         proper_name: None
@@ -642,12 +648,12 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         _ => { (0, None) } // Other terrestrial Categories: Acheronian, JaniLithic, Telluric
     };
 
-    let (atmosphere, hydrosphere, biosphere) = match category {
+    let (atmosphere, hydrosphere, biosphere, subsurface_oceans) = match category {
         Category::Acheronian => {
             let atmosphere = 1;
             let hydrosphere = 0;
             let biosphere = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         }
         Category::Arid => {
             let age_compare = roll_xdy(rng, 1, 3);
@@ -660,7 +666,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
             let atmosphere = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 - 7 + size as i8).clamp(2, 9) as u8
             } else { 10 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::JaniLithic => {
             let atmo_roll = roll_xdy(rng, 1, 6) as i8;
@@ -670,7 +676,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
                 };
             let hydrosphere: u8 = 0;
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Oceanic => {
             let hydrosphere: u8 = 11;
@@ -702,7 +708,8 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
                     _ => 12
                 }
             };
-            (atmosphere, hydrosphere, biosphere)
+            let subsurface_oceans = if atmosphere < 2 && biosphere > 0 { true } else { false };
+            (atmosphere, hydrosphere, biosphere, subsurface_oceans)
         },
         Category::Tectonic => {
             let age_compare = roll_xdy(rng, 1, 3);
@@ -717,13 +724,13 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
             } else if biosphere >= 3 && (chemistry == Some(Chemistry::Sulfur) || chemistry == Some(Chemistry::Chlorine)) {
                 11
             } else { 10 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Telluric => {
             let atmosphere: u8 = 12;
             let hydrosphere: u8 = if roll_xdy(rng, 1, 6) <= 4 { 0 } else { 15 };
             let biosphere: u8 = 0;
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         },
         Category::Vesperian => {
             let age_compare = roll_xdy(rng, 1, 3);
@@ -738,7 +745,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
             } else if biosphere >= 3 && chemistry == Some(Chemistry::Chlorine) {
                 11
             } else { 10 };
-            (atmosphere, hydrosphere, biosphere)
+            (atmosphere, hydrosphere, biosphere, false)
         }
         _ => unreachable!("create_terrestrial_planet called for {category:?}")
     };
@@ -750,6 +757,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         chemistry: chemistry,
         atmosphere: atmosphere,
         hydrosphere: hydrosphere,
+        subsurface_oceans: subsurface_oceans,
         biosphere: biosphere,
         rings: None,
         proper_name: None
@@ -833,6 +841,7 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         chemistry: chemistry,
         atmosphere: atmosphere,
         hydrosphere: hydrosphere,
+        subsurface_oceans: false,
         biosphere: biosphere,
         rings: None,
         proper_name: None
@@ -907,6 +916,7 @@ fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         chemistry: chemistry,
         atmosphere: atmosphere,
         hydrosphere: hydrosphere,
+        subsurface_oceans: false,
         biosphere: biosphere,
         rings: rings,
         proper_name: None
