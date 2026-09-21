@@ -791,6 +791,11 @@ mod expansion {
                     "seed {seed} {coord:?}: scorched world {} ({:?}) has hydrosphere {}",
                     body.designation, planet.category, planet.hydrosphere,
                 );
+                assert!(
+                    planet.rings.is_none(),
+                    "seed {seed} {coord:?}: scorched world {} ({:?}) has rings {:?}",
+                    body.designation, planet.category, planet.rings,
+                );
             }
         }
         for satellite in &body.satellites {
