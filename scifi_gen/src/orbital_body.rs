@@ -1,8 +1,12 @@
-use rand_chacha::ChaCha8Rng;
-use crate::star::LuminosityClass;
-use crate::dice_roller::roll_xdy;
 use std::cmp::max;
 use std::cmp::min;
+use rand_chacha::ChaCha8Rng;
+use crate::star::LuminosityClass;
+use crate::temperature::Solvent;
+use crate::dice_roller::roll_xdy;
+use crate::temperature;
+use crate::terrain::Terrain;
+use crate::terrain::terrain_present;
 
 pub struct OrbitalBody {
     pub order: u8,
@@ -18,6 +22,16 @@ impl OrbitalBody {
             Body::Planet(p) => p.proper_name.as_deref().unwrap_or(&self.designation),
             Body::AsteroidBelt => &self.designation,
         }
+    }
+}
+
+pub fn solvent(chemistry: Option<Chemistry>) -> Solvent {
+    match chemistry {
+        Some(Chemistry::Ammonia) => Solvent::Ammonia,
+        Some(Chemistry::Chlorine) => Solvent::Chlorine,
+        Some(Chemistry::Methane) => Solvent::Methane,
+        Some(Chemistry::Sulfur) => Solvent::SulfuricAcid,
+        _ => Solvent::Water
     }
 }
 
@@ -50,7 +64,21 @@ pub struct Planet {
     pub subsurface_oceans: bool,
     pub biosphere: u8,
     pub rings: Option<RingsType>,
-    pub proper_name: Option<String>
+    pub proper_name: Option<String>,
+    pub base_temperature: i16
+}
+
+impl Planet {
+    pub fn temperature(&self) -> temperature::Temperature {
+        temperature::current(self.base_temperature, self.category, self.atmosphere, self.hydrosphere, solvent(self.chemistry))
+    }
+    pub fn flare_shielded(&self) -> bool {
+        is_flare_shielded(self.hydrosphere, self.subsurface_oceans)
+    }
+    pub fn terrains(&self) -> Vec<Terrain> {
+        let s = solvent(self.chemistry);
+        terrain_present(self)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -82,11 +110,18 @@ pub fn category_group(cat: Category) -> Group {
     match cat {
         Category::AsteroidBelt => Group::AsteroidBelt,
         Category::Rockball | Category::Snowball | Category::Meltball | Category::Hebean
-        | Category::Promethean | Category::Arean | Category::Stygian => Group::Dwarf,
+            | Category::Promethean | Category::Arean | Category::Stygian => Group::Dwarf,
         Category::Telluric | Category::Arid | Category::Tectonic | Category::Oceanic
-        | Category::Vesperian | Category::JaniLithic | Category::Acheronian => Group::Terrestrial,
+            | Category::Vesperian | Category::JaniLithic | Category::Acheronian => Group::Terrestrial,
         Category::Helian | Category::Panthalassic | Category::Asphodelian => Group::Helian,
         Category::Jovian | Category::Chthonian => Group::Jovian,
+    }
+}
+
+pub fn has_solid_surface(category: Category) -> bool {
+    match category {
+        Category::Helian | Category::Jovian | Category::Panthalassic => false,
+        _ => true
     }
 }
 
@@ -115,6 +150,18 @@ pub fn describe(cat: Category) -> &'static str {
     }
 }
 
+fn after_flares(biosphere: u8, luminosity_class: LuminosityClass, shielded: bool) -> u8 {
+    if luminosity_class == LuminosityClass::MVe && !shielded {
+        biosphere.saturating_sub(2)
+    } else {
+        biosphere
+    }
+}
+
+fn is_flare_shielded(hydrosphere: u8, subsurface_oceans: bool) -> bool {
+    subsurface_oceans || hydrosphere == 11
+}
+
 pub fn create_orbital_body(
     rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, designation: String,
     group: Group, parent_group: Option<Group>, is_binary_companion: bool,
@@ -141,7 +188,8 @@ pub fn create_orbital_body(
                     subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
-                    proper_name: None
+                    proper_name: None,
+                    base_temperature: temperature::base(orbit_type, Category::Stygian, 0, solvent(None))
                 }
             } else {
                 create_dwarf_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age, parent_group)
@@ -166,7 +214,8 @@ pub fn create_orbital_body(
                     subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
-                    proper_name: None
+                    proper_name: None,
+                    base_temperature: temperature::base(orbit_type, Category::Acheronian, 1, solvent(None))
                 }
             } else {
                 create_terrestrial_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age, parent_group)
@@ -186,7 +235,8 @@ pub fn create_orbital_body(
                     subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
-                    proper_name: None
+                    proper_name: None,
+                    base_temperature: temperature::base(orbit_type, Category::Asphodelian, 1, solvent(None))
                 }
             } else {
                 create_helian_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age)
@@ -206,7 +256,8 @@ pub fn create_orbital_body(
                     subsurface_oceans: false,
                     biosphere: 0,
                     rings: None,
-                    proper_name: None
+                    proper_name: None,
+                    base_temperature: temperature::base(orbit_type, Category::Chthonian, 1, solvent(None))
                 }
             } else {
                 create_jovian_planet(rng, order, orbit_type, orbital_data.luminosity_class, orbital_data.system_age)
@@ -345,6 +396,7 @@ fn terrestrial_chem_dm(lum: LuminosityClass, orbit: OrbitType) -> i8 {
     let star = match lum {
         LuminosityClass::KV => 2,
         LuminosityClass::MV => 4,
+        LuminosityClass::MVe => 4,
         LuminosityClass::L  => 5,
         _ => 0,
     };
@@ -389,6 +441,7 @@ fn helian_chem_dm(lum: LuminosityClass) -> i8 {
     match lum {
         LuminosityClass::KV => 2,
         LuminosityClass::MV => 4,
+        LuminosityClass::MVe => 4,
         LuminosityClass::L  => 5,
         _ => 0,
     }
@@ -517,6 +570,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
             let atmosphere: u8 = dwarf_atmosphere(&category, atmo_roll);
             let hydro_roll: i8 = roll_xdy(rng, 2, 3) as i8 + size as i8 - 7 - if atmosphere == 1 { 4 } else { 0 };
             let hydrosphere: u8 = max(0, hydro_roll) as u8;
+            let subsurface_oceans = false;
             let age_compare: u8 = roll_xdy(rng, 1, 3);
             let biosphere: u8 = if atmosphere == 1 && system_age >= age_compare + age_mod {
                     max(0, roll_xdy(rng, 1, 6) as i8 - 4) as u8
@@ -525,6 +579,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 } else if atmosphere == 10 && system_age >= age_compare + age_mod {
                     roll_xdy(rng, 1, 3)
                 } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             (atmosphere, hydrosphere, biosphere, false)
         }
         Category::Hebean => {
@@ -544,6 +599,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
         Category::Promethean => {
             let hydro_roll: i8 = roll_xdy(rng, 2, 6) as i8 - 2;
             let hydrosphere: u8 = max(0, hydro_roll) as u8;
+            let subsurface_oceans = false;
             let age_compare: u8 = roll_xdy(rng, 1, 3);
             let biosphere_roll: i8 = roll_xdy(rng, 1, 6) as i8;
             let biosphere: u8 = if system_age >= 4 + age_mod {
@@ -551,6 +607,7 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 } else if system_age >= age_compare + age_mod {
                     roll_xdy(rng, 1, 3)
                 } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             let atmosphere: u8 = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 + size as i8 - 7).clamp(2, 9) as u8
             } else { 0 };
@@ -570,11 +627,12 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
                 _ => (roll_xdy(rng, 2, 6) - 2, true)
             };
             let age_compare: u8 = roll_xdy(rng, 1, 6);
-            let biosphere: u8 = if system_age >= 6 + age_mod {
+            let biosphere: u8 = if system_age >= 6 + age_mod && subsurface_oceans {
                     max(0, roll_xdy(rng, 1, 6) as i8 + size as i8 - 2) as u8
-                } else if system_age >= age_compare {
+                } else if system_age >= age_compare && subsurface_oceans {
                     max(0, roll_xdy(rng, 1, 6) as i8 -3) as u8
                 } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             (atmosphere, hydrosphere, biosphere, subsurface_oceans)
         },
         Category::Stygian => {
@@ -596,7 +654,8 @@ fn create_dwarf_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, l
         subsurface_oceans: subsurface_oceans,
         biosphere: biosphere,
         rings: None,
-        proper_name: None
+        proper_name: None,
+        base_temperature: temperature::base(orbit_type, category, atmosphere, solvent(chemistry))
     }
 }
 
@@ -657,12 +716,14 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         }
         Category::Arid => {
             let age_compare = roll_xdy(rng, 1, 3);
+            let hydrosphere = roll_xdy(rng, 1, 3);
+            let subsurface_oceans = false;
             let biosphere: u8 = if system_age >= 4 + age_mod {
                 max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
             } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
-            let hydrosphere = roll_xdy(rng, 1, 3);
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             let atmosphere = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 - 7 + size as i8).clamp(2, 9) as u8
             } else { 10 };
@@ -681,11 +742,6 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         Category::Oceanic => {
             let hydrosphere: u8 = 11;
             let age_compare = roll_xdy(rng, 1, 3);
-            let biosphere: u8 = if system_age >= 4 + age_mod {
-                max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
-            } else if system_age >= age_compare + age_mod {
-                roll_xdy(rng, 1, 3)
-            } else { 0 };
             let atmosphere = if chemistry == Some(Chemistry::Water) {
                 let atmo_roll = roll_xdy(rng, 2, 6) as i8
                     - 6
@@ -693,6 +749,7 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
                     - match luminosity_class {
                         LuminosityClass::L => { 3 },
                         LuminosityClass::MV => { 2 },
+                        LuminosityClass::MVe => { 2 },
                         LuminosityClass::KV => { 1 },
                         LuminosityClass::FIV => { 1 },
                         LuminosityClass::GIV => { 1 },
@@ -708,17 +765,25 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
                     _ => 12
                 }
             };
-            let subsurface_oceans = if atmosphere < 2 && biosphere > 0 { true } else { false };
-            (atmosphere, hydrosphere, biosphere, subsurface_oceans)
-        },
-        Category::Tectonic => {
-            let age_compare = roll_xdy(rng, 1, 3);
+            let subsurface_oceans = atmosphere < 2;
             let biosphere: u8 = if system_age >= 4 + age_mod {
                 max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
             } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
+            (atmosphere, hydrosphere, biosphere, subsurface_oceans)
+        },
+        Category::Tectonic => {
+            let age_compare = roll_xdy(rng, 1, 3);
             let hydrosphere = roll_xdy(rng, 2, 6) - 2;
+            let subsurface_oceans = false;
+            let biosphere: u8 = if system_age >= 4 + age_mod {
+                max(0, roll_xdy(rng, 2, 6) as i8 - if luminosity_class == LuminosityClass::D { 3 } else { 0 }) as u8
+            } else if system_age >= age_compare + age_mod {
+                roll_xdy(rng, 1, 3)
+            } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             let atmosphere = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 - 7 + size as i8).clamp(2, 9) as u8
             } else if biosphere >= 3 && (chemistry == Some(Chemistry::Sulfur) || chemistry == Some(Chemistry::Chlorine)) {
@@ -740,6 +805,8 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
                 roll_xdy(rng, 1, 3)
             } else { 0 };
             let hydrosphere = roll_xdy(rng, 2, 6) - 2;
+            let subsurface_oceans = false;
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             let atmosphere = if biosphere >= 3 && chemistry == Some(Chemistry::Water) {
                 (roll_xdy(rng, 2, 6) as i8 - 7 + size as i8).clamp(2, 9) as u8
             } else if biosphere >= 3 && chemistry == Some(Chemistry::Chlorine) {
@@ -760,7 +827,8 @@ fn create_terrestrial_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitT
         subsurface_oceans: subsurface_oceans,
         biosphere: biosphere,
         rings: None,
-        proper_name: None
+        proper_name: None,
+        base_temperature: temperature::base(orbit_type, category, atmosphere, solvent(chemistry))
     }
 }
 
@@ -823,12 +891,14 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         Category::Panthalassic => {
             let atmosphere = min(13, roll_xdy(rng, 1, 6) + 8);
             let hydrosphere: u8 = 11;
+            let subsurface_oceans = false;
             let age_compare = roll_xdy(rng, 1, 3);
             let biosphere: u8 = if system_age >= 4 + age_mod {
                 roll_xdy(rng, 2, 6)
             } else if system_age >= age_compare + age_mod {
                 roll_xdy(rng, 1, 3)
             } else { 0 };
+            let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
             (atmosphere, hydrosphere, biosphere)
         }
         _ => unreachable!("create_helian_planet called for {category:?}")
@@ -844,7 +914,8 @@ fn create_helian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         subsurface_oceans: false,
         biosphere: biosphere,
         rings: None,
-        proper_name: None
+        proper_name: None,
+        base_temperature: temperature::base(orbit_type, category, atmosphere, solvent(chemistry))
     }
 }
 
@@ -884,6 +955,8 @@ fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
             }
         }
     };
+    let subsurface_oceans = false;
+    let biosphere = after_flares(biosphere, luminosity_class, is_flare_shielded(hydrosphere, subsurface_oceans));
 
     // Chemistry
     let chemistry = match category {
@@ -919,7 +992,8 @@ fn create_jovian_planet(rng: &mut ChaCha8Rng, order: u8, orbit_type: OrbitType, 
         subsurface_oceans: false,
         biosphere: biosphere,
         rings: rings,
-        proper_name: None
+        proper_name: None,
+        base_temperature: temperature::base(orbit_type, category, atmosphere, solvent(chemistry))
     }
 }
 
@@ -932,6 +1006,7 @@ mod chem_dm_tests {
         assert_eq!(terrestrial_chem_dm(LuminosityClass::L,  OrbitType::InnerZone), 5); // L adds — catches bug #3
         assert_eq!(terrestrial_chem_dm(LuminosityClass::KV, OrbitType::InnerZone), 2);
         assert_eq!(terrestrial_chem_dm(LuminosityClass::MV, OrbitType::OuterZone), 6); // 4 + 2 stack
+        assert_eq!(terrestrial_chem_dm(LuminosityClass::MVe, OrbitType::OuterZone), 6); // 4 + 2 stack
         assert_eq!(terrestrial_chem_dm(LuminosityClass::GV, OrbitType::InnerZone), 0);
     }
 
@@ -940,6 +1015,7 @@ mod chem_dm_tests {
         assert_eq!(helian_chem_dm(LuminosityClass::L),  5);
         assert_eq!(helian_chem_dm(LuminosityClass::KV), 2);
         assert_eq!(helian_chem_dm(LuminosityClass::MV), 4);
+        assert_eq!(helian_chem_dm(LuminosityClass::MVe), 4);
         assert_eq!(helian_chem_dm(LuminosityClass::GV), 0);
     }
 
@@ -957,5 +1033,41 @@ mod chem_dm_tests {
         assert_eq!(dwarf_chem_dm(LuminosityClass::GV, OrbitType::Epistellar, Category::Arean),       0);
         assert_eq!(dwarf_chem_dm(LuminosityClass::GV, OrbitType::Epistellar, Category::Snowball),    0);
         assert_eq!(dwarf_chem_dm(LuminosityClass::L,  OrbitType::OuterZone,  Category::Arean),       4); // L +2, outer +2
+    }
+}
+
+#[cfg(test)]
+mod flare_tests {
+    use super::*;
+ 
+    #[test]
+    fn flares_cost_unshielded_worlds_two_points() {
+        assert_eq!(after_flares(10, LuminosityClass::MVe, false), 8);
+        assert_eq!(after_flares(3, LuminosityClass::MVe, false), 1);
+        // Floors at zero rather than wrapping.
+        assert_eq!(after_flares(2, LuminosityClass::MVe, false), 0);
+        assert_eq!(after_flares(1, LuminosityClass::MVe, false), 0);
+        assert_eq!(after_flares(0, LuminosityClass::MVe, false), 0);
+    }
+ 
+    #[test]
+    fn shielded_worlds_and_quiet_stars_are_untouched() {
+        assert_eq!(after_flares(10, LuminosityClass::MVe, true), 10);
+        for lum in [LuminosityClass::MV, LuminosityClass::GV, LuminosityClass::KV,
+                    LuminosityClass::D, LuminosityClass::L] {
+            assert_eq!(after_flares(10, lum, false), 10, "{lum:?} should not flare");
+        }
+    }
+ 
+    #[test]
+    fn shielding_comes_from_deep_oceans_or_ice() {
+        assert!(is_flare_shielded(11, false), "a superdense ocean shields");
+        assert!(is_flare_shielded(0, true), "an ice shell shields");
+        assert!(is_flare_shielded(5, true), "an ice shell shields at any hydrosphere");
+        // 15 and 16 aren't oceans; 10 is a normal ocean, not a superdense one.
+        for hydrosphere in [0, 5, 10, 15, 16] {
+            assert!(!is_flare_shielded(hydrosphere, false),
+                "hydrosphere {hydrosphere} with no ice shell should not shield");
+        }
     }
 }

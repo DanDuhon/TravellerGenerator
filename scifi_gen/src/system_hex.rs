@@ -109,13 +109,16 @@ fn lookup_companion_orbit(roll: u8) -> CompanionOrbit {
 }
 
 fn zone_counts(rng: &mut ChaCha8Rng, lum: LuminosityClass) -> [u8; 3] {
-    let mv = if lum == LuminosityClass::MV { 1 } else { 0 };
-    let mv_or_l = if lum == LuminosityClass::MV || lum == LuminosityClass::L { 1 } else { 0 };
+    let mv = if lum == LuminosityClass::MV || lum == LuminosityClass::MVe { 1 } else { 0 };
+    let mv_or_l = if lum == LuminosityClass::MV || lum == LuminosityClass::MVe || lum == LuminosityClass::L { 1 } else { 0 };
     let inner_die = if lum == LuminosityClass::L { 3 } else { 6 };
 
-    let epistellar = (roll_xdy(rng, 1, 6) as i8 - 3 - mv).clamp(0, 2) as u8;
-    let inner      = (roll_xdy(rng, 1, inner_die) as i8 - 1 - mv).clamp(0, 5) as u8;
-    let outer      = (roll_xdy(rng, 1, 6) as i8 - 1 - mv_or_l).clamp(0, 5) as u8;
+    let epistellar = match lum {
+        LuminosityClass::L | LuminosityClass::D | LuminosityClass::KIII | LuminosityClass::MIII => 0,
+        _ => (roll_xdy(rng, 1, 6) as i8 - 3 - mv).clamp(0, 2) as u8
+    };
+    let inner = (roll_xdy(rng, 1, inner_die) as i8 - 1 - mv).clamp(0, 5) as u8;
+    let outer = (roll_xdy(rng, 1, 6) as i8 - 1 - mv_or_l).clamp(0, 5) as u8;
     [epistellar, inner, outer]
 }
 
