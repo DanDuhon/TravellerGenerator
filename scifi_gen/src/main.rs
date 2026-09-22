@@ -5,6 +5,8 @@ mod name_generator;
 mod dice_roller;
 mod temperature;
 mod terrain;
+mod text;
+mod animal;
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use crate::name_generator::NameGenerator;
