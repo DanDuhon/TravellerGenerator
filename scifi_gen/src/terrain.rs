@@ -25,26 +25,28 @@ pub enum Terrain {
     Woods
 }
 
-const ALL: [Terrain; 18] = [
-    Terrain::BeachShore,
-    Terrain::Clear,
-    Terrain::DeepOcean,
-    Terrain::Desert,
-    Terrain::Forest,
-    Terrain::Hills,
-    Terrain::IceSheet,
-    Terrain::Jungle,
-    Terrain::Mountains,
-    Terrain::OpenOcean,
-    Terrain::Plains,
-    Terrain::Rainforest,
-    Terrain::Riverbank,
-    Terrain::RoughBroken,
-    Terrain::ShallowOcean,
-    Terrain::SwampMarsh,
-    Terrain::Tundra,
-    Terrain::Woods
-];
+impl Terrain {
+    pub const ALL: [Terrain; 18] = [
+        Terrain::BeachShore,
+        Terrain::Clear,
+        Terrain::DeepOcean,
+        Terrain::Desert,
+        Terrain::Forest,
+        Terrain::Hills,
+        Terrain::IceSheet,
+        Terrain::Jungle,
+        Terrain::Mountains,
+        Terrain::OpenOcean,
+        Terrain::Plains,
+        Terrain::Rainforest,
+        Terrain::Riverbank,
+        Terrain::RoughBroken,
+        Terrain::ShallowOcean,
+        Terrain::SwampMarsh,
+        Terrain::Tundra,
+        Terrain::Woods
+    ];
+}
 
 pub fn terrain_present(planet: &Planet) -> Vec<Terrain> {
     let solid = has_solid_surface(planet.category);
@@ -59,7 +61,7 @@ pub fn terrain_present(planet: &Planet) -> Vec<Terrain> {
     let hot = temp.spans(ClimateBand::Hot);
     let frozen = temp.spans(ClimateBand::Frozen);
 
-    ALL.into_iter()
+    Terrain::ALL.into_iter()
     .filter(|t| match t {
         Terrain::BeachShore => land && weather && liquid && planet.hydrosphere >= 2,
         Terrain::Clear | Terrain::Hills | Terrain::Mountains | Terrain::RoughBroken => land,
